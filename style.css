@@ -1,0 +1,12 @@
+/* */
+.reportview-container {
+    flex-direction: row;
+}
+
+.main {
+    overflow-y: hidden !important;
+}
+
+.sidebar .sidebar-content {
+    width: auto;
+}
