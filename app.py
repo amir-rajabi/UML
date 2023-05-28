@@ -66,10 +66,19 @@ with col1:
     ax.set_ylabel("Y")
     ax.set_title("Graph")
     st.pyplot(fig)
+with col3:
+    #TODO: formating 
+
+    st.header("Pages")
+    if st.button("Page 1"):
+        page = "Page 1"
+    if st.button("Page 2"):
+        page = "Page 2"
+    if st.button("Page 3"):
+        page = "Page 3"
 
 
 with col2:
-    #does not work (yet)
     if page == "Page 1":
         page1()
     elif page == "Page 2":
@@ -84,16 +93,4 @@ with col2:
     interrupt = but2.button("Interrupt Training")
     revert = but3.button("Revert")
 
-with col3:
-    #TODO: formating 
-
-    #TODO: make this change page on col2
-    # does not work yet
-    st.header("Pages")
-    if st.button("Page 1"):
-        page = "Page 1"
-    if st.button("Page 2"):
-        page = "Page 2"
-    if st.button("Page 3"):
-        page = "Page 3"
 
