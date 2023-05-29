@@ -50,4 +50,5 @@ def main(seed):
         batch_size=256,
     )
 
-main(seed=0)
+if __name__ == "__main__":
+    main(seed=0)
