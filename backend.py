@@ -3,6 +3,11 @@ from time import sleep
 from tqdm import trange
 import zmq
 
+from ml_utils.data import get_data_loaders
+from ml_utils.evaluate import accuracy
+from ml_utils.model import ConvolutionalNeuralNetwork
+from ml_utils.training import main as train
+
 
 def process(task: any, event: Event) -> None:
     """Process receives a task and processes it. This runs in the worker process, meaning it doesn't block your UI or main backend processes.
@@ -13,7 +18,8 @@ def process(task: any, event: Event) -> None:
     """
     for i in (pbar := trange(task["duration"])):
         pbar.set_description(str(task["task_description"]))
-        sleep(1)
+        #sleep(1)
+        
         if event.is_set():
             print("Stopped due to interrupt")
             event.clear()
@@ -29,6 +35,7 @@ def worker(queue: JoinableQueue, event: Event):
     print(f"Worker is live.")
     while True:
         task = queue.get()
+        print(task)
         process(task, event)
         queue.task_done()
 

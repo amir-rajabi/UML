@@ -22,8 +22,10 @@ def send_msg(msg, receiver: str = "tcp://localhost:5555"):
     socket.close()
 
 
-def send_text_message():
-    send_msg(dict(task_description=text_message, duration=slider_value))
+#TODO: in the future will likly not send duration 
+#but data structure of parameter adjustments
+def send_text_message(text_message, duration):
+    send_msg(dict(task_description=text_message, duration=duration))
 
 
 def interrupt():
@@ -54,7 +56,7 @@ with open('style.css') as f:
 context = zmq.Context()
 
 page = "Page 1"
-col1, col2, col3 = st.columns([5,4,1])
+col1, col2, col3 = st.columns([8,4,1])
 
 with col1:
     st.header("Graph")
@@ -92,5 +94,8 @@ with col2:
     run = but1.button("Run Training")
     interrupt = but2.button("Interrupt Training")
     revert = but3.button("Revert")
+    
+    if run:
+        send_text_message("run", 1)
 
 
