@@ -1,6 +1,8 @@
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
+from consumer_utils import consumer
+import asyncio
 
 from time import sleep
 import zmq
@@ -11,7 +13,6 @@ import zmq
 def long_fn():
     sleep(slider_value)
 
-
 def send_msg(msg, receiver: str = "tcp://localhost:5555"):
     print("Connecting to server…")
     socket = context.socket(zmq.REQ)
@@ -21,12 +22,10 @@ def send_msg(msg, receiver: str = "tcp://localhost:5555"):
     print(reply)
     socket.close()
 
-
 #TODO: in the future will likly not send duration 
 #but data structure of parameter adjustments
 def send_text_message(text_message, duration):
     send_msg(dict(task_description=text_message, duration=duration))
-
 
 def interrupt():
     send_msg("Interrupt")
@@ -58,16 +57,6 @@ context = zmq.Context()
 page = "Page 1"
 col1, col2, col3 = st.columns([8,4,1])
 
-with col1:
-    st.header("Graph")
-    fig, ax = plt.subplots()
-    x = np.linspace(0, 10, 100)
-    y = np.sin(x)
-    ax.plot(x, y)
-    ax.set_xlabel("X")
-    ax.set_ylabel("Y")
-    ax.set_title("Graph")
-    st.pyplot(fig)
 with col3:
     #TODO: formating 
 
@@ -98,4 +87,19 @@ with col2:
     if run:
         send_text_message("run", 1)
 
+with col1:
+    st.header("Graph")
+    fig, ax = plt.subplots()
+    x = np.linspace(0, 10, 100)
+    y = np.sin(x)
+    ax.plot(x, y)
+    ax.set_xlabel("X")
+    ax.set_ylabel("Y")
+    ax.set_title("Graph")
+    st.pyplot(fig)
+    window_size = 20
+    status = st.empty()
+    if run:
+        #st.write("waiting for input")
+        asyncio.run(consumer(col1, window_size, status))
 
