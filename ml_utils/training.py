@@ -4,9 +4,15 @@ from torch.cuda import empty_cache
 from torch.nn import Module, functional as F
 from torch.optim import Optimizer, SGD
 
-from ml_utils.data import get_data_loaders
-from ml_utils.evaluate import accuracy
-from ml_utils.model import ConvolutionalNeuralNetwork
+if __name__ == "__main__":
+    from data import get_data_loaders
+    from evaluate import accuracy
+    from model import ConvolutionalNeuralNetwork
+else:
+    from ml_utils.data import get_data_loaders
+    from ml_utils.evaluate import accuracy
+    from ml_utils.model import ConvolutionalNeuralNetwork
+
 
 
 def train_step(model: Module, optimizer: Optimizer, data: Tensor,
@@ -49,3 +55,6 @@ def main(seed):
         n_epochs=10,
         batch_size=256,
     )
+
+if __name__ == "__main__":
+    main(seed=0)
