@@ -4,7 +4,7 @@ from functools import partial
 
 WS_CONN = "ws://localhost:8000/sample"
 
-async def consumer(column, window_size, status):
+async def consumer(graphs, window_size, status):
     windows = defaultdict(partial(deque, [0]*window_size, maxlen=window_size))
 
     async with aiohttp.ClientSession(trust_env = True) as session:
@@ -15,8 +15,12 @@ async def consumer(column, window_size, status):
                 data = message.json()
 
                 windows[data["channel"]].append(data["data"])
-                channel_data = {channel: windows[channel]}
-                column.line_chart(channel_data)
+
+                for channel, graph in graphs.items():
+                    channel_data = {channel: windows[channel]}
+                    if channel == "acc":
+                        graph.line_chart(channel_data)
+
                 '''
                 for channel, graph in graphs.items():
                     channel_data = {channel: windows[channel]}

@@ -48,8 +48,8 @@ def page3():
 st.set_page_config(layout="wide")
 #imports custom css code
 #currently makes the app not scrollable
-with open('style.css') as f:
-    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+#with open('style.css') as f:
+#    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
 
 context = zmq.Context()
@@ -84,22 +84,28 @@ with col2:
     interrupt = but2.button("Interrupt Training")
     revert = but3.button("Revert")
     
-    if run:
-        send_text_message("run", 1)
+    #if run:
+        #send_text_message("run", 1)
 
 with col1:
-    st.header("Graph")
-    fig, ax = plt.subplots()
-    x = np.linspace(0, 10, 100)
-    y = np.sin(x)
-    ax.plot(x, y)
-    ax.set_xlabel("X")
-    ax.set_ylabel("Y")
-    ax.set_title("Graph")
-    st.pyplot(fig)
+    
+    #st.header("Graph")
+    #fig, ax = plt.subplots()
+    #x = np.linspace(0, 10, 100)
+    #y = np.sin(x)
+    #ax.plot(x, y)
+    #ax.set_xlabel("X")
+    #ax.set_ylabel("Y")
+    #ax.set_title("Graph")
+    #st.pyplot(fig)
     window_size = 20
+    
     status = st.empty()
+
+    selected_channels = st.multiselect("Select Channels", ["acc"], default=["acc"])
+    columns = [col.empty() for col in st.columns(len(selected_channels))]
+    arg1 = dict(zip(selected_channels, columns))
     if run:
         #st.write("waiting for input")
-        asyncio.run(consumer(col1, window_size, status))
+        asyncio.run(consumer(arg1, window_size, status))
 

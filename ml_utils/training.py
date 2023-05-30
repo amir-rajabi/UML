@@ -44,7 +44,7 @@ def training(model: Module, optimizer: Optimizer, cuda: bool, n_epochs: int,
             train_step(model=model, optimizer=optimizer, cuda=cuda, data=data,
                        target=target)
         loss, test_accuracy = accuracy(model, test_loader, cuda)
-        websocket.send_json({"channel": "accuracy",
+        websocket.send_json({"channel": "acc",
                              "data":randint(1, 10)})
         #print(f'epoch={epoch}, test accuracy={test_accuracy}, loss={loss}')
     if cuda:
