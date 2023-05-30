@@ -31,10 +31,10 @@ def train_step(model: Module, optimizer: Optimizer, data: Tensor,
     optimizer.step()
     optimizer.zero_grad()
 
-async def training(model: Module, optimizer: Optimizer, cuda: bool, n_epochs: int,
+def training(model: Module, optimizer: Optimizer, cuda: bool, n_epochs: int,
              batch_size: int, websocket: WebSocket):
     #await websocket.accept()
-    await websocket.send_json(randint(1, 10))
+    websocket.send_json(randint(1, 10))
     train_loader, test_loader = get_data_loaders(batch_size=batch_size)
     if cuda:
         model.cuda()
@@ -44,7 +44,8 @@ async def training(model: Module, optimizer: Optimizer, cuda: bool, n_epochs: in
             train_step(model=model, optimizer=optimizer, cuda=cuda, data=data,
                        target=target)
         loss, test_accuracy = accuracy(model, test_loader, cuda)
-        #await websocket.send_json(randint(1, 10))
+        websocket.send_json({"channel": "accuracy",
+                             "data":randint(1, 10)})
         #print(f'epoch={epoch}, test accuracy={test_accuracy}, loss={loss}')
     if cuda:
         empty_cache()
@@ -52,6 +53,7 @@ async def training(model: Module, optimizer: Optimizer, cuda: bool, n_epochs: in
 
 @app.websocket("/sample")
 async def training_send(websocket: WebSocket):
+    print("awaited the websocket")
     await websocket.accept()
     manual_seed(0)
     np.random.seed(0)
@@ -82,7 +84,7 @@ def main(seed):
 '''
 
 def main():
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+     uvicorn.run(app, host="127.0.0.1", port=8000)
 
 if __name__ == "__main__":
     main()
