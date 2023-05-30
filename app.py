@@ -61,11 +61,14 @@ with col3:
     #TODO: formating 
 
     st.header("Pages")
-    if st.button("Page 1"):
+    p1 = st.button("Page 1")
+    p2 = st.button("Page 2")
+    p3 = st.button("Page 3")
+    if p1:
         page = "Page 1"
-    if st.button("Page 2"):
+    if p2:
         page = "Page 2"
-    if st.button("Page 3"):
+    if p3:
         page = "Page 3"
 
 
@@ -84,8 +87,12 @@ with col2:
     interrupt = but2.button("Interrupt Training")
     revert = but3.button("Revert")
     
+    if ( (p1 or p2 or p3) and not run):
+        st.stop()
+
     #if run:
         #send_text_message("run", 1)
+
 
 with col1:
     
@@ -102,10 +109,11 @@ with col1:
     
     status = st.empty()
 
-    selected_channels = st.multiselect("Select Channels", ["acc"], default=["acc"])
-    columns = [col.empty() for col in st.columns(len(selected_channels))]
-    arg1 = dict(zip(selected_channels, columns))
-    if run:
+    selected_channels = st.multiselect("Select Channels[DO NOT SELECT LOSS]", ["acc","loss"], default=["acc"])
+    if(len(selected_channels) != 0):
+        columns = [col.empty() for col in st.columns(len(selected_channels))]
+        arg1 = dict(zip(selected_channels, columns))
+        if run:
         #st.write("waiting for input")
-        asyncio.run(consumer(arg1, window_size, status))
-
+            asyncio.run(consumer(arg1, window_size, status))
+            run = False

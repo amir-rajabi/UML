@@ -12,11 +12,11 @@ CHANNELS = ["acc"]
 @app.websocket("/sample")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
-    while True:
-        print("sendind")
+    for i in range(1000):
+        print("sending")
         await websocket.send_json({
             "channel": choice(CHANNELS),
-            "data": randint(1, 10)
+            "data": i +randint(1, 10)
             }
         )
         await asyncio.sleep(0.5)
