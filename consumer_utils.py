@@ -3,28 +3,26 @@ import aiohttp
 from collections import deque, defaultdict
 from functools import partial
 
+#port to listen to
 WS_CONN = "ws://localhost:8000/sample"
 
-def my_hash_func(delta_generator):
-    return hash(delta_generator._id)
 
-def my_aio_hash_func(client_session):
-    return hash(client_session._session_id)
-
-@st.cache(hash_funcs={st.delta_generator.DeltaGenerator: my_hash_func, aiohttp.ClientSession: my_aio_hash_func})
-async def consumer(graphs, window_size, status):
+#@st.cache_resource
+async def consumer(_graphs, window_size, _status):
     windows = defaultdict(partial(deque, [0]*window_size, maxlen=window_size))
 
     async with aiohttp.ClientSession(trust_env = True) as session:
-        status.subheader(f"Connecting to {WS_CONN}")
+        #displays status
+        _status.subheader(f"Connecting to {WS_CONN}")
         async with session.ws_connect(WS_CONN) as websocket:
-            status.subheader(f"Connected to: {WS_CONN}")
+            _status.subheader(f"Connected to: {WS_CONN}")
             async for message in websocket:
+                #receives data
                 data = message.json()
 
+                #takes the message and plots it
                 windows[data["channel"]].append(data["data"])
-
-                for channel, graph in graphs.items():
+                for channel, graph in _graphs.items():
                     channel_data = {channel: windows[channel]}
                     if channel == "acc":
                         graph.line_chart(channel_data)

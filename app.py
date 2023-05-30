@@ -8,11 +8,11 @@ from time import sleep
 import zmq
 
 
-#long_fn, send_msg, send_message, interrupt
-#are copied from the original app.py file
+#not usedful; only for simulation
 def long_fn():
     sleep(slider_value)
 
+#communicate with backend through zmq
 def send_msg(msg, receiver: str = "tcp://localhost:5555"):
     print("Connecting to server…")
     socket = context.socket(zmq.REQ)
@@ -31,7 +31,7 @@ def interrupt():
     send_msg("Interrupt")
 
 
-#outsource this to separate files
+#TODO: outsource this to separate files
 def page1():
     st.header("Page 1")
     st.write("This is the content for page 1.")
@@ -45,15 +45,19 @@ def page3():
     st.write("This is the content for page 3.")
 
 
+#has to be before css
 st.set_page_config(layout="wide")
+
 #imports custom css code
 #currently makes the app not scrollable
-#with open('style.css') as f:
-#    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+with open('style.css') as f:
+    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
 
+
+
+#init and layout
 context = zmq.Context()
-
 page = "Page 1"
 col1, col2, col3 = st.columns([8,4,1])
 
@@ -61,6 +65,8 @@ with col3:
     #TODO: formating 
 
     st.header("Pages")
+
+    #page buttons
     p1 = st.button("Page 1")
     p2 = st.button("Page 2")
     p3 = st.button("Page 3")
@@ -73,6 +79,9 @@ with col3:
 
 
 with col2:
+
+    #updates if page buttons are
+    #pressed on col3
     if page == "Page 1":
         page1()
     elif page == "Page 2":
@@ -87,15 +96,37 @@ with col2:
     interrupt = but2.button("Interrupt Training")
     revert = but3.button("Revert")
     
-    if ( (p1 or p2 or p3) and not run):
-        st.stop()
+    #doesn't work
+    #if ( (p1 or p2 or p3) and not run):
+    #    st.stop()
 
+    #sends messages to real backend
+    #was not fully finished and is now 
+    #abandoned because it will not work
+    #because of other things
     #if run:
         #send_text_message("run", 1)
+
+#tries to connect to backend with consumer function
+#defined in consumer_utils
+#gets a dictionary of states sent by backend
+#and can plot it on multple graphs
+
+#has major problems since every button press
+#will reset the graph/this entire sequence = VERY BAD
+#@st.cache_resource
+def run_col1(window_size, _status, selected_channels):
+    
+    if(len(selected_channels) != 0):
+        columns = [col.empty() for col in st.columns(len(selected_channels))]
+        arg1 = dict(zip(selected_channels, columns))
+        #st.write("waiting for input")
+        asyncio.run(consumer(arg1, window_size, _status))
 
 
 with col1:
     
+    #old test plot
     #st.header("Graph")
     #fig, ax = plt.subplots()
     #x = np.linspace(0, 10, 100)
@@ -105,15 +136,14 @@ with col1:
     #ax.set_ylabel("Y")
     #ax.set_title("Graph")
     #st.pyplot(fig)
-    window_size = 20
-    
-    status = st.empty()
 
+    window_size = 20
+    #status of the connection (can be removed in the future)
+    status = st.empty()
+    #select what info to plot (should be removed in the future)
     selected_channels = st.multiselect("Select Channels[DO NOT SELECT LOSS]", ["acc","loss"], default=["acc"])
-    if(len(selected_channels) != 0):
-        columns = [col.empty() for col in st.columns(len(selected_channels))]
-        arg1 = dict(zip(selected_channels, columns))
-        if run:
-        #st.write("waiting for input")
-            asyncio.run(consumer(arg1, window_size, status))
-            run = False
+
+    #starts listening to signals on port 8000 once run is pressed on col2 
+    if run:
+        run_col1(window_size, status, selected_channels)
+    

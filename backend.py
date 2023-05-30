@@ -20,6 +20,11 @@ def process(task: any, event: Event) -> None:
         pbar.set_description(str(task["task_description"]))
         #sleep(1)
         if( task["task_description"] == "run"):
+            #would have ran the (new) main function of training.py
+            #however never got fixed
+            #the coroutine doesn't get awaited
+            #has been abandoned cuz streamlit will not support
+            #other features
             print("received run message")
             train()
         
