@@ -19,6 +19,9 @@ def process(task: any, event: Event) -> None:
     for i in (pbar := trange(task["duration"])):
         pbar.set_description(str(task["task_description"]))
         #sleep(1)
+        if( task["task_description"] == "run"):
+            print("received run message")
+            train()
         
         if event.is_set():
             print("Stopped due to interrupt")
