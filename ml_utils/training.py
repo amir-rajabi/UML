@@ -4,6 +4,7 @@ from torch.cuda import empty_cache
 from torch.nn import Module, functional as F
 from torch.optim import Optimizer, SGD
 
+#only for testing
 if __name__ == "__main__":
     from data import get_data_loaders
     from evaluate import accuracy
@@ -38,6 +39,10 @@ def training(model: Module, optimizer: Optimizer, cuda: bool, n_epochs: int,
             train_step(model=model, optimizer=optimizer, cuda=cuda, data=data,
                        target=target)
         loss, test_accuracy = accuracy(model, test_loader, cuda)
+        #TODO: save/send data; probably gonna be JSON or pickle
+        #       only websocket is kinda shit ngl
+        #TODO: maybe send message about new data
+        #       highly likely to be websocket
         print(f'epoch={epoch}, test accuracy={test_accuracy}, loss={loss}')
     if cuda:
         empty_cache()
@@ -56,5 +61,10 @@ def main(seed):
         batch_size=256,
     )
 
+#TODO: add starting webserver to send data
+
+#TODO: add serialization
+
+#only for testing
 if __name__ == "__main__":
     main(seed=0)

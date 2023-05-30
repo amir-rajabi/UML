@@ -15,6 +15,7 @@ def process(task: any, event: Event) -> None:
         pbar.set_description(str(task["task_description"]))
         sleep(1)
         if event.is_set():
+            #TODO: handle run requests
             print("Stopped due to interrupt")
             event.clear()
             break
