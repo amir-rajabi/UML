@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bs.css') }}">
+    <title>UsableML</title>
+</head>
+<body>
+    <div id="root">
+        <div id="main">           
+            {% include 'items/sidebar.html' %}
+            <div class="column" id="settings-ctr">
+                <div id="control-buttons">
+                    <div>start</div>
+                </div>
+                <div class="settings current-setting" id="adjust-settings">
+                    {% include 'items/settings/adjust.html' %}
+                </div>
+                <div class="settings" id="diagram-settings">
+                    {% include 'items/settings/diagram.html' %}
+                </div>
+                <div class="settings" id="history-settings">
+                    {% include 'items/settings/history.html' %}
+                </div>
+                <div class="settings" id="models-settings">
+                    {% include 'items/settings/models.html' %}
+                </div>
+            </div>
+            <div class="column" id="main-ctr">
+                <div>1 2 3</div>
+                <div><div style="width: 800px;"><canvas id="accuracy"></canvas></div></div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="{{ url_for('static', filename='node_modules/chart.js/dist/chart.umd.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='dia1.js') }}"></script>
+<script src="{{ url_for('static', filename='node_modules/socket.io-client/dist/socket.io.js') }}"></script>
+
+
+
+
+
+</html>
