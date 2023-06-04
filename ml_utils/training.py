@@ -4,16 +4,14 @@ from torch.cuda import empty_cache
 from torch.nn import Module, functional as F
 from torch.optim import Optimizer, SGD
 
-#only for testing
-if __name__ == "__main__":
+if __name__ == '__main__':
     from data import get_data_loaders
     from evaluate import accuracy
     from model import ConvolutionalNeuralNetwork
-else:
+else: 
     from ml_utils.data import get_data_loaders
     from ml_utils.evaluate import accuracy
     from ml_utils.model import ConvolutionalNeuralNetwork
-
 
 
 def train_step(model: Module, optimizer: Optimizer, data: Tensor,
@@ -39,13 +37,12 @@ def training(model: Module, optimizer: Optimizer, cuda: bool, n_epochs: int,
             train_step(model=model, optimizer=optimizer, cuda=cuda, data=data,
                        target=target)
         loss, test_accuracy = accuracy(model, test_loader, cuda)
-        #TODO: save/send data; probably gonna be JSON or pickle
-        #       only websocket is kinda shit ngl
-        #TODO: maybe send message about new data
-        #       highly likely to be websocket
         print(f'epoch={epoch}, test accuracy={test_accuracy}, loss={loss}')
     if cuda:
         empty_cache()
+    weights_m=model.get_weights()
+    for i in range(8):
+        print(weights_m[i].shape)
 
 
 def main(seed):
@@ -56,15 +53,7 @@ def main(seed):
     training(
         model=model,
         optimizer=opt,
-        cuda=True,
+        cuda=False,
         n_epochs=10,
         batch_size=256,
     )
-
-#TODO: add starting webserver to send data
-
-#TODO: add serialization
-
-#only for testing
-if __name__ == "__main__":
-    main(seed=0)
