@@ -35,7 +35,8 @@ Zur Verwendung muss flask installiert sein. Navigiere dazu in deine conda-Umgebu
 ```
 pip install flask
 ```
-Alernativ die Umgebung mithilfe der env.yml aktualisieren:
+Alternativ die Umgebung mithilfe der env.yml aktualisieren:
+
 1. 
 ```
 conda acitvate UsableML
