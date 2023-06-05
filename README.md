@@ -9,7 +9,7 @@ Die Kommunikation zwischen webserver und training.py kann unverändert erfolgen.
 ## FLASK
 Der Webserver wird mithilfe von Flask betrieben. Flask ist ein leichtgewichtiges Web-Framework für die Entwicklung von Webanwendungen in Python. 
 Flask benötigt eine bestimmte Ordnerstruktur. **Die Ordnerstruktur und dessen Namen müssen zwingend wie gegeben bleiben!**
-
+```
 root
 |
 |---- static
@@ -18,7 +18,7 @@ root
 |---- templates
 |
 |---- webserver.py
-
+```
 
 ### static
 Der static-Ordner in Flask wird verwendet, um statische Dateien wie CSS-Dateien, JavaScript-Dateien, Bilder und andere Ressourcen zu speichern, die von den Webseiten einer Flask-Anwendung verwendet werden. Innerhalb des static Ordners kann eine beliebige Ordnerstruktur vorliegen. Der in static liegende Ordner node_modules beinhaltet JavaScript-basierte Entwicklungstools und -bibliotheken, wie in unserem Fall z.B. chart.js und bootstrap.
@@ -40,7 +40,7 @@ Zur Erleichterung können von bootstrap, ähnlich wie bei Streamlit, fertige Ele
 
 
 ## grundlegende SOFTWARESTRUKTUR
-
+```
                             |-------|
                             |  DOM  |
                             |-------|
@@ -64,3 +64,4 @@ Zur Erleichterung können von bootstrap, ähnlich wie bei Streamlit, fertige Ele
                           |-------------|                               |
                           | training.py |-------------------------------|
                           |-------------|
+```
