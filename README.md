@@ -63,7 +63,7 @@ cd static/node_modules
 ```
 2. Installiere die notwendigen Pakete
 ```
-npm install bootstrap@5.3.0 chart.js sass
+npm install bootstrap@5.3.0 chart.js sass socket.io
 ```
 **Es werden im Laufe der Entwicklung weitere Module notwendig werden! Diese müssen dann evtl. auch nachinstalliert werden** 
 
