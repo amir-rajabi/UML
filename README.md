@@ -43,7 +43,7 @@ conda acitvate UsableML
 ```
 2. 
 ```
-conda env update env.yml
+conda env update --file env.yml
 ```
 
 ## JAVASCRIPT und deren Erweiterungen
