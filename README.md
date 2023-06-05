@@ -12,12 +12,13 @@ Flask benötigt eine bestimmte Ordnerstruktur. **Die Ordnerstruktur und dessen N
 ```
 root
 |
-|---- static
+|----static
 |       |----node_modules
 |
-|---- templates
+|----templates
+|       |----index.html
 |
-|---- webserver.py
+|----webserver.py
 ```
 
 ### static
@@ -29,15 +30,41 @@ Der templates-Ordner beinhaltet lediglich die .html Dateien. Im Normalfall also 
 ### webserver.py
 Diese Datei beinhaltet alle Funktionen, des Webservers. Von hier aus startet auch der Webserver.
 
+#### Verwendung:
+Zur Verwendung muss flask installiert sein. Navigiere dazu in deine conda-Umgebung und installiere flask mit:
+```
+pip install flask
+```
+Alernativ die Umgebung mithilfe der env.yml aktualisieren:
+1. 
+```
+conda acitvate UsableML
+```
+2. 
+```
+conda env update env.yml
+```
 
 ## JAVASCRIPT und deren Erweiterungen
 
 ### chart.js
 Als Darstellung der Daten kann chart.js verwendet werden. Es ist eine gut zu bedienendes und sehr anpassbare Bibliothek zur Erstellung von Diagrammen jeglicher Art. Graphen von Chart.js sind im laufenden Prozess aktualisierbar.
+Link: https://www.chartjs.org/
 
 ### bootstrap
 Zur Erleichterung können von bootstrap, ähnlich wie bei Streamlit, fertige Elemente eingebunden werden. Also zum Beispiel slider oder buttons etc. 
+Link: https://getbootstrap.com/docs/5.3/forms/range/ (Beispiel des Sliders)
 
+Eventuell müssen die notwendigen Erweiterungen neu installiert werden:
+1. Navigiere zu node_modules
+```
+cd static/node_modules
+```
+2. Installiere die notwendigen Pakete
+```
+npm install bootstrap@5.3.0 chart.js sass
+```
+**Es werden im Laufe der Entwicklung weitere Module notwendig werden! Diese müssen dann evtl. auch nachinstalliert werden** 
 
 ## grundlegende SOFTWARESTRUKTUR
 ```
