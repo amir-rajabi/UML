@@ -33,7 +33,7 @@ Diese Datei beinhaltet alle Funktionen, des Webservers. Von hier aus startet auc
 #### Verwendung:
 Zur Verwendung muss flask installiert sein. Navigiere dazu in deine conda-Umgebung und installiere flask mit:
 ```
-pip install flask
+pip install flask flask_socketio
 ```
 Alternativ die Umgebung mithilfe der env.yml aktualisieren:
 
