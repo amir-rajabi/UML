@@ -11,6 +11,8 @@
 </head>
 <body>
     <div id="root">
+        {% include 'items/settings/help.html' %}
+        {% include 'items/settings/reset.html' %}
         <div id="main">           
             {% include 'items/sidebar.html' %}
             <div class="column" id="settings-ctr">
@@ -38,10 +40,11 @@
     </div>
 </body>
 <script src="{{ url_for('static', filename='node_modules/chart.js/dist/chart.umd.js') }}"></script>
-<script type="module" src="{{ url_for('static', filename='dia1.js') }}"></script>
+<script src="{{ url_for('static', filename='node_modules/socket.io/client-dist/socket.io.js') }}"></script>
 <script src="{{ url_for('static', filename='node_modules/socket.io/client-dist/socket.io.js') }}"></script>
 
-
+<script src="{{ url_for('static', filename='a_js/dia1.js') }}"></script>
+<script src="{{ url_for('static', filename='a_js/navigate.js') }}"></script>
 
 
 </html>
