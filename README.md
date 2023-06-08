@@ -1,3 +1,6 @@
+## LINKS
+todos: https://docs.google.com/spreadsheets/d/128ToeKJUO-rZcMXk5bAOppTXJHs30mdFSz-yu5_1URE/edit#gid=0
+
 ## IDEE
 
 Wir bauen die Webapp mit HTML/CSS/JS. Dabei dient die backend.py als Webserver, der die Webapp hostet. Der Webserver dient als Schnittstelle zwischen dem ML-Modell und dem UI. 
