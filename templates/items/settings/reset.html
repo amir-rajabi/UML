@@ -1,8 +1,47 @@
-<div id="reset-window-ctr">
-    <div id="reset-window">
-        <div id="reset-window-headline-ctr">
-            <div class="settings-title">Are you sure you want to reset?</div>
-            <button id="reset-window-collapse">X</button>
+<div class="modal fade" id="resetModal" tabindex="-1" aria-labelledby="resetModalLabel" aria-hidden="true" data-bs-theme="dark">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="resetModalLabel">Are you sure you want to reset?</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+        <div class="modal-body">
+          <div>
+            <div class="reset-description">
+              Checking the box below will reset all settings to default. This includes the settings made in: adjustments, diagram and models.
+            </div>
+            <br>
+            <div class="reset-check-ctr">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+                <label class="form-check-label" for="flexCheckChecked">
+                  Set all settings to default
+                </label>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div>
+            <div class="reset-description">
+              By ticking the following box, the entire history is deleted. This means that all entries from the "history" menu will be removed.
+            </div>
+            <br>
+            <div class="reset-check-ctr">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                <label class="form-check-label" for="flexCheckDefault">
+                  Clear history
+                </label>
+              </div>
+            </div>
+          </div>
+          <br><br>
+          <div class="reset-irreversible">This step is irreversible!</div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-danger" id="reset">Reset</button>
+        </div>
+      </div>
     </div>
 </div>

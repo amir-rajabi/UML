@@ -25,13 +25,13 @@
     </div>
     <span id="sidebar-tobottom">
         <div class="kachel" id="help-kachel">
-            <button id="help-button">
+            <button id="help-button" data-bs-toggle="modal" data-bs-target="#helpModal">
                 <img src="{{ url_for('static', filename='images/help.svg') }}" alt="">
                 <div class="kachel-description">help</div>
             </button>
         </div>
         <div class="kachel" id="reset-kachel">
-            <button id="reset-button">
+            <button id="reset-button" data-bs-toggle="modal" data-bs-target="#resetModal">
                 <img src="{{ url_for('static', filename='images/reset.svg') }}" alt="">
                 <div class="kachel-description">reset</div>
             </button>

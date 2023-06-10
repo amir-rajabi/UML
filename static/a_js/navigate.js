@@ -13,7 +13,6 @@ function handleButtonClick(event) {
     kachelButtons[i].addEventListener('click', handleButtonClick);
   }
 
-
 //----------------------------------------------------------------//
 
 var adjustButton = document.getElementById('adjust-button');
@@ -60,21 +59,3 @@ historyButton.addEventListener('click', handleHistoryButtonClick);
 modelsButton.addEventListener('click', handleModelsButtonClick);
 
 //----------------------------------------------------------------//
-var helpWindowCtr = document.getElementById('help-window-ctr');
-var resetWindowCtr = document.getElementById('reset-window-ctr');
-
-document.getElementById('help-button').addEventListener('click', function() {
-  helpWindowCtr.style.display = 'flex';
-});
-
-document.getElementById('help-window-collapse').addEventListener('click', function() {
-  helpWindowCtr.style.display = 'none';
-});
-
-document.getElementById('reset-button').addEventListener('click', function() {
-  resetWindowCtr.style.display = 'flex';
-});
-
-document.getElementById('reset-window-collapse').addEventListener('click', function() {
-  resetWindowCtr.style.display = 'none';
-});

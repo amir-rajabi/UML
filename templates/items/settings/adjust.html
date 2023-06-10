@@ -1,39 +1,50 @@
-<div class="settings-title">adjustments</div>
-<div class="settings-main-ctr">
-        <div class="input-txt" id="adjust-a1">
-            <div>learning rate</div>
-            <img class="adjust-qm" src="{{ url_for('static', filename='images/qm.svg') }}">
+<div class="settings-ctr">
+    <div class="settings-title">ADJUSTMENTS</div>
+    <div class="settings-description">In this menu, certain parameters of the AI can be changed. The parameters directly change the learning behavior of the machine learning. Hover over the question marks to get precise information.</div>
+    <div class="line"></div>
+
+    <div class="settings-main-ctr">
+        <div class="adjust-input-ctr">
+            <div class="input-txt" id="adjust-a1">
+                <div>Learning rate</div>
+                <img class="adjust-qm" src="{{ url_for('static', filename='images/qm.svg') }}">
+            </div>
+            <div class="input adjust-slider" id="adjust-slider1">
+                <input type="range" class="form-range adjust-input" min="0" max="5" step="0.5" value="0.0" id="customRange1">
+                <div class="sliderValue" id="sliderValue1">0</div>
+            </div>
         </div>
-        <div class="input" id="adjust-slider1">
-            <input type="range" class="form-range" min="0" max="5" step="0.5" id="customRange1">
-            <div class="sliderValue" id="sliderValue1">0</div>
+        <div class="adjust-input-ctr">
+            <div class="input-txt" id="adjust-a2">
+                <div>Momentum</div>
+                <img class="adjust-qm" src="{{ url_for('static', filename='images/qm.svg') }}">
+            </div>
+            <div class="input adjust-slider" id="adjust-slider2">
+                <input type="range" class="form-range adjust-input" min="0" max="5" step="0.5" value="0.0" id="customRange2">
+                <div class="sliderValue" id="sliderValue2">0</div>
+            </div>
         </div>
-
-        <script>
-            const slider1 = document.getElementById('customRange1');
-            const sliderValue1 = document.getElementById('sliderValue1');
-            let timeoutId;
-
-            slider1.addEventListener('input', function() {
-                sliderValue1.textContent = this.value;
-                clearTimeout(timeoutId); // Lösche vorherigen Timeout
-                timeoutId = setTimeout(sendSliderValue, 500); // Starte neuen Timeout
-            });
-
-            function sendSliderValue() {
-                const value = parseInt(slider1.value, 10); // Wandele den Slider-Wert in eine ganze Zahl um
-                // AJAX-Aufruf hier einfügen
-                var xhr = new XMLHttpRequest();
-                xhr.open('POST', '/button', true);
-                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState === 4 && xhr.status === 200) {
-                        var response = JSON.parse(xhr.responseText);
-                        console.log(response);
-                    }
-                };
-                xhr.send('value=' + value); // Sende den Wert als Integer
-            }
-        </script>
-        
+        <div class="adjust-input-ctr">
+            <div class="input-txt" id="adjust-a3">
+                <div>Dropout rate</div>
+                <img class="adjust-qm" src="{{ url_for('static', filename='images/qm.svg') }}">
+            </div>
+            <div class="input adjust-slider" id="adjust-slider3">
+                <input type="range" class="form-range adjust-input" min="0" max="5" step="0.5" value="0.0" id="customRange3">
+                <div class="sliderValue" id="sliderValue3">0</div>
+            </div>
+        </div>
+        <div class="adjust-input-ctr">
+            <div class="input-txt" id="adjust-a2">
+                <div>Loss function</div>
+                <img class="adjust-qm" src="{{ url_for('static', filename='images/qm.svg') }}">
+            </div>
+            <select class="form-select adjust-input" aria-label="loss-function" id="adjust-dropdown1">
+                <option value="0" selected>Entropy Loss</option>
+                <option value="1">Hinge Loss</option>
+                <option value="2">Quadratic Loss</option>
+                <option value="3">Log-Cosh Loss</option>
+            </select>
+        </div>
+    </div>
 </div>

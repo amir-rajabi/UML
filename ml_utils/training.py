@@ -57,3 +57,6 @@ def main(seed):
         n_epochs=10,
         batch_size=256,
     )
+
+
+main(0);

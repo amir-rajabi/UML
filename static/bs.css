@@ -178,6 +178,14 @@
   --bs-form-invalid-border-color: #ea868f;
 }
 
+
+@media (prefers-reduced-motion: no-preference) {
+  :root {
+    scroll-behavior: smooth;
+  }
+}
+
+
 hr {
   margin: 1rem 0;
   color: inherit;
