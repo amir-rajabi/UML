@@ -29,8 +29,18 @@ adj = {
 #with parameters
 #to extend param list also edit start training
 #in training.py accordingly
-def start_training(lr, momentum, batch_size, seed = 0):
-    worker_process = Process(target=train, args=[float(lr), float(momentum), batch_size, seed], daemon=True)
+#TODO: block start button on training
+#   currently it's possible to start training mutliple
+#   times; this should not be possible in the final product
+#TODO: add interrupt
+#   probably doesn't belong here but still
+#   likely should be done by lockfiles 
+#   and training checking for said lockfile, unlocking
+#   and posting update '-1'
+def start_training(lr, momentum, dropout_rate, batch_size, epoch_num=5,seed = 0):
+    worker_process = Process(target=train, args=[float(lr), float(momentum),
+                                                 float(dropout_rate), batch_size,
+                                                 epoch_num,seed], daemon=True)
     worker_process.start()
     return
 
@@ -53,11 +63,13 @@ def button():
     #WILL ONLY START TRANING ON LOG-COSH-LOSS
     if adj["loss_function"] == '3':
         print("STARTING TRAINING")
-        start_training(adj['learning_rate'], adj['momentum'],256,0)
+        start_training(adj['learning_rate'], adj['momentum'], adj['dropout_rate'],256,5,0)
 
     response_text = "Daten empfangen und gespeichert!"
     return jsonify({'response': response_text})
 
+#TODO: intrrupt button
+#   @JS dev and Flask dev
 
 # start server & websocket connection 
 @socketio.on('connect')

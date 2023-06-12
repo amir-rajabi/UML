@@ -36,16 +36,34 @@ def training(model: Module, optimizer: Optimizer, cuda: bool, n_epochs: int,
             data, target = batch
             train_step(model=model, optimizer=optimizer, cuda=cuda, data=data,
                        target=target)
+            #TODO: check for interrupt (probably a interrupt.lock)
+            #TODO: if interrupt signal present (interrupt.lock acquired)
+            #TODO: break loop
+
         loss, test_accuracy = accuracy(model, test_loader, cuda)
+        #TODO: acquire, stats.lock file
+        #TODO: write stats into a file
+        #TODO: free stats.lock file
+        #TODO: send update signal to frontend
+        #   with index of new stats: "update" : index
+        #TODO: check for interrupt signal
+        #TODO: clear interrupt signal
+        #TODO: break
         print(f'epoch={epoch}, test accuracy={test_accuracy}, loss={loss}')
     if cuda:
         empty_cache()
+    #TODO: acquire model.lock
+    #TODO: write model into a file
+    #TODO: free model.lock
+    #TODO: send update -1 signal
+    print("TRAINING FINISHED")
+
     #
     #weights_m=model.get_weights()
     #for i in range(8):
     #    print(weights_m[i].shape)
 
-
+#this function is NOT used by frontend
 def main(seed):
     manual_seed(seed)
     np.random.seed(seed)
@@ -59,16 +77,17 @@ def main(seed):
         batch_size=256,
     )
 
-def start_training(lr=0.3, momentum=0.5, batch_size=256, seed=0):
+#this function is used by frontend
+def start_training(lr=0.3, momentum=0.5, dropout_r=0, batch_size=256,epoch =5, seed=0):
     manual_seed(seed)
     np.random.seed(seed)
-    model = ConvolutionalNeuralNetwork()
+    model = ConvolutionalNeuralNetwork(dropout_r)
     opt = SGD(model.parameters(), lr=lr, momentum=momentum)
     training(
         model=model,
         optimizer=opt,
         cuda=False,
-        n_epochs=10,
+        n_epochs=epoch,
         batch_size=batch_size,
     )
 
