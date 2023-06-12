@@ -4,7 +4,7 @@ import time
 
 #for start_training method
 from ml_utils.training import start_training as train
-from multiprocessing import Process, JoinableQueue, Event
+from multiprocessing import Process
 
 
 
