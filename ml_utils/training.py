@@ -2,7 +2,10 @@ import numpy as np
 from torch import manual_seed, Tensor
 from torch.cuda import empty_cache
 from torch.nn import Module, functional as F
+import torch.nn as nn
+import torch
 from torch.optim import Optimizer, SGD
+import time
 
 if __name__ == '__main__':
     from data import get_data_loaders
@@ -25,8 +28,19 @@ def train_step(model: Module, optimizer: Optimizer, data: Tensor,
     #TODO: add function to adjust loss function
     #   will probably also have to adjust size
     #   depneding on the loss function
+
+    #NOTE: for testing other loss functions
+    #adaptive_avg_pool = nn.AdaptiveAvgPool1d(1)
+    #prediction = adaptive_avg_pool(prediction)
+    #prediction = torch.transpose(prediction,0,1)
+    #prediction = prediction[0]
+    #print("Target\n")
+    #print(target)
     #print(target.size())
+    #print("Prediction\n")
+    #print(prediction)
     #print(prediction.size())
+    #time.sleep(30)
     loss = F.cross_entropy(prediction, target)
     loss.backward()
     optimizer.step()
