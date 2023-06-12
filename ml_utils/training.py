@@ -40,9 +40,10 @@ def training(model: Module, optimizer: Optimizer, cuda: bool, n_epochs: int,
         print(f'epoch={epoch}, test accuracy={test_accuracy}, loss={loss}')
     if cuda:
         empty_cache()
-    weights_m=model.get_weights()
-    for i in range(8):
-        print(weights_m[i].shape)
+    #
+    #weights_m=model.get_weights()
+    #for i in range(8):
+    #    print(weights_m[i].shape)
 
 
 def main(seed):
@@ -58,5 +59,18 @@ def main(seed):
         batch_size=256,
     )
 
+def start_training(lr=0.3, momentum=0.5, batch_size=256, seed=0):
+    manual_seed(seed)
+    np.random.seed(seed)
+    model = ConvolutionalNeuralNetwork()
+    opt = SGD(model.parameters(), lr=lr, momentum=momentum)
+    training(
+        model=model,
+        optimizer=opt,
+        cuda=False,
+        n_epochs=10,
+        batch_size=batch_size,
+    )
 
-main(0);
+if __name__ == "__main__":
+    main(0)
