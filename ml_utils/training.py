@@ -20,6 +20,13 @@ def train_step(model: Module, optimizer: Optimizer, data: Tensor,
     if cuda:
         data, target = data.cuda(), target.cuda()
     prediction = model(data)
+    #NOTE: size of targe is [256]
+    #       size of prediction is [256,10]
+    #TODO: add function to adjust loss function
+    #   will probably also have to adjust size
+    #   depneding on the loss function
+    #print(target.size())
+    #print(prediction.size())
     loss = F.cross_entropy(prediction, target)
     loss.backward()
     optimizer.step()
@@ -67,7 +74,7 @@ def training(model: Module, optimizer: Optimizer, cuda: bool, n_epochs: int,
 def main(seed):
     manual_seed(seed)
     np.random.seed(seed)
-    model = ConvolutionalNeuralNetwork()
+    model = ConvolutionalNeuralNetwork(0)
     opt = SGD(model.parameters(), lr=0.3, momentum=0.5)
     training(
         model=model,
