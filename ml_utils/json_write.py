@@ -11,15 +11,13 @@ import random
     assumes that the file in path is 
     either completely empty or contains list
 
-    NOTE: the file must exists, otherwise
-    it will cause an error
-    
     WARNING: make sure when clearing files 
     manually EVERYTHING is deleted
     otherwise will lead to parsing errors
 '''
 def write_json(path, data):
-
+    if not os.path.exists(path):
+        open(path, "w").close()
     if os.stat(path).st_size == 0:
         listObj =[]
     else:
@@ -58,8 +56,11 @@ def clear_file(path="epoch_data.json"):
     arg, should likely be changed later
 '''
 def clear_history(path="epoch_data.json"):
+    if not os.path.exists(path):
+        print("WARNING: file doesn't exists")
+        return
     if os.stat(path).st_size == 0:
-        #nothing to do
+        print("WARNING: file already empty")
         return
     with open(path, "r") as file:
         epoch_list = json.load(file)
@@ -82,8 +83,6 @@ def clear_history(path="epoch_data.json"):
 
     exectue the file with
     $ python ml_utils/json_write.py
-
-    WARNING: epoch_data.json has to exists
 '''
 if __name__ == "__main__":
     #input arg 1, -1 or -2 to:
