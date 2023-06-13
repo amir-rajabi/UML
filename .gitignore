@@ -1,3 +1,4 @@
 MNIST
 __pycache__
 .DS_Store
+epoch_data.json

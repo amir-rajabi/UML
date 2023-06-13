@@ -3,30 +3,39 @@ import os
 import sys
 import random
 
-#more general interface to writing
-#into a json file
-#might get useful with mutliplte 
-#json file, like for saving 
-#param data
+
+'''
+    general interface for writing to json
+    file specified with path
+
+    assumes that the file in path is 
+    either completely empty or contains list
+
+    NOTE: the file must exists, otherwise
+    it will cause an error
+    
+    WARNING: make sure when clearing files 
+    manually EVERYTHING is deleted
+    otherwise will lead to parsing errors
+'''
 def write_json(path, data):
 
-    # NOTE: epoch_data.json has to exists
-    #   will otherwise error
-    #if file is empty it starts a list
     if os.stat(path).st_size == 0:
         listObj =[]
-    #otherwise loads the json which is
-    #already a list if it exists
     else:
         with open(path, "r") as file:
             listObj = json.load(file)
     listObj.append(data)
     json_object = json.dumps(listObj, indent=4)
-    with open(path,"w") as outfile:
-        outfile.write(json_object)
+    with open(path,"w") as file:
+        file.write(json_object)
     
 
-#writes specifically into epoch_data.json
+'''
+    dictionary will likely not have epoch in
+    the future since epoch index is 
+    the same as list index
+'''
 def write_epoch(epoch, loss, accuracy):
     dictionary = {
         "epoch": epoch,
@@ -35,25 +44,57 @@ def write_epoch(epoch, loss, accuracy):
             }
     write_json("epoch_data.json", dictionary)
 
-#be carefull with this
-def clear_file():
-    open("epoch_data.json", "w").close()
+'''
+    nukes file specified by path
+    be careful with using this
+'''
+def clear_file(path="epoch_data.json"):
+    open(path, "w").close()
 
 
 '''
-    DO NOT START THIS FILE IN "."
-    this file is currenlty meant to be used in
-    the directory ..
-    so if you want to execute main you
+    clears everything ecept last element
+    currently has epoch_data.json as default 
+    arg, should likely be changed later
+'''
+def clear_history(path="epoch_data.json"):
+    if os.stat(path).st_size == 0:
+        #nothing to do
+        return
+    with open(path, "r") as file:
+        epoch_list = json.load(file)
+    epoch_list = epoch_list[-1:]
+    epoch_list = json.dumps(epoch_list, indent=4)
+    open(path, "w").close()
+    with open(path, "w") as file:
+        file.write(epoch_list)
+    return
+
+
+'''
+    WARNING: File path should be relativ
+    from where you start the program
+
+    if you use the default values given
+    on epoch_data.json then start
+    in the same directory as the 
+    file epoch_data.json
+
     exectue the file with
     $ python ml_utils/json_write.py
 
-    epoch_data.json has to exists
+    WARNING: epoch_data.json has to exists
 '''
 if __name__ == "__main__":
-    match len(sys.argv):
-        case 2:
-            if int(sys.argv[1]) == -1:
-                clear_file()
-        case _:
+    #input arg 1, -1 or -2 to:
+    #add, nuke, clear
+    match int(sys.argv[1]):
+        case 1:
+            print("added new element")
             write_epoch(2,random.randint(0,9),random.randint(0,9))
+        case -1:
+            print("file cleared")
+            clear_file()
+        case -2:
+            print("history cleared")
+            clear_history()
