@@ -40,22 +40,23 @@ def write_epoch(epoch, loss, accuracy):
         "loss": loss,
         "accuracy": accuracy
             }
-    write_json("epoch_data.json", dictionary)
+    write_json("data/epoch_data.json", dictionary)
+
 
 '''
     nukes file specified by path
     be careful with using this
 '''
-def clear_file(path="epoch_data.json"):
+def clear_file(path="data/epoch_data.json"):
     open(path, "w").close()
 
 
 '''
-    clears everything ecept last element
+    clears everything except last element
     currently has epoch_data.json as default 
     arg, should likely be changed later
 '''
-def clear_history(path="epoch_data.json"):
+def clear_history(path="data/epoch_data.json"):
     if not os.path.exists(path):
         print("WARNING: file doesn't exists")
         return
