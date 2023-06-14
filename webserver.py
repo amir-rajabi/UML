@@ -25,7 +25,7 @@ data = {
 
 #default values can be changed here
 adj = {
-    "learning_rate": 0.2,
+    "learning_rate": 0.1,
     "momentum": 0.5,
     "dropout_rate": 0,
     "loss_function": 0,
@@ -33,6 +33,7 @@ adj = {
     "batch_size": 256
 }
 
+#NOTE: doesn't work and likely will not work
 #starts watchdog to watch for changes in json
 def start_chart_dog(data=data,socket=socketio):
     #makes sure file exists
@@ -42,8 +43,9 @@ def start_chart_dog(data=data,socket=socketio):
     chart_dog_process.start()
     print("LOG: started chart_dog")
     return
-
+#NOTE: doesn't work and likely will not work
 #start_chart_dog(data,socketio)
+
 
 #TODO: block start button on training
 #   currently it's possible to start training mutliple
@@ -55,10 +57,16 @@ def start_chart_dog(data=data,socket=socketio):
 #   and posting update '-1'
 #starts training in ml_utils.training.py
 #with parameters
+
 def start_training_dict(params):
     #NOTE: what to do with sesed?
     # should it be chooseable or rolled randomly each time?
     # or options for both?
+
+    #NOTE: for testing
+    data["d2"].append(4)
+    socketio.emit('update_chart', {'data':data})
+
     worker_process = Process(target=train, args=[params],daemon=True)
     worker_process.start()
     return
@@ -89,10 +97,7 @@ def sendingAdjustments():
 def run():
     print("LOG: RECEIVED TO RUN: " +str(adj))
     print("LOG: STARTING TRAINING")
-    data["d1"].append(4)
-    socketio.emit('update_chart', {'data':data})
     start_training_dict(adj)
-
     response_text = "Daten empfangen und gespeichert!"
     return jsonify({'response': response_text})
 
@@ -123,8 +128,6 @@ def handle_connect():
     socketio.emit('update_chart', {'data': data})
 
 if __name__ == '__main__':
-    #print("testing")
-    #start_chart_dog(socketio)
     print('App started')
     socketio.run(app, host='127.0.0.1', port=5001, debug=False)
 

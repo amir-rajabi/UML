@@ -59,8 +59,10 @@ def train_step(model: Module, optimizer: Optimizer, data: Tensor,
     optimizer.zero_grad()
 
 
-def training(dictionary, model: Module, optimizer: Optimizer, cuda: bool, n_epochs: int,
-             batch_size: int, loss_func):
+def training(dictionary, model: Module, optimizer: Optimizer,
+            cuda: bool, n_epochs: int,
+            batch_size: int, loss_func):
+
     train_loader, test_loader = get_data_loaders(batch_size=batch_size)
     if cuda:
         model.cuda()
@@ -75,9 +77,6 @@ def training(dictionary, model: Module, optimizer: Optimizer, cuda: bool, n_epoc
 
         loss, test_accuracy = accuracy(model, test_loader, cuda)
         #TODO: acquire, stats.lock file
-
-
-        #add loss and accuracy and write to json
         dictionary["loss"] = str(loss)
         dictionary["accuracy"] = str(test_accuracy)
         write_json(dictionary,path="data/epoch_data.json")
@@ -116,7 +115,7 @@ def main(seed):
         cuda=False,
         n_epochs=10,
         batch_size=256,
-        loss_func=loss[1]
+        loss_func=loss[0]
     )
 
 #this function is used by frontend
