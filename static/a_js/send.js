@@ -1,24 +1,18 @@
 import {adjustments} from './data.js';
 window.adjustments = adjustments;
 
-export function sendAdjustments(data) {
+export function sendAdjustments() {
     var xhr = new XMLHttpRequest();
-    xhr.open('POST', '/adjust', true);
+    xhr.open('POST', '/sendadjust', true);
     xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-        var response = JSON.parse(xhr.responseText);
-        console.log(response);
-        }
-    };
-    xhr.send(JSON.stringify(data));
+    xhr.send(JSON.stringify(adjustments));
 } 
-
 
 // when start button is clicked, send data to server
 const start = document.getElementById('start');
 start.addEventListener('click', function(){
-    sendAdjustments(adjustments);
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/run', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(1);
 });
-
-

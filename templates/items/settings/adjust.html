@@ -3,14 +3,14 @@
     <div class="settings-description">In this menu, certain parameters of the AI can be changed. The parameters directly change the learning behavior of the machine learning. Hover over the question marks to get precise information.</div>
     <div class="line"></div>
 
-    <div class="settings-main-ctr">
+    <div class="settings-main-ctr settings-contents">
         <div class="adjust-input-ctr">
             <div class="input-txt" id="adjust-a1">
                 <div>Learning rate</div>
                 <img class="adjust-qm" src="{{ url_for('static', filename='images/qm.svg') }}">
             </div>
             <div class="input adjust-slider" id="adjust-slider1">
-                <input type="range" class="form-range adjust-input" min="0" max="1" step="0.1" value="0.0" id="customRange1">
+                <input type="range" class="form-range adjust-input" min="0" max="1" step="0.1" id="customRange1">
                 <div class="sliderValue" id="sliderValue1">0</div>
             </div>
         </div>
@@ -20,7 +20,7 @@
                 <img class="adjust-qm" src="{{ url_for('static', filename='images/qm.svg') }}">
             </div>
             <div class="input adjust-slider" id="adjust-slider2">
-                <input type="range" class="form-range adjust-input" min="0" max="1" step="0.1" value="0.0" id="customRange2">
+                <input type="range" class="form-range adjust-input" min="0" max="1" step="0.1"  id="customRange2">
                 <div class="sliderValue" id="sliderValue2">0</div>
             </div>
         </div>
@@ -30,7 +30,7 @@
                 <img class="adjust-qm" src="{{ url_for('static', filename='images/qm.svg') }}">
             </div>
             <div class="input adjust-slider" id="adjust-slider3">
-                <input type="range" class="form-range adjust-input" min="0" max="1" step="0.1" value="0.0" id="customRange3">
+                <input type="range" class="form-range adjust-input" min="0" max="1" step="0.1" id="customRange3">
                 <div class="sliderValue" id="sliderValue3">0</div>
             </div>
         </div>
@@ -40,11 +40,30 @@
                 <img class="adjust-qm" src="{{ url_for('static', filename='images/qm.svg') }}">
             </div>
             <select class="form-select adjust-input" aria-label="loss-function" id="adjust-dropdown1">
-                <option value="0" selected>Entropy Loss</option>
-                <option value="1">Hinge Loss</option>
-                <option value="2">Quadratic Loss</option>
-                <option value="3">Log-Cosh Loss</option>
+                <option value="0" selected>Cross Entropy</option>
+                <option value="1">Multi Margin Loss</option>
+                <option value="2">NLL Loss</option>
             </select>
+        </div>
+        <div class="adjust-input-ctr">
+            <div class="input-txt" id="adjust-a4">
+                <div>Epochs</div>
+                <img class="adjust-qm" src="{{ url_for('static', filename='images/qm.svg') }}">
+            </div>
+            <div class="input adjust-slider" id="adjust-slider4">
+                <input type="range" class="form-range adjust-input" min="1" max="10" step="1" id="customRange4">
+                <div class="sliderValue" id="sliderValue4">1</div>
+            </div>
+        </div>
+        <div class="adjust-input-ctr">
+            <div class="input-txt" id="adjust-a5">
+                <div>Batch size</div>
+                <img class="adjust-qm" src="{{ url_for('static', filename='images/qm.svg') }}">
+            </div>
+            <div class="input adjust-slider" id="adjust-slider5">
+                <input type="range" class="form-range adjust-input" min="1" max="500" step="1" id="customRange5">
+                <div class="sliderValue" id="sliderValue5">1</div>
+            </div>
         </div>
     </div>
 </div>

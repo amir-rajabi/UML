@@ -1,10 +1,12 @@
 export var socket = io();
 
 export var adjustments = {
-    learning_rate: '0',
-    momentum: '0',
-    dropout_rate: '0',
-    loss_function: '0'
+    learning_rate: null,
+    momentum: null,
+    dropout_rate: null,
+    loss_function: null, 
+    epochs: null,
+    batch_size: null
 };
 
 export var chartData = {
@@ -20,3 +22,12 @@ export var history = {
     r3: [],
     r4: []
 };
+
+export function updateAdjustments(data) {
+    adjustments.learning_rate = data.learning_rate;
+    adjustments.momentum = data.momentum;
+    adjustments.dropout_rate = data.dropout_rate;
+    adjustments.loss_function = data.loss_function;
+    adjustments.epochs = data.epochs;
+    adjustments.batch_size = data.batch_size;
+}

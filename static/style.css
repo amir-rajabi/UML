@@ -45,6 +45,9 @@ input, label, select, button{
     cursor: pointer;
 }
 
+::-webkit-scrollbar {
+    width: 0;
+  }
 /*------- columns -------*/
 .column{
     height: 100vh;
@@ -149,7 +152,6 @@ input, label, select, button{
     height: 5%;
     margin-right: 65%;
     display: flex;
-    justify-content: space-between;
 }
 .input-txt div{
     font-size: 15px;
@@ -159,7 +161,7 @@ input, label, select, button{
     height: 20px;
 }
 .adjust-input-ctr{
-    margin-bottom: 20%;
+    margin-bottom: 10%;
 }
 .adjust-input{
     margin-top: 2%;

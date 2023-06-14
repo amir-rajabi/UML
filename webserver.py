@@ -18,10 +18,12 @@ data = {
 }
 
 adj = {
-  "learning_rate": 0,
+    "learning_rate": 0,
   "momentum": 0,
   "dropout_rate": 0,
-  "loss_function": 0
+  "loss_function": 0,
+  "epochs": 1,
+  "batch_size": 1
 }
 
 
@@ -48,20 +50,27 @@ def start_training(lr, momentum, dropout_rate, batch_size, epoch_num=5,seed = 0)
 def index():
     return render_template('index.html')
 
-#start button
-@app.route('/adjust', methods=['POST'])
-def button():
+
+@app.route('/sendadjust', methods=['POST'])   # (frontend is sending adjustments) 
+def gettingAdjustments():
   if request.method == 'POST':
-    data = request.get_json()
-    print(f"Empfangene Daten: {data}")
-    
+    data = request.get_json()   
     for key, value in data.items():
       if key in adj:
         adj[key] = value
-    print("adjustmens:" + str(adj))
+    response_text = ""
+    return jsonify({'response': response_text})
 
-    #WILL ONLY START TRANING ON LOG-COSH-LOSS
-    if adj["loss_function"] == '3':
+@app.route('/getadjust', methods=['POST'])  # (frontend is getting adjustments) 
+def sendingAdjustments():
+  print('\n DATA WIRD AUFGERUFEN', adj)
+  if request.method == 'POST':
+    response = adj;
+    return jsonify({'response': response})
+
+@app.route('/run', methods=['POST'])  # (frontend is getting adjustments) 
+def run():
+    if adj["loss_function"] == '2':
         print("STARTING TRAINING")
         start_training(adj['learning_rate'], adj['momentum'], adj['dropout_rate'],256,5,0)
 
