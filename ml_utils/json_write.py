@@ -30,7 +30,7 @@ def write_json(data, path="data/epoch_data.json"):
     json_object = json.dumps(listObj, indent=4)
     with open(path,"w") as file:
         file.write(json_object)
-    print("WRITE SUCCESS")
+    print("LOG: WRITE SUCCESS")
 
 
 '''

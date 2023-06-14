@@ -9,6 +9,7 @@ from torch.optim import Optimizer, SGD
 import time
 import random
 
+loss = [F.cross_entropy, F.multi_margin_loss, F.nll_loss]
 if __name__ == '__main__':
     from data import get_data_loaders
     from evaluate import accuracy
@@ -31,7 +32,7 @@ def train_step(model: Module, optimizer: Optimizer, data: Tensor,
     #       size of prediction is [256,10]
     #TODO: add function to adjust loss function
     #   will probably also have to adjust size
-    #   depneding on the loss function
+    #   depending on the loss function
 
     #NOTE: for testing other loss functions
     #print("Target\n")
@@ -51,10 +52,7 @@ def train_step(model: Module, optimizer: Optimizer, data: Tensor,
     #loss = F.poisson_nll_loss(prediction, target)
     #loss = F.gaussian_nll_loss(prediction, target)
     
-    #NOTE: works
-    #loss = F.multi_margin_loss(prediction, target)
-    #loss = F.nll_loss(prediction, target)
-    #loss = F.cross_entropy(prediction, target)
+    #currently uses loss_function intput into the function
     loss = loss_func(prediction, target)
     loss.backward()
     optimizer.step()
@@ -89,7 +87,7 @@ def training(dictionary, model: Module, optimizer: Optimizer, cuda: bool, n_epoc
         #TODO: check for interrupt signal
         #TODO: clear interrupt signal
         #TODO: break
-        print(f'epoch={epoch}, test accuracy={test_accuracy}, loss={loss}')
+        print(f'LOG: epoch={epoch}, test accuracy={test_accuracy}, loss={loss}')
     if cuda:
         empty_cache()
     #TODO: acquire model.lock
@@ -97,7 +95,7 @@ def training(dictionary, model: Module, optimizer: Optimizer, cuda: bool, n_epoc
     #TODO: free model.lock
     #TODO: send update -1 signal
     torch.save(model.state_dict(), 'model.pth')
-    print("TRAINING FINISHED")
+    print("LOG: TRAINING FINISHED")
 
     #
     #weights_m=model.get_weights()
@@ -118,29 +116,13 @@ def main(seed):
         cuda=False,
         n_epochs=10,
         batch_size=256,
-        loss_func=F.cross_entropy
-    )
-
-#this function is used by frontend
-def start_training_legacy(lr=0.3, momentum=0.5, dropout_r=0, batch_size=256,epoch =5, seed=0):
-    manual_seed(seed)
-    np.random.seed(seed)
-    model = ConvolutionalNeuralNetwork(dropout_r)
-    opt = SGD(model.parameters(), lr=lr, momentum=momentum)
-    empty_dict ={"test": "test value"}
-    training(
-        empty_dict,
-        model=model,
-        optimizer=opt,
-        cuda=False,
-        n_epochs=epoch,
-        batch_size=batch_size,
-        loss_func=F.cross_entropy
+        loss_func=loss[1]
     )
 
 #this function is used by frontend
 def start_training(params):
-    seed = random.randint(0,100)
+    #seed = random.randint(0,100)
+    seed = 0
     manual_seed(seed)
     np.random.seed(seed)
     model = ConvolutionalNeuralNetwork(float(params["dropout_rate"]))
@@ -153,9 +135,9 @@ def start_training(params):
         cuda=False,
         #TODO: make epoch_num and batch_size
         # and loss function selectable
-        n_epochs=5,
-        batch_size=256,
-        loss_func=F.cross_entropy
+        n_epochs=int(params["epochs"]),
+        batch_size=int(params["batch_size"]),
+        loss_func=loss[int(params["loss_function"])]
     )
 
 if __name__ == "__main__":

@@ -7,7 +7,6 @@ import io
 #for start_training method
 from ml_utils.training import start_training as train
 from multiprocessing import Process
-import random
 
 #for test_method
 from ml_utils.testing import test_drawing
@@ -21,20 +20,17 @@ data = {
     'd4': [3, 4, 5, 2, 1]
 }
 
+#default values can be changed here
 adj = {
-    "learning_rate": 0,
-  "momentum": 0,
-  "dropout_rate": 0,
-  "loss_function": 0,
-  "epochs": 1,
-  "batch_size": 1
+    "learning_rate": 0.2,
+    "momentum": 0.5,
+    "dropout_rate": 0,
+    "loss_function": 0,
+    "epochs": 1,
+    "batch_size": 256
 }
 
 
-#starts training in ml_utils.training.py
-#with parameters
-#to extend param list also edit start training
-#in training.py accordingly
 #TODO: block start button on training
 #   currently it's possible to start training mutliple
 #   times; this should not be possible in the final product
@@ -43,17 +39,8 @@ adj = {
 #   likely should be done by lockfiles 
 #   and training checking for said lockfile, unlocking
 #   and posting update '-1'
-# NOTE: start_training will likely become legacy, see start_training_dict
-def start_training(lr, momentum, dropout_rate, batch_size,params, epoch_num=5,  seed = 0):
-    #NOTE: what to do with sesed?
-    # should it be chooseable or rolled randomly each time?
-    # or options for both?
-    worker_process = Process(target=train, args=[float(lr), float(momentum),
-                                                 float(dropout_rate), batch_size,
-                                                 epoch_num,seed], daemon=True)
-    worker_process.start()
-    return
-
+#starts training in ml_utils.training.py
+#with parameters
 def start_training_dict(params):
     #NOTE: what to do with sesed?
     # should it be chooseable or rolled randomly each time?
@@ -86,12 +73,9 @@ def sendingAdjustments():
 
 @app.route('/run', methods=['POST'])  # (frontend is getting adjustments) 
 def run():
-    print("RECEIVED TO RUN: " +str(adj))
-    if adj["loss_function"] == '2':
-        print("STARTING TRAINING")
-        #might be legacy
-        #start_training(adj['learning_rate'], adj['momentum'], adj['dropout_rate'],256,5,0)
-        start_training_dict(adj)
+    print("LOG: RECEIVED TO RUN: " +str(adj))
+    print("LOG: STARTING TRAINING")
+    start_training_dict(adj)
 
     response_text = "Daten empfangen und gespeichert!"
     return jsonify({'response': response_text})
