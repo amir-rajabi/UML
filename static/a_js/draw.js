@@ -23,7 +23,7 @@ function draw(event) {
     context.beginPath();
     context.moveTo(previousX, previousY);
     context.lineTo(offsetX, offsetY);
-    context.lineWidth = 15; // Setzen Sie die Linienbreite nach Bedarf
+    context.lineWidth = 10; // Setzen Sie die Linienbreite nach Bedarf
     context.strokeStyle = 'white';
     context.lineCap = "round";
     context.stroke();
@@ -44,6 +44,7 @@ document.getElementById('clear_drawing').addEventListener('click', function(){
 
 function clear_canvas(){
     context.clearRect(0, 0, canvas.width, canvas.height);
+    predicted_no.textContent = "";
 }
 
 document.getElementById('predict_drawing').addEventListener('click', function(){
