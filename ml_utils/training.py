@@ -91,6 +91,7 @@ def training(model: Module, optimizer: Optimizer, cuda: bool, n_epochs: int,
     #TODO: write model into a file
     #TODO: free model.lock
     #TODO: send update -1 signal
+    torch.save(model.state_dict(), 'model.pth')
     print("TRAINING FINISHED")
 
     #

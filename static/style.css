@@ -191,24 +191,47 @@ input, label, select, button{
 }
 
 /*------- diagrams -------*/
-
-#visual-ctr{
+#pills-tab{
+    padding-top: 1%;
+    padding-right: 1%;
+    display: flex;
+    justify-content: end;
+}
+.visual-ctr{
     width: 100%;
-    height: 80%;
+    height: 95%;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 #canvas-ctr{
-    margin-top: 10%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     width: 90%;
     height: 100%;
 }
+.tab-content{
+    height: 95%;
+}
+.tab-pane{
+    height: 100%;
+}
+#drawing_tab{
+    display: flex;
+    flex-direction: column;
+}
+#drawing_buttons{
+    margin-top: 5%;
+    display: flex;
+    justify-content: space-evenly;
+    display: block;
+}
+#succ_pred_alert{
+    margin-top: 1%;
+}
 #visual-lower-ctr{
-    height: 10%;
+    height: 5%;
 }
 #dia2-ctr, #second-card-body{
     display: none;
@@ -240,3 +263,7 @@ thead th{
     text-align: end;
     padding-right: 5%;
 }
+#drawingcanvas {
+    border: 1px solid white;
+    background-color: black;
+  }
