@@ -139,12 +139,13 @@ def start_training_legacy(lr=0.3, momentum=0.5, dropout_r=0, batch_size=256,epoc
     )
 
 #this function is used by frontend
-def start_training_legacy(params):
-    manual_seed(random.randint(0,100))
+def start_training(params):
+    seed = random.randint(0,100)
+    manual_seed(seed)
     np.random.seed(seed)
-    model = ConvolutionalNeuralNetwork(params["dropout_rate"])
-    opt = SGD(model.parameters(), lr=params["learning_rate"], 
-              momentum=params["momentum"])
+    model = ConvolutionalNeuralNetwork(float(params["dropout_rate"]))
+    opt = SGD(model.parameters(), lr=float(params["learning_rate"]), 
+              momentum=float(params["momentum"]))
     training(
         params,
         model=model,
@@ -152,7 +153,7 @@ def start_training_legacy(params):
         cuda=False,
         #TODO: make epoch_num and batch_size
         # and loss function selectable
-        epochs=5,
+        n_epochs=5,
         batch_size=256,
         loss_func=F.cross_entropy
     )

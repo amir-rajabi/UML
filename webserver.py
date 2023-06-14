@@ -86,6 +86,7 @@ def sendingAdjustments():
 
 @app.route('/run', methods=['POST'])  # (frontend is getting adjustments) 
 def run():
+    print("RECEIVED TO RUN: " +str(adj))
     if adj["loss_function"] == '2':
         print("STARTING TRAINING")
         #might be legacy
