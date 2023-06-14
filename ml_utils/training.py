@@ -33,10 +33,6 @@ def train_step(model: Module, optimizer: Optimizer, data: Tensor,
     #   depneding on the loss function
 
     #NOTE: for testing other loss functions
-    #adaptive_avg_pool = nn.AdaptiveAvgPool1d(1)
-    #prediction = adaptive_avg_pool(prediction)
-    #prediction = torch.transpose(prediction,0,1)
-    #prediction = prediction[0]
     #print("Target\n")
     #print(target)
     #print(target.size())
@@ -44,6 +40,19 @@ def train_step(model: Module, optimizer: Optimizer, data: Tensor,
     #print(prediction)
     #print(prediction.size())
     #time.sleep(30)
+    #print("batch")
+
+    #NOTE: doesn't work
+    #loss = F.multilabel_margin_loss(prediction, target)
+    #loss = F.multilabel_soft_margin_loss(prediction, target)
+    #loss = F.cosine_embedding_loss(prediction, target)
+    #loss = F.hinge_embedding_loss(prediction, target)
+    #loss = F.poisson_nll_loss(prediction, target)
+    #loss = F.gaussian_nll_loss(prediction, target)
+    
+    #NOTE: works
+    #loss = F.multi_margin_loss(prediction, target)
+    #loss = F.nll_loss(prediction, target)
     loss = F.cross_entropy(prediction, target)
     loss.backward()
     optimizer.step()
