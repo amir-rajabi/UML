@@ -3,6 +3,7 @@ from flask_socketio import SocketIO
 from PIL import Image, ImageDraw
 import base64
 import io
+import os
 
 #for start_training method
 from ml_utils.training import start_training as train
@@ -10,6 +11,8 @@ from multiprocessing import Process
 
 #for test_method
 from ml_utils.testing import test_drawing
+
+from ml_utils.chart_update import chart_dog
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -30,6 +33,17 @@ adj = {
     "batch_size": 256
 }
 
+#starts watchdog to watch for changes in json
+def start_chart_dog(data=data,socket=socketio):
+    #makes sure file exists
+    if not os.path.exists("data/epoch_data.json"):
+        open("data/epoch_data.json", "w").close()
+    chart_dog_process = Process(target=chart_dog, args=[data,socket],daemon=True)
+    chart_dog_process.start()
+    print("LOG: started chart_dog")
+    return
+
+#start_chart_dog(data,socketio)
 
 #TODO: block start button on training
 #   currently it's possible to start training mutliple
@@ -75,6 +89,8 @@ def sendingAdjustments():
 def run():
     print("LOG: RECEIVED TO RUN: " +str(adj))
     print("LOG: STARTING TRAINING")
+    data["d1"].append(4)
+    socketio.emit('update_chart', {'data':data})
     start_training_dict(adj)
 
     response_text = "Daten empfangen und gespeichert!"
@@ -107,6 +123,8 @@ def handle_connect():
     socketio.emit('update_chart', {'data': data})
 
 if __name__ == '__main__':
+    #print("testing")
+    #start_chart_dog(socketio)
     print('App started')
     socketio.run(app, host='127.0.0.1', port=5001, debug=False)
 
