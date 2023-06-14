@@ -1,15 +1,12 @@
 from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO
-from PIL import Image, ImageDraw
-import base64
-import io
+import time
 
 #for start_training method
 from ml_utils.training import start_training as train
 from multiprocessing import Process
 
-#for test_method
-from ml_utils.testing import test_drawing
+
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -79,23 +76,6 @@ def run():
 
     response_text = "Daten empfangen und gespeichert!"
     return jsonify({'response': response_text})
-
-@app.route('/predict_drawing', methods=['POST'])
-def predict_drawing():
-    data = request.get_json()
-    image_data = data['image_data']
-    
-    image_bytes = base64.b64decode(image_data.split(',')[1])
-    img = Image.open(io.BytesIO(image_bytes))
-    
-    new_img = Image.new('RGB', img.size, 'black')
-    new_img.paste(img, (0, 0), img)
-
-
-    new_img.save('static/img.jpg', 'jpeg')
-    prediction = test_drawing()
-
-    return jsonify({'prediction': int(prediction)})
 
 #TODO: intrrupt button
 #   @JS dev and Flask dev
