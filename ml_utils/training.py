@@ -7,21 +7,22 @@ import torch
 from torch.optim import Optimizer, SGD
 
 import time
+import random
 
 if __name__ == '__main__':
     from data import get_data_loaders
     from evaluate import accuracy
     from model import ConvolutionalNeuralNetwork
-    from json_write import write_epoch
+    from json_write import write_json
 else: 
     from ml_utils.data import get_data_loaders
     from ml_utils.evaluate import accuracy
     from ml_utils.model import ConvolutionalNeuralNetwork
-    from ml_utils.json_write import write_epoch
+    from ml_utils.json_write import write_json
 
 
 def train_step(model: Module, optimizer: Optimizer, data: Tensor,
-               target: Tensor, cuda: bool):
+               target: Tensor, cuda: bool, loss_func):
     model.train()
     if cuda:
         data, target = data.cuda(), target.cuda()
@@ -53,14 +54,15 @@ def train_step(model: Module, optimizer: Optimizer, data: Tensor,
     #NOTE: works
     #loss = F.multi_margin_loss(prediction, target)
     #loss = F.nll_loss(prediction, target)
-    loss = F.cross_entropy(prediction, target)
+    #loss = F.cross_entropy(prediction, target)
+    loss = loss_func(prediction, target)
     loss.backward()
     optimizer.step()
     optimizer.zero_grad()
 
 
-def training(model: Module, optimizer: Optimizer, cuda: bool, n_epochs: int,
-             batch_size: int):
+def training(dictionary, model: Module, optimizer: Optimizer, cuda: bool, n_epochs: int,
+             batch_size: int, loss_func):
     train_loader, test_loader = get_data_loaders(batch_size=batch_size)
     if cuda:
         model.cuda()
@@ -68,7 +70,7 @@ def training(model: Module, optimizer: Optimizer, cuda: bool, n_epochs: int,
         for batch in train_loader:
             data, target = batch
             train_step(model=model, optimizer=optimizer, cuda=cuda, data=data,
-                       target=target)
+                       target=target, loss_func=loss_func)
             #TODO: check for interrupt (probably a interrupt.lock)
             #TODO: if interrupt signal present (interrupt.lock acquired)
             #TODO: break loop
@@ -76,8 +78,11 @@ def training(model: Module, optimizer: Optimizer, cuda: bool, n_epochs: int,
         loss, test_accuracy = accuracy(model, test_loader, cuda)
         #TODO: acquire, stats.lock file
 
-        #NOTE: first arg might become legacy but keep it for now
-        write_epoch(0, test_accuracy, loss)
+
+        #add loss and accuracy and write to json
+        dictionary["loss"] = str(loss)
+        dictionary["accuracy"] = str(test_accuracy)
+        write_json(dictionary,path="data/epoch_data.json")
         #TODO: free stats.lock file
         #TODO: send update signal to frontend
         #   with index of new stats: "update" : index
@@ -105,26 +110,51 @@ def main(seed):
     np.random.seed(seed)
     model = ConvolutionalNeuralNetwork(0)
     opt = SGD(model.parameters(), lr=0.3, momentum=0.5)
+    empty_dict ={"test": "test value"}
     training(
+        empty_dict,
         model=model,
         optimizer=opt,
         cuda=False,
         n_epochs=10,
         batch_size=256,
+        loss_func=F.cross_entropy
     )
 
 #this function is used by frontend
-def start_training(lr=0.3, momentum=0.5, dropout_r=0, batch_size=256,epoch =5, seed=0):
+def start_training_legacy(lr=0.3, momentum=0.5, dropout_r=0, batch_size=256,epoch =5, seed=0):
     manual_seed(seed)
     np.random.seed(seed)
     model = ConvolutionalNeuralNetwork(dropout_r)
     opt = SGD(model.parameters(), lr=lr, momentum=momentum)
+    empty_dict ={"test": "test value"}
     training(
+        empty_dict,
         model=model,
         optimizer=opt,
         cuda=False,
         n_epochs=epoch,
         batch_size=batch_size,
+        loss_func=F.cross_entropy
+    )
+
+#this function is used by frontend
+def start_training_legacy(params):
+    manual_seed(random.randint(0,100))
+    np.random.seed(seed)
+    model = ConvolutionalNeuralNetwork(params["dropout_rate"])
+    opt = SGD(model.parameters(), lr=params["learning_rate"], 
+              momentum=params["momentum"])
+    training(
+        params,
+        model=model,
+        optimizer=opt,
+        cuda=False,
+        #TODO: make epoch_num and batch_size
+        # and loss function selectable
+        epochs=5,
+        batch_size=256,
+        loss_func=F.cross_entropy
     )
 
 if __name__ == "__main__":

@@ -7,6 +7,7 @@ import io
 #for start_training method
 from ml_utils.training import start_training as train
 from multiprocessing import Process
+import random
 
 #for test_method
 from ml_utils.testing import test_drawing
@@ -42,10 +43,22 @@ adj = {
 #   likely should be done by lockfiles 
 #   and training checking for said lockfile, unlocking
 #   and posting update '-1'
-def start_training(lr, momentum, dropout_rate, batch_size, epoch_num=5,seed = 0):
+# NOTE: start_training will likely become legacy, see start_training_dict
+def start_training(lr, momentum, dropout_rate, batch_size,params, epoch_num=5,  seed = 0):
+    #NOTE: what to do with sesed?
+    # should it be chooseable or rolled randomly each time?
+    # or options for both?
     worker_process = Process(target=train, args=[float(lr), float(momentum),
                                                  float(dropout_rate), batch_size,
                                                  epoch_num,seed], daemon=True)
+    worker_process.start()
+    return
+
+def start_training_dict(params):
+    #NOTE: what to do with sesed?
+    # should it be chooseable or rolled randomly each time?
+    # or options for both?
+    worker_process = Process(target=train, args=[params],daemon=True)
     worker_process.start()
     return
 
@@ -75,7 +88,9 @@ def sendingAdjustments():
 def run():
     if adj["loss_function"] == '2':
         print("STARTING TRAINING")
-        start_training(adj['learning_rate'], adj['momentum'], adj['dropout_rate'],256,5,0)
+        #might be legacy
+        #start_training(adj['learning_rate'], adj['momentum'], adj['dropout_rate'],256,5,0)
+        start_training_dict(adj)
 
     response_text = "Daten empfangen und gespeichert!"
     return jsonify({'response': response_text})

@@ -15,7 +15,10 @@ import random
     manually EVERYTHING is deleted
     otherwise will lead to parsing errors
 '''
-def write_json(path, data):
+def write_json(data, path="data/epoch_data.json"):
+    if not isinstance(data, dict):
+        print("ERROR: data to be written is not a dictionary")
+        return 
     if not os.path.exists(path):
         open(path, "w").close()
     if os.stat(path).st_size == 0:
@@ -27,29 +30,15 @@ def write_json(path, data):
     json_object = json.dumps(listObj, indent=4)
     with open(path,"w") as file:
         file.write(json_object)
-    
-
-'''
-    dictionary will likely not have epoch in
-    the future since epoch index is 
-    the same as list index
-'''
-def write_epoch(epoch, loss, accuracy):
-    dictionary = {
-        "epoch": epoch,
-        "loss": loss,
-        "accuracy": accuracy
-            }
-    write_json("data/epoch_data.json", dictionary)
+    print("WRITE SUCCESS")
 
 
 '''
-    nukes file specified by path
-    be careful with using this
+    nukes file
+    be careful with this
 '''
 def clear_file(path="data/epoch_data.json"):
     open(path, "w").close()
-
 
 '''
     clears everything except last element
@@ -72,7 +61,6 @@ def clear_history(path="data/epoch_data.json"):
         file.write(epoch_list)
     return
 
-
 '''
     WARNING: File path should be relativ
     from where you start the program
@@ -84,14 +72,25 @@ def clear_history(path="data/epoch_data.json"):
 
     exectue the file with
     $ python ml_utils/json_write.py
+
+    this block is for testing
+    and for clearing file
 '''
 if __name__ == "__main__":
     #input arg 1, -1 or -2 to:
     #add, nuke, clear
+
+    #test dict
+    dictionary = {
+        "epoch": 0,
+        "loss": random.randint(0,100),
+        "accuracy":random.randint(0,100)
+        }
+
     match int(sys.argv[1]):
         case 1:
-            print("added new element")
-            write_epoch(2,random.randint(0,9),random.randint(0,9))
+            print("trying to write data")
+            write_json(dictionary)
         case -1:
             print("file cleared")
             clear_file()
