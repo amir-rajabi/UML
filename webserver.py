@@ -4,6 +4,8 @@ from PIL import Image, ImageDraw
 import base64
 import io
 import os
+import time
+import threading
 
 #for start_training method
 from ml_utils.training import start_training as train
@@ -71,6 +73,22 @@ def start_training_dict(params):
     worker_process.start()
     return
 
+def drawing():
+    while(1):
+        #NOTE: for testing
+        time.sleep(2)
+        data["d2"].append(4)
+        socketio.emit('update_chart', {'data':data})
+
+def drawing_start():
+    # Start the thread to send data
+
+    #process = Process(target=drawing, args=[],daemon=True)
+    #process.start()
+    data_thread = threading.Thread(target=drawing)
+    data_thread.start()
+    return
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -126,6 +144,8 @@ def predict_drawing():
 def handle_connect():
     print("Connected to client.")
     socketio.emit('update_chart', {'data': data})
+    print("testing")
+    drawing_start()
 
 if __name__ == '__main__':
     print('App started')
