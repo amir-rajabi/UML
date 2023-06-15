@@ -8,7 +8,7 @@ import os
 def test_drawing():
     # Lade das trainierte Modell
     model = ConvolutionalNeuralNetwork(dropout_rate=0)  # Passe den dropout_rate-Wert entsprechend an
-    model.load_state_dict(torch.load('model.pth'))
+    model.load_state_dict(torch.load('data/model.pt'))
     model.eval()
 
     # Lade und transformiere das Bild
