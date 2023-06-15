@@ -36,14 +36,16 @@ data = {
     'd3': [1, 3, 5, 4, 2],
     'd4': [3, 4, 5, 2, 1]
 }
-#default values can be changed here
+
+# DO NOT CHANGE THIS
+# default values should be changed in javascript (onload.js)
 adj = {
-    "learning_rate": 0.1,
-    "momentum": 0.5,
+    "learning_rate": 0,
+    "momentum": 0,
     "dropout_rate": 0,
     "loss_function": 0,
-    "epochs": 1,
-    "batch_size": 256
+    "epochs": 0,
+    "batch_size": 0
 }
 
 #NOTE: doesn't work and likely will not work

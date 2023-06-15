@@ -38,12 +38,12 @@ window.addEventListener('load', function() {
     } else {
         sessionStorage.setItem('UML_DATA_PIEQ4', first_run_flag);
         var response = {
-            learning_rate: 0,
-            momentum: 0,
+            learning_rate: 0.1,
+            momentum: 0.5,
             dropout_rate: 0,
             loss_function: 0, 
-            epochs: 0,
-            batch_size: 0
+            epochs: 1,
+            batch_size: 256
         };
         updateAdjustments(response);
         restoreAllAdjustments();
