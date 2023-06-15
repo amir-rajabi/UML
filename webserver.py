@@ -29,6 +29,8 @@ data = {
 '''
 
 #data with empty chart
+#d1 is accuracy
+#d2 should be changed to loss
 data = {
 
     'd1': [],
@@ -47,20 +49,6 @@ adj = {
     "epochs": 0,
     "batch_size": 0
 }
-
-#NOTE: doesn't work and likely will not work
-#starts watchdog to watch for changes in json
-def start_chart_dog(data=data,socket=socketio):
-    #makes sure file exists
-    if not os.path.exists("data/epoch_data.json"):
-        open("data/epoch_data.json", "w").close()
-    chart_dog_process = Process(target=chart_dog, args=[data,socket],daemon=True)
-    chart_dog_process.start()
-    print("LOG: started chart_dog")
-    return
-#NOTE: doesn't work and likely will not work
-#start_chart_dog(data,socketio)
-
 
 #TODO: block start button on training
 #   currently it's possible to start training mutliple

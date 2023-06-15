@@ -16,17 +16,29 @@ import random
     otherwise will lead to parsing errors
 '''
 def write_json(data, path="data/epoch_data.json"):
+    
     if not isinstance(data, dict):
         print("ERROR: data to be written is not a dictionary")
         return 
     if not os.path.exists(path):
         open(path, "w").close()
     if os.stat(path).st_size == 0:
-        listObj =[]
+        listObj = {
+            "loss": [],
+            "accuracy": [],
+            "learning_rate": [],
+            "momentum": [],
+            "dropout_rate": [],
+            "loss_function": [],
+            "epochs": [],
+            "batch_size": []
+        }
     else:
         with open(path, "r") as file:
             listObj = json.load(file)
-    listObj.append(data)
+
+    for i in listObj.keys():
+        listObj[i].append(data[i])
     json_object = json.dumps(listObj, indent=4)
     with open(path,"w") as file:
         file.write(json_object)
@@ -50,11 +62,12 @@ def clear_history(path="data/epoch_data.json"):
         print("WARNING: file doesn't exists")
         return
     if os.stat(path).st_size == 0:
-        print("WARNING: file already empty")
+        print("WARNING: file is empty")
         return
     with open(path, "r") as file:
         epoch_list = json.load(file)
-    epoch_list = epoch_list[-1:]
+    for i in epoch_list.keys():
+        epoch_list[i] = epoch_list[i][-1:]
     epoch_list = json.dumps(epoch_list, indent=4)
     open(path, "w").close()
     with open(path, "w") as file:
@@ -80,13 +93,17 @@ if __name__ == "__main__":
     #input arg 1, -1 or -2 to:
     #add, nuke, clear
 
-    #test dict
+    #test dictionary
     dictionary = {
-        "epoch": 0,
-        "loss": random.randint(0,100),
-        "accuracy":random.randint(0,100)
-        }
-
+        "loss": 1,
+        "accuracy": random.randint(0,100),
+        "learning_rate": 1,
+        "momentum": 1,
+        "dropout_rate": 1,
+        "loss_function": 1,
+        "epochs": 1,
+        "batch_size": 1
+    }
     match int(sys.argv[1]):
         case 1:
             print("trying to write data")

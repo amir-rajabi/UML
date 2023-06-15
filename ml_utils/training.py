@@ -83,8 +83,8 @@ def training(chart_data, socketio, dictionary, model: Module,
         loss, test_accuracy = accuracy(model, test_loader, cuda)
         #TODO: acquire, stats.lock file
 
-        chart_data['d1'].append(loss)
-        chart_data['d2'].append(test_accuracy)
+        chart_data['d1'].append(test_accuracy)
+        chart_data['d2'].append(loss)
         socketio.emit('update_chart', {'data':chart_data})
         print("LOG: update chart")
 

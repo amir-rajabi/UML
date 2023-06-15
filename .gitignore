@@ -4,3 +4,4 @@ __pycache__
 epoch_data.json
 model.pth
 output.txt
+legacy_json_write.py
