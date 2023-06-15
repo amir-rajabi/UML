@@ -8,6 +8,7 @@ from torch.optim import Optimizer, SGD
 
 import time
 import random
+import os
 
 from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO
@@ -104,9 +105,10 @@ def training(chart_data, socketio, dictionary, model: Module,
     #TODO: write model into a file
     #TODO: free model.lock
     #TODO: send update -1 signal
-    torch.save(model.state_dict(), 'model.pth')
+    torch.save(model.state_dict(), 'data/model.pt')
     print("LOG: TRAINING FINISHED")
     socketio.emit('training_finished', {'data':chart_data})
+    print("LOG: model written")
 
     #
     #weights_m=model.get_weights()
@@ -129,6 +131,12 @@ def main(seed):
         batch_size=256,
         loss_func=loss[0]
     )
+def init_model(model):
+    if os.path.exists("data/model.pt"):
+        model.load_state_dict(torch.load("data/model.pt"))
+        print("LOG: model loaded")
+    return model
+
 
 #this function is used by frontend
 def start_training(data, socketio, params):
@@ -137,6 +145,7 @@ def start_training(data, socketio, params):
     manual_seed(seed)
     np.random.seed(seed)
     model = ConvolutionalNeuralNetwork(float(params["dropout_rate"]))
+    model = init_model(model)
     opt = SGD(model.parameters(), lr=float(params["learning_rate"]), 
               momentum=float(params["momentum"]))
     training(

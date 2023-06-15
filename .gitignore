@@ -3,5 +3,6 @@ __pycache__
 .DS_Store
 epoch_data.json
 model.pth
+model.pt
 output.txt
 legacy_json_write.py
