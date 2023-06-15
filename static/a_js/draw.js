@@ -65,4 +65,3 @@ document.getElementById('predict_drawing').addEventListener('click', function(){
     };
     xhr.send(JSON.stringify({ image_data: imageData }));
 });
-

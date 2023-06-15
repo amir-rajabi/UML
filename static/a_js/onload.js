@@ -20,7 +20,40 @@ var loss_function = document.getElementById("adjust-dropdown1");
 
 var first_run_flag = 1;
 
-window.addEventListener('load', function() { 
+socket.on('connect', function() {
+    console.log('Connected to server.');
+    startRestoring();
+});
+
+socket.on('disconnect', function() {
+    console.log('Disconnected from server');
+    sessionStorage.removeItem('UML_DATA_PIEQ4');
+});
+
+function restoreAllAdjustments() {
+    var learningRate = adjustments_data.learning_rate;
+    var momentum = adjustments_data.momentum;
+    var dropoutRate = adjustments_data.dropout_rate;
+    var epochs = adjustments_data.epochs;
+    var batch_size = adjustments_data.batch_size;
+    var lossFunction = adjustments_data.loss_function;
+
+    adjust_slider1.value = parseFloat(learningRate);
+    sliderValue1.textContent = learningRate;
+    adjust_slider2.value = parseFloat(momentum);
+    sliderValue2.textContent = momentum;
+    adjust_slider3.value = parseFloat(dropoutRate);
+    sliderValue3.textContent = dropoutRate;
+
+    adjust_slider4.value = parseInt(epochs);
+    sliderValue4.textContent = epochs;
+    adjust_slider5.value = parseInt(batch_size);
+    sliderValue5.textContent = batch_size;
+
+    loss_function.value = parseFloat(lossFunction);
+}
+
+function startRestoring() {
     var storedData = sessionStorage.getItem('UML_DATA_PIEQ4');
     
     if (storedData) {
@@ -49,27 +82,4 @@ window.addEventListener('load', function() {
         sendAdjustments();
         restoreAllAdjustments();
     }
-});
-
-function restoreAllAdjustments() {
-    var learningRate = adjustments_data.learning_rate;
-    var momentum = adjustments_data.momentum;
-    var dropoutRate = adjustments_data.dropout_rate;
-    var epochs = adjustments_data.epochs;
-    var batch_size = adjustments_data.batch_size;
-    var lossFunction = adjustments_data.loss_function;
-
-    adjust_slider1.value = parseFloat(learningRate);
-    sliderValue1.textContent = learningRate;
-    adjust_slider2.value = parseFloat(momentum);
-    sliderValue2.textContent = momentum;
-    adjust_slider3.value = parseFloat(dropoutRate);
-    sliderValue3.textContent = dropoutRate;
-
-    adjust_slider4.value = parseInt(epochs);
-    sliderValue4.textContent = epochs;
-    adjust_slider5.value = parseInt(batch_size);
-    sliderValue5.textContent = batch_size;
-
-    loss_function.value = parseFloat(lossFunction);
 }

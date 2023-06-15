@@ -72,9 +72,6 @@ const dia2 = new Chart(
 );
 
 //--------------- updater ---------------//
-socket.on('connect', function() {
-  console.log('Connected to server.');
-});
 
 socket.on('update_chart', function(data){
   chartData.d1 = data.data.d1;
