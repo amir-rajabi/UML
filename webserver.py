@@ -6,6 +6,7 @@ import io
 import os
 import time
 import threading
+import json
 
 #for start_training method
 from ml_utils.training import start_training as train
@@ -48,6 +49,16 @@ adj = {
     "epochs": 0,
     "batch_size": 0
 }
+
+
+#loads history
+#should be used 
+def init_data():
+    with open("data/epoch_data.json", "r") as file:
+        history = json.load(file)
+    data["d1"] = history["accuracy"]
+    data["d2"] = history["loss"]
+    return
 
 #TODO: block start button on training
 #   currently it's possible to start training mutliple
@@ -122,6 +133,7 @@ def predict_drawing():
 # start server & websocket connection 
 @socketio.on('connect')
 def handle_connect():
+    init_data()
     print("Connected to client.")
     socketio.emit('update_chart', {'data': data})
     print("testing")
