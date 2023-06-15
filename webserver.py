@@ -18,13 +18,24 @@ from ml_utils.chart_update import chart_dog
 
 app = Flask(__name__)
 socketio = SocketIO(app)
+'''
+#test data
 data = {
     'd1': [1, 2, 3, 4, 5, 5, 2, 2, 1],
     'd2': [5, 4, 3, 2, 1],
     'd3': [1, 3, 5, 4, 2],
     'd4': [3, 4, 5, 2, 1]
 }
+'''
 
+#data with empty chart
+data = {
+
+    'd1': [],
+    'd2': [],
+    'd3': [1, 3, 5, 4, 2],
+    'd4': [3, 4, 5, 2, 1]
+}
 #default values can be changed here
 adj = {
     "learning_rate": 0.1,
@@ -64,29 +75,9 @@ def start_training_dict(params):
     #NOTE: what to do with sesed?
     # should it be chooseable or rolled randomly each time?
     # or options for both?
-
-    #NOTE: for testing
-    data["d2"].append(4)
-    socketio.emit('update_chart', {'data':data})
-
-    worker_process = Process(target=train, args=[params],daemon=True)
+    worker_process = threading.Thread(target=train, args=[data, socketio, params.copy()])
+    #worker_process = Process(target=train, args=[data, socketio, params], daemon = False)
     worker_process.start()
-    return
-
-def drawing():
-    while(1):
-        #NOTE: for testing
-        time.sleep(2)
-        data["d2"].append(4)
-        socketio.emit('update_chart', {'data':data})
-
-def drawing_start():
-    # Start the thread to send data
-
-    #process = Process(target=drawing, args=[],daemon=True)
-    #process.start()
-    data_thread = threading.Thread(target=drawing)
-    data_thread.start()
     return
 
 @app.route('/')
@@ -145,7 +136,7 @@ def handle_connect():
     print("Connected to client.")
     socketio.emit('update_chart', {'data': data})
     print("testing")
-    drawing_start()
+    #drawing_start()
 
 if __name__ == '__main__':
     print('App started')

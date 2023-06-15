@@ -9,6 +9,9 @@ from torch.optim import Optimizer, SGD
 import time
 import random
 
+from flask import Flask, render_template, request, jsonify
+from flask_socketio import SocketIO
+
 loss = [F.cross_entropy, F.multi_margin_loss, F.nll_loss]
 if __name__ == '__main__':
     from data import get_data_loaders
@@ -59,9 +62,11 @@ def train_step(model: Module, optimizer: Optimizer, data: Tensor,
     optimizer.zero_grad()
 
 
-def training(dictionary, model: Module, optimizer: Optimizer,
+def training(chart_data, socketio, dictionary, model: Module,
+            optimizer: Optimizer,
             cuda: bool, n_epochs: int,
             batch_size: int, loss_func):
+
 
     train_loader, test_loader = get_data_loaders(batch_size=batch_size)
     if cuda:
@@ -77,6 +82,12 @@ def training(dictionary, model: Module, optimizer: Optimizer,
 
         loss, test_accuracy = accuracy(model, test_loader, cuda)
         #TODO: acquire, stats.lock file
+
+        chart_data['d1'].append(loss)
+        chart_data['d2'].append(test_accuracy)
+        socketio.emit('update_chart', {'data':chart_data})
+        print("LOG: update chart")
+
         dictionary["loss"] = str(loss)
         dictionary["accuracy"] = str(test_accuracy)
         write_json(dictionary,path="data/epoch_data.json")
@@ -119,7 +130,7 @@ def main(seed):
     )
 
 #this function is used by frontend
-def start_training(params):
+def start_training(data, socketio, params):
     #seed = random.randint(0,100)
     seed = 0
     manual_seed(seed)
@@ -128,6 +139,8 @@ def start_training(params):
     opt = SGD(model.parameters(), lr=float(params["learning_rate"]), 
               momentum=float(params["momentum"]))
     training(
+        data,
+        socketio,
         params,
         model=model,
         optimizer=opt,
