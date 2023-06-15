@@ -106,7 +106,7 @@ function updateChart(selectedValue, dia){
     selected = selected_data1;
   } else {
     selected = selected_data2;
-  }
+  } // notwendig??
   
   if (selectedValue === '0') {
     selected = chartData.d1;
@@ -136,5 +136,5 @@ function updateChart(selectedValue, dia){
     });
     dia.data.datasets[0].data = selected;
     dia.update();
-  }
+  } // else !
 }
