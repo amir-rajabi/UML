@@ -47,7 +47,8 @@ input, label, select, button{
 
 ::-webkit-scrollbar {
     width: 0;
-  }
+}
+
 /*------- columns -------*/
 .column{
     height: 100vh;
@@ -120,7 +121,14 @@ input, label, select, button{
 }
 #control-buttons :first-child {
     margin-right: 2%;
-  }
+}
+
+#start{
+    display: block;
+}
+#stop{
+    display: none;
+}
 
 /*------- settings window -------*/
 .settings{
@@ -266,4 +274,4 @@ thead th{
 #drawingcanvas {
     border: 1px solid white;
     background-color: black;
-  }
+}

@@ -1,4 +1,4 @@
-import { adjustments, chartData, history, updateAdjustments } from './data.js';
+import { adjustments, chartData, history, updateAdjustments, socket } from './data.js';
 import { sendAdjustments } from './send.js';
 
 window.adjustments_data = adjustments;
@@ -75,7 +75,7 @@ function startRestoring() {
             momentum: 0.5,
             dropout_rate: 0,
             loss_function: 0, 
-            epochs: 1,
+            epochs: 10,
             batch_size: 256
         };
         updateAdjustments(response);

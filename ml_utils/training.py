@@ -106,6 +106,7 @@ def training(chart_data, socketio, dictionary, model: Module,
     #TODO: send update -1 signal
     torch.save(model.state_dict(), 'model.pth')
     print("LOG: TRAINING FINISHED")
+    socketio.emit('training_finished', {'data':chart_data})
 
     #
     #weights_m=model.get_weights()

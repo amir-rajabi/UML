@@ -28,13 +28,9 @@ data = {
 }
 '''
 
-#data with empty chart
-#d1 is accuracy
-#d2 should be changed to loss
 data = {
-
-    'd1': [],
-    'd2': [],
+    'd1': [],   #accuracy
+    'd2': [],   #loss
     'd3': [1, 3, 5, 4, 2],
     'd4': [3, 4, 5, 2, 1]
 }
@@ -49,7 +45,7 @@ adj = {
     "epochs": 0,
     "batch_size": 0
 }
-
+response = ""
 
 #loads history
 #should be used 
@@ -92,8 +88,7 @@ def gettingAdjustments():
     for key, value in data.items():
       if key in adj:
         adj[key] = value
-    response_text = ""
-    return jsonify({'response': response_text})
+    return response
 
 @app.route('/getadjust', methods=['POST'])  # (frontend is getting adjustments) 
 def sendingAdjustments():
@@ -102,33 +97,50 @@ def sendingAdjustments():
     response = adj;
     return jsonify({'response': response})
 
-@app.route('/run', methods=['POST'])  # (frontend is getting adjustments) 
-def run():
+@app.route('/start', methods=['POST'])  # (frontend is getting adjustments) 
+def start():
     print("LOG: RECEIVED TO RUN: " +str(adj))
     print("LOG: STARTING TRAINING")
     start_training_dict(adj)
-    response_text = "Daten empfangen und gespeichert!"
-    return jsonify({'response': response_text})
+    return response
+
+#TODO: STOP WHEN INTERRUPT OR WHEN CLIENT DISCONNECTED
+
+@app.route('/stop', methods=['POST'])  # (frontend is getting adjustments) 
+def stop():
+    print("LOG: STOP TRAINING")
+
+# stop training here
+# this function is called when:
+# - stop button is pressed
+# - tab gets reloaded
+
+    return response
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    # also stop training in this case 
+    print('Client disconnected')
+
+
+@app.route('/revert', methods=['POST'])  # (frontend is getting adjustments) 
+def revert():
+    print("LOG: REVERT")
+
+    return response
 
 @app.route('/predict_drawing', methods=['POST'])
 def predict_drawing():
     data = request.get_json()
-    image_data = data['image_data']
-    
+    image_data = data['image_data']   
     image_bytes = base64.b64decode(image_data.split(',')[1])
-    img = Image.open(io.BytesIO(image_bytes))
-    
+    img = Image.open(io.BytesIO(image_bytes))    
     new_img = Image.new('RGB', img.size, 'black')
     new_img.paste(img, (0, 0), img)
-
-
     new_img.save('static/img.jpg', 'jpeg')
     prediction = test_drawing()
 
     return jsonify({'prediction': int(prediction)})
-
-#TODO: intrrupt button
-#   @JS dev and Flask dev
 
 # start server & websocket connection 
 @socketio.on('connect')
@@ -136,10 +148,7 @@ def handle_connect():
     init_data()
     print("Connected to client.")
     socketio.emit('update_chart', {'data': data})
-    print("testing")
-    #drawing_start()
 
 if __name__ == '__main__':
     print('App started')
     socketio.run(app, host='127.0.0.1', port=5001, debug=False)
-

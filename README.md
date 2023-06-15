@@ -42,7 +42,7 @@ Alternativ die Umgebung mithilfe der env.yml aktualisieren:
 
 1. 
 ```
-conda acitvate UsableML
+conda activate UML
 ```
 2. 
 ```
@@ -59,16 +59,6 @@ Link: https://www.chartjs.org/
 Zur Erleichterung können von bootstrap, ähnlich wie bei Streamlit, fertige Elemente eingebunden werden. Also zum Beispiel slider oder buttons etc. 
 Link: https://getbootstrap.com/docs/5.3/forms/range/ (Beispiel des Sliders)
 
-Eventuell müssen die notwendigen Erweiterungen neu installiert werden:
-1. Navigiere zu node_modules
-```
-cd static/node_modules
-```
-2. Installiere die notwendigen Pakete
-```
-npm install bootstrap@5.3.0 chart.js sass socket.io
-```
-**Es werden im Laufe der Entwicklung weitere Module notwendig werden! Diese müssen dann evtl. auch nachinstalliert werden** 
 
 ## grundlegende SOFTWARESTRUKTUR
 ```

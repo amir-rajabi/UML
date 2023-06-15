@@ -99,11 +99,6 @@ selector2.addEventListener("change", function(event) {
 
 function updateChart(selectedValue, dia){
   var selected;
-  if (dia == dia1){
-    selected = selected_data1;
-  } else {
-    selected = selected_data2;
-  } // notwendig??
   
   if (selectedValue === '0') {
     selected = chartData.d1;
@@ -112,26 +107,28 @@ function updateChart(selectedValue, dia){
     });
     dia.data.datasets[0].data = selected;
     dia.update();
-  } else if (selectedValue === '1') {
+  } 
+  else if (selectedValue === '1') {
     selected = chartData.d2;
     dia.data.labels = selected.map(function(_, index) {
       return 'Epoch ' + (index + 1);
     });
     dia.data.datasets[0].data = selected;
     dia.update();
-  } else if (selectedValue === '2') {
-    selected = chartData.d3;
-    dia.data.labels = selected.map(function(_, index) {
-      return 'Epoch ' + (index + 1);
-    });
-    dia.data.datasets[0].data = selected;
-    dia.update();
-  } else if (selectedValue === '3') {
-    selected = chartData.d4;
-    dia.data.labels = selected.map(function(_, index) {
-      return 'Epoch ' + (index + 1);
-    });
-    dia.data.datasets[0].data = selected;
-    dia.update();
-  } // else !
+  } 
+  // else if (selectedValue === '2') {
+  //   selected = chartData.d3;
+  //   dia.data.labels = selected.map(function(_, index) {
+  //     return 'Epoch ' + (index + 1);
+  //   });
+  //   dia.data.datasets[0].data = selected;
+  //   dia.update();
+  // } else if (selectedValue === '3') {
+  //   selected = chartData.d4;
+  //   dia.data.labels = selected.map(function(_, index) {
+  //     return 'Epoch ' + (index + 1);
+  //   });
+  //   dia.data.datasets[0].data = selected;
+  //   dia.update();
+  // }
 }
