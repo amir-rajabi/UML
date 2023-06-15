@@ -46,6 +46,7 @@ window.addEventListener('load', function() {
             batch_size: 256
         };
         updateAdjustments(response);
+        sendAdjustments();
         restoreAllAdjustments();
     }
 });
