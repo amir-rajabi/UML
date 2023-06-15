@@ -14,7 +14,6 @@ from multiprocessing import Process
 #for test_method
 from ml_utils.testing import test_drawing
 
-from ml_utils.chart_update import chart_dog
 
 app = Flask(__name__)
 socketio = SocketIO(app)
