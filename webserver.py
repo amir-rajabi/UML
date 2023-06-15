@@ -104,28 +104,27 @@ def start():
     start_training_dict(adj)
     return response
 
-#TODO: STOP WHEN INTERRUPT OR WHEN CLIENT DISCONNECTED
+#TODO: STOP TRAINING IF ONE IS RUNNING
+def stop_training():
+   
+
+   print('LOG: STOPPED')
+
 
 @app.route('/stop', methods=['POST'])  # (frontend is getting adjustments) 
 def stop():
-    print("LOG: STOP TRAINING")
-
-# stop training here
-# this function is called when:
-# - stop button is pressed
-# - tab gets reloaded
-
+    print("LOG: STOP PRESSED")
+    stop_training();
     return response
 
 @socketio.on('disconnect')
 def handle_disconnect():
-    # also stop training in this case 
+    stop_training();
     print('Client disconnected')
-
 
 @app.route('/revert', methods=['POST'])  # (frontend is getting adjustments) 
 def revert():
-    print("LOG: REVERT")
+    print("LOG: REVERT PRESSED")
 
     return response
 
