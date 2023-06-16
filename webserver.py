@@ -56,16 +56,13 @@ def init_data():
     data["d2"] = history["loss"]
     return
 
-#TODO: block start button on training
-#   currently it's possible to start training mutliple
-#   times; this should not be possible in the final product
 #TODO: add interrupt
 #   probably doesn't belong here but still
 #   likely should be done by lockfiles 
 #   and training checking for said lockfile, unlocking
 #   and posting update '-1'
-#starts training in ml_utils.training.py
-#with parameters
+
+#starts training in ml_utils.training.py with parameters
 
 def start_training_dict(params):
     #NOTE: what to do with sesed?
@@ -117,16 +114,18 @@ def stop():
     stop_training();
     return response
 
-@socketio.on('disconnect')
-def handle_disconnect():
-    stop_training();
-    print('Client disconnected')
-
 @app.route('/revert', methods=['POST'])  # (frontend is getting adjustments) 
 def revert():
     print("LOG: REVERT PRESSED")
 
     return response
+
+@app.route('/clear_history', methods=['POST']) 
+def clear_history():
+   print("LOG: CLEAR HISTORY")
+
+   return response
+
 
 @app.route('/predict_drawing', methods=['POST'])
 def predict_drawing():
@@ -147,6 +146,11 @@ def handle_connect():
     init_data()
     print("Connected to client.")
     socketio.emit('update_chart', {'data': data})
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    stop_training();
+    print('Client disconnected')
 
 if __name__ == '__main__':
     print('App started')
