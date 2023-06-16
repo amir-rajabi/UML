@@ -13,18 +13,12 @@ import os
 from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO
 
-loss = [F.cross_entropy, F.multi_margin_loss, F.nll_loss]
-if __name__ == '__main__':
-    from data import get_data_loaders
-    from evaluate import accuracy
-    from model import ConvolutionalNeuralNetwork
-    from json_write import write_json
-else: 
-    from ml_utils.data import get_data_loaders
-    from ml_utils.evaluate import accuracy
-    from ml_utils.model import ConvolutionalNeuralNetwork
-    from ml_utils.json_write import write_json
+from ml_utils.data import get_data_loaders
+from ml_utils.evaluate import accuracy
+from ml_utils.model import ConvolutionalNeuralNetwork
+from ml_utils.json_write import write_json
 
+loss = [F.cross_entropy, F.multi_margin_loss, F.nll_loss]
 
 def train_step(model: Module, optimizer: Optimizer, data: Tensor,
                target: Tensor, cuda: bool, loss_func):
@@ -48,7 +42,7 @@ def train_step(model: Module, optimizer: Optimizer, data: Tensor,
     #time.sleep(30)
     #print("batch")
 
-    #NOTE: doesn't work
+    #NOTE: likely needs one_hot_encoding
     #loss = F.multilabel_margin_loss(prediction, target)
     #loss = F.multilabel_soft_margin_loss(prediction, target)
     #loss = F.cosine_embedding_loss(prediction, target)
@@ -67,8 +61,6 @@ def training(chart_data, socketio, dictionary, model: Module,
             optimizer: Optimizer,
             cuda: bool, n_epochs: int,
             batch_size: int, loss_func):
-
-
     train_loader, test_loader = get_data_loaders(batch_size=batch_size)
     if cuda:
         model.cuda()
@@ -78,65 +70,49 @@ def training(chart_data, socketio, dictionary, model: Module,
             train_step(model=model, optimizer=optimizer, cuda=cuda, data=data,
                        target=target, loss_func=loss_func)
             #TODO: check for interrupt (probably a interrupt.lock)
-            #TODO: if interrupt signal present (interrupt.lock acquired)
             #TODO: break loop
+            #if INTERRUPTPRESENT:
+            #   break
+            # this will break the nested loop, there is no need
+            # to break outer loop, see for ... else: structure
+        else:
+            #this else statement makes it so
+            #that if an interrupt is send this block will not
+            #go through. If however the loop finishes without
+            #the interrupt, then it will execute
+            #this means that on interrupt the current epoch is
+            #aborted
+            test_loss, test_accuracy = accuracy(model, test_loader, cuda)
+            train_loss, train_accuracy = accuracy(model, train_loader, cuda)
 
-        test_loss, test_accuracy = accuracy(model, test_loader, cuda)
-        train_loss, train_accuracy = accuracy(model, train_loader, cuda)
-        #TODO: acquire, stats.lock file
-
-        chart_data['d1'].append(test_accuracy)
-        chart_data['d2'].append(test_loss)
-        chart_data['d3'].append(train_accuracy)
-        chart_data['d4'].append(train_loss)
-        socketio.emit('update_chart', {'data':chart_data})
-        print("LOG: update chart")
-
-        dictionary["loss"] = str(test_loss)
-        dictionary["accuracy"] = str(test_accuracy)
-        dictionary["train_loss"] = str(train_loss)
-        dictionary["train_accuracy"] = str(train_accuracy)
-        write_json(dictionary,path="data/epoch_data.json")
-        #TODO: free stats.lock file
-        #TODO: send update signal to frontend
-        #   with index of new stats: "update" : index
-        #TODO: check for interrupt signal
-        #TODO: clear interrupt signal
-        #TODO: break
-        print(f'LOG: epoch={epoch}, train accuracy={train_accuracy}, train loss={train_loss}')
-        print(f'LOG: epoch={epoch}, test accuracy={test_accuracy}, test loss={test_loss}')
+            chart_data['d1'].append(test_accuracy)
+            chart_data['d2'].append(test_loss)
+            chart_data['d3'].append(train_accuracy)
+            chart_data['d4'].append(train_loss)
+            socketio.emit('update_chart', {'data':chart_data})
+            print("LOG: update chart")
+    
+            dictionary["loss"] = str(test_loss)
+            dictionary["accuracy"] = str(test_accuracy)
+            dictionary["train_loss"] = str(train_loss)
+            dictionary["train_accuracy"] = str(train_accuracy)
+            write_json(dictionary,path="data/epoch_data.json")
+            print(f'LOG: epoch={epoch}, train accuracy={train_accuracy}, train loss={train_loss}')
+            print(f'LOG: epoch={epoch}, test accuracy={test_accuracy}, test loss={test_loss}')
+            continue
+        print('LOG: breaking double loop')
+        break
     if cuda:
         empty_cache()
-    #TODO: acquire model.lock
-    #TODO: write model into a file
-    #TODO: free model.lock
-    #TODO: send update -1 signal
     torch.save(model.state_dict(), 'data/model.pt')
     print("LOG: TRAINING FINISHED")
     socketio.emit('training_finished', {'data':chart_data})
     print("LOG: model written")
 
-    #
     #weights_m=model.get_weights()
     #for i in range(8):
     #    print(weights_m[i].shape)
 
-#this function is NOT used by frontend
-def main(seed):
-    manual_seed(seed)
-    np.random.seed(seed)
-    model = ConvolutionalNeuralNetwork(0)
-    opt = SGD(model.parameters(), lr=0.3, momentum=0.5)
-    empty_dict ={"test": "test value"}
-    training(
-        empty_dict,
-        model=model,
-        optimizer=opt,
-        cuda=False,
-        n_epochs=10,
-        batch_size=256,
-        loss_func=loss[0]
-    )
 def init_model(model):
     if os.path.exists("data/model.pt"):
         model.load_state_dict(torch.load("data/model.pt"))
@@ -145,6 +121,9 @@ def init_model(model):
 
 
 #this function is used by frontend
+#socket to JS frontend
+#data is the current graph in JS
+#that will be updated by training
 def start_training(data, socketio, params):
     #seed = random.randint(0,100)
     seed = 0
@@ -161,12 +140,7 @@ def start_training(data, socketio, params):
         model=model,
         optimizer=opt,
         cuda=False,
-        #TODO: make epoch_num and batch_size
-        # and loss function selectable
         n_epochs=int(params["epochs"]),
         batch_size=int(params["batch_size"]),
         loss_func=loss[int(params["loss_function"])]
     )
-
-if __name__ == "__main__":
-    main(0)

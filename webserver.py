@@ -13,15 +13,6 @@ from ml_utils.testing import test_drawing
 
 app = Flask(__name__)
 socketio = SocketIO(app)
-'''
-#test data
-data = {
-    'd1': [1, 2, 3, 4, 5, 5, 2, 2, 1],
-    'd2': [5, 4, 3, 2, 1],
-    'd3': [1, 3, 5, 4, 2],
-    'd4': [3, 4, 5, 2, 1]
-}
-'''
 
 data = {
     'd1': [],   #accuracy
@@ -43,35 +34,17 @@ adj = {
 response = ""
 
 #loads history
-#should be used 
 def init_data():
     try:
         with open("data/epoch_data.json", "r") as file:
             history = json.load(file)
     except:
-        history = {
-            "loss": [],
-            "accuracy": [],
-            "train_accuracy": [],
-            "train_loss": [],
-            "learning_rate": [],
-            "momentum": [],
-            "dropout_rate": [],
-            "loss_function": [],
-            "epochs": [],
-            "batch_size": []
-        }
+        return
     data["d1"] = history["accuracy"]
     data["d2"] = history["loss"]
     data["d3"] = history["train_accuracy"]
     data["d4"] = history["train_loss"]
     return
-
-#TODO: add interrupt
-#   probably doesn't belong here but still
-#   likely should be done by lockfiles 
-#   and training checking for said lockfile, unlocking
-#   and posting update '-1'
 
 #starts training in ml_utils.training.py with parameters
 
@@ -80,7 +53,6 @@ def start_training_dict(params):
     # should it be chooseable or rolled randomly each time?
     # or options for both?
     worker_process = threading.Thread(target=train, args=[data, socketio, params.copy()])
-    #worker_process = Process(target=train, args=[data, socketio, params], daemon = False)
     worker_process.start()
     return
 
@@ -119,18 +91,30 @@ def stop_training():
    print('LOG: STOPPED')
 
 
+#TODO: make stop work
+#   likely should be done by lockfiles 
+#   and training checking for said lockfile, unlocking
+#   and posting update '-1'
+#   or maybe pass a variable that training and flask has access to
 @app.route('/stop', methods=['POST'])  # (frontend is getting adjustments) 
 def stop():
     print("LOG: STOP PRESSED")
     stop_training();
     return response
 
+
+#TODO: make revert work
+#   involves always saving the backup file of model
+#   how do you remember how many epochs were in last run
+#   might involve adding to json_write.py interface
 @app.route('/revert', methods=['POST'])  # (frontend is getting adjustments) 
 def revert():
     print("LOG: REVERT PRESSED")
 
     return response
 
+#TODO: already has an interface in json_write.py
+#   this is basicly 2 lines of code at max
 @app.route('/clear_history', methods=['POST']) 
 def clear_history():
    print("LOG: CLEAR HISTORY")
@@ -152,6 +136,7 @@ def predict_drawing():
     return jsonify({'prediction': int(prediction)})
 
 # start server & websocket connection 
+# any init stuff can be put here
 @socketio.on('connect')
 def handle_connect():
     init_data()
