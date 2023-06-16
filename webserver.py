@@ -1,12 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO
-from PIL import Image, ImageDraw
-import base64
-import io
-import os
-import time
-import threading
-import json
+from PIL import Image
+import base64, io, os, time, threading, json, webbrowser
 
 #for start_training method
 from ml_utils.training import start_training as train
@@ -170,4 +165,6 @@ def handle_disconnect():
 
 if __name__ == '__main__':
     print('App started')
+    # webbrowser.open('http://localhost:5001')
     socketio.run(app, host='127.0.0.1', port=5001, debug=False)
+    

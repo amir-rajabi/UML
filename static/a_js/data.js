@@ -54,12 +54,12 @@ var sliderValue5 = document.getElementById('sliderValue5');
 var loss_function = document.getElementById("adjust-dropdown1");
 
 export function restoreAllAdjustments() {
-    var learningRate = adjustments_data.learning_rate;
-    var momentum = adjustments_data.momentum;
-    var dropoutRate = adjustments_data.dropout_rate;
-    var epochs = adjustments_data.epochs;
-    var batch_size = adjustments_data.batch_size;
-    var lossFunction = adjustments_data.loss_function;
+    var learningRate = adjustments.learning_rate;
+    var momentum = adjustments.momentum;
+    var dropoutRate = adjustments.dropout_rate;
+    var epochs = adjustments.epochs;
+    var batch_size = adjustments.batch_size;
+    var lossFunction = adjustments.loss_function;
 
     adjust_slider1.value = parseFloat(learningRate);
     sliderValue1.textContent = learningRate;

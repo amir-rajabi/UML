@@ -18,8 +18,6 @@ socket.on('disconnect', function() {
     sessionStorage.removeItem('UML_DATA_PIEQ4');
 });
 
-
-
 function startRestoring() {
     var storedData = sessionStorage.getItem('UML_DATA_PIEQ4');
     
