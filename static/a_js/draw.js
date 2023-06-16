@@ -1,3 +1,5 @@
+import {createAlert} from './alerts.js';
+
 var canvas = document.getElementById('drawingcanvas');
 var context = canvas.getContext('2d');
 var drawing = false;
@@ -60,7 +62,7 @@ document.getElementById('predict_drawing').addEventListener('click', function(){
             var prediction = response.prediction;
             predicted_no.textContent = prediction;
         } else {
-            alert('Beim Senden des Bildes ist ein Fehler aufgetreten.');
+            createAlert(3,'There was an error sending the image.');
         }
     };
     xhr.send(JSON.stringify({ image_data: imageData }));

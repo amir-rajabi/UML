@@ -48,7 +48,6 @@ input, label, select, button{
 ::-webkit-scrollbar {
     width: 0;
 }
-
 /*------- columns -------*/
 .column{
     height: 100vh;
@@ -239,7 +238,14 @@ input, label, select, button{
     margin-top: 1%;
 }
 #visual-lower-ctr{
+    position: relative;
     height: 5%;
+}
+#alerts_ctr{
+    position: absolute;
+    width: 70%;
+    margin-top: 1%;
+    margin-left: 5%;
 }
 #dia2-ctr, #second-card-body{
     display: none;
