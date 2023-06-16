@@ -22,7 +22,7 @@ data = {
 }
 
 # DO NOT CHANGE THIS
-# default values should be changed in javascript (onload.js)
+# default values should be changed in javascript (data.js)
 adj = {
     "learning_rate": 0,
     "momentum": 0,
