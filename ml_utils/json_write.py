@@ -26,6 +26,8 @@ def write_json(data, path="data/epoch_data.json"):
         listObj = {
             "loss": [],
             "accuracy": [],
+            "train_accuracy": [],
+            "train_loss": [],
             "learning_rate": [],
             "momentum": [],
             "dropout_rate": [],

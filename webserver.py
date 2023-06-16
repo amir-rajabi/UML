@@ -31,8 +31,8 @@ data = {
 data = {
     'd1': [],   #accuracy
     'd2': [],   #loss
-    'd3': [1, 3, 5, 4, 2],
-    'd4': [3, 4, 5, 2, 1]
+    'd3': [],	#train accuracy
+    'd4': []	#train loss
 }
 
 # DO NOT CHANGE THIS
@@ -50,10 +50,26 @@ response = ""
 #loads history
 #should be used 
 def init_data():
-    with open("data/epoch_data.json", "r") as file:
-        history = json.load(file)
+    try:
+        with open("data/epoch_data.json", "r") as file:
+            history = json.load(file)
+    except:
+        history = {
+            "loss": [],
+            "accuracy": [],
+            "train_accuracy": [],
+            "train_loss": [],
+            "learning_rate": [],
+            "momentum": [],
+            "dropout_rate": [],
+            "loss_function": [],
+            "epochs": [],
+            "batch_size": []
+        }
     data["d1"] = history["accuracy"]
     data["d2"] = history["loss"]
+    data["d3"] = history["train_accuracy"]
+    data["d4"] = history["train_loss"]
     return
 
 #TODO: block start button on training

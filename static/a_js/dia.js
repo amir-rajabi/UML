@@ -116,19 +116,19 @@ function updateChart(selectedValue, dia){
     dia.data.datasets[0].data = selected;
     dia.update();
   } 
-  // else if (selectedValue === '2') {
-  //   selected = chartData.d3;
-  //   dia.data.labels = selected.map(function(_, index) {
-  //     return 'Epoch ' + (index + 1);
-  //   });
-  //   dia.data.datasets[0].data = selected;
-  //   dia.update();
-  // } else if (selectedValue === '3') {
-  //   selected = chartData.d4;
-  //   dia.data.labels = selected.map(function(_, index) {
-  //     return 'Epoch ' + (index + 1);
-  //   });
-  //   dia.data.datasets[0].data = selected;
-  //   dia.update();
-  // }
+  else if (selectedValue === '2') {
+    selected = chartData.d3;
+    dia.data.labels = selected.map(function(_, index) {
+      return 'Epoch ' + (index + 1);
+    });
+    dia.data.datasets[0].data = selected;
+    dia.update();
+  } else if (selectedValue === '3') {
+    selected = chartData.d4;
+    dia.data.labels = selected.map(function(_, index) {
+      return 'Epoch ' + (index + 1);
+    });
+    dia.data.datasets[0].data = selected;
+    dia.update();
+  }
 }

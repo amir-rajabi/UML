@@ -81,16 +81,21 @@ def training(chart_data, socketio, dictionary, model: Module,
             #TODO: if interrupt signal present (interrupt.lock acquired)
             #TODO: break loop
 
-        loss, test_accuracy = accuracy(model, test_loader, cuda)
+        test_loss, test_accuracy = accuracy(model, test_loader, cuda)
+        train_loss, train_accuracy = accuracy(model, train_loader, cuda)
         #TODO: acquire, stats.lock file
 
         chart_data['d1'].append(test_accuracy)
-        chart_data['d2'].append(loss)
+        chart_data['d2'].append(test_loss)
+        chart_data['d3'].append(train_accuracy)
+        chart_data['d4'].append(train_loss)
         socketio.emit('update_chart', {'data':chart_data})
         print("LOG: update chart")
 
-        dictionary["loss"] = str(loss)
+        dictionary["loss"] = str(test_loss)
         dictionary["accuracy"] = str(test_accuracy)
+        dictionary["train_loss"] = str(train_loss)
+        dictionary["train_accuracy"] = str(train_accuracy)
         write_json(dictionary,path="data/epoch_data.json")
         #TODO: free stats.lock file
         #TODO: send update signal to frontend
@@ -98,7 +103,8 @@ def training(chart_data, socketio, dictionary, model: Module,
         #TODO: check for interrupt signal
         #TODO: clear interrupt signal
         #TODO: break
-        print(f'LOG: epoch={epoch}, test accuracy={test_accuracy}, loss={loss}')
+        print(f'LOG: epoch={epoch}, train accuracy={train_accuracy}, train loss={train_loss}')
+        print(f'LOG: epoch={epoch}, test accuracy={test_accuracy}, test loss={test_loss}')
     if cuda:
         empty_cache()
     #TODO: acquire model.lock
