@@ -128,6 +128,12 @@ input, label, select, button{
 #stop{
     display: none;
 }
+#revert{
+    display: block;
+}
+#redo{
+    display: none;
+}
 
 /*------- settings window -------*/
 .settings{

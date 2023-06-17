@@ -16,7 +16,7 @@ from flask_socketio import SocketIO
 from ml_utils.data import get_data_loaders
 from ml_utils.evaluate import accuracy
 from ml_utils.model import ConvolutionalNeuralNetwork
-from ml_utils.json_write import write_json
+from ml_utils.json_write import write_json, get_run_num
 
 loss = [F.cross_entropy, F.multi_margin_loss, F.nll_loss]
 
@@ -61,6 +61,7 @@ def training(chart_data, socketio, dictionary, model: Module,
             optimizer: Optimizer,
             cuda: bool, n_epochs: int,
             batch_size: int, loss_func):
+    run_index = get_run_num()
     train_loader, test_loader = get_data_loaders(batch_size=batch_size)
     if cuda:
         model.cuda()
@@ -91,11 +92,12 @@ def training(chart_data, socketio, dictionary, model: Module,
             chart_data['d4'].append(train_loss)
             socketio.emit('update_chart', {'data':chart_data})
             print("LOG: update chart")
-    
+
             dictionary["loss"] = str(test_loss)
             dictionary["accuracy"] = str(test_accuracy)
             dictionary["train_loss"] = str(train_loss)
             dictionary["train_accuracy"] = str(train_accuracy)
+            dictionary["run"]=str(run_index)
             write_json(dictionary,path="data/epoch_data.json")
             print(f'LOG: epoch={epoch}, train accuracy={train_accuracy}, train loss={train_loss}')
             print(f'LOG: epoch={epoch}, test accuracy={test_accuracy}, test loss={test_loss}')
@@ -104,7 +106,7 @@ def training(chart_data, socketio, dictionary, model: Module,
         break
     if cuda:
         empty_cache()
-    torch.save(model.state_dict(), 'data/model.pt')
+    torch.save(model.state_dict(), 'data/model_new.pt')
     print("LOG: TRAINING FINISHED")
     socketio.emit('training_finished', {'data':chart_data})
     print("LOG: model written")

@@ -1,10 +1,11 @@
 from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO
 from PIL import Image
-import base64, io, os, time, threading, json, webbrowser
+import base64, io, os, sys, time, threading, json, webbrowser, shutil
 
 #for start_training method
 from ml_utils.training import start_training as train
+from ml_utils.json_write import clear_history, revert_history
 from multiprocessing import Process
 
 #for test_method
@@ -14,11 +15,16 @@ from ml_utils.testing import test_drawing
 app = Flask(__name__)
 socketio = SocketIO(app)
 
+config_revert = False
+#disable training by giving webserver any number
+testing_flag = False
+
 data = {
     'd1': [],   #accuracy
     'd2': [],   #loss
     'd3': [],	#train accuracy
-    'd4': []	#train loss
+    'd4': [],	#train loss
+    'run': []
 }
 
 # DO NOT CHANGE THIS
@@ -44,6 +50,7 @@ def init_data():
     data["d2"] = history["loss"]
     data["d3"] = history["train_accuracy"]
     data["d4"] = history["train_loss"]
+    data["run"] = history["run"]
     return
 
 #starts training in ml_utils.training.py with parameters
@@ -77,10 +84,28 @@ def sendingAdjustments():
     response = adj;
     return jsonify({'response': response})
 
+def check_revert():
+    if config_revert:
+        revert_history()
+        init_data()
+        print("LOG: TRAINING OLD REVERTED MODEL")
+        return
+    elif os.path.exists("data/model_new.pt"):
+        #aktualisiert das model
+        #model is always loaded by training
+        #model_new.pt is for the new one
+        #that will be written into by trianing
+        shutil.copy("data/model_new.pt", "data/model.pt")
+        print("LOG: NO REVERT")
+
 @app.route('/start', methods=['POST'])  # (frontend is getting adjustments) 
 def start():
     print("LOG: RECEIVED TO RUN: " +str(adj))
+    if testing_flag:
+        print("LOG: testing; training skipped")
+        return response
     print("LOG: STARTING TRAINING")
+    check_revert()
     start_training_dict(adj)
     return response
 
@@ -104,14 +129,24 @@ def stop():
 
 
 #TODO: make revert work
-#   involves always saving the backup file of model
-#   how do you remember how many epochs were in last run
-#   might involve adding to json_write.py interface
+#GOTO: start() -> check_revert()
+#this function will only set the Flag 
+#the action of reverting is done in check_revert
 @app.route('/revert', methods=['POST'])  # (frontend is getting adjustments) 
 def revert():
+    #TODO: add signal to update chart in JS
+    global config_revert
+    config_revert = True
     print("LOG: REVERT PRESSED")
-
     return response
+
+@app.route('/redo', methods=['POST'])  # (frontend is getting adjustments) 
+def redo():
+    global config_revert
+    config_revert = False
+    print("LOG: REDO PRESSED")
+    return response
+
 
 #TODO: already has an interface in json_write.py
 #   this is basicly 2 lines of code at max
@@ -139,6 +174,14 @@ def predict_drawing():
 # any init stuff can be put here
 @socketio.on('connect')
 def handle_connect():
+
+    #disables training, give 
+    #arguments only for testing
+    if len(sys.argv) == 2:
+        global testing_flag
+        testing_flag = True
+        print("LOG: testing mode")
+
     init_data()
     print("Connected to client.")
     socketio.emit('update_chart', {'data': data})

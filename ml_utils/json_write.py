@@ -33,7 +33,8 @@ def write_json(data, path="data/epoch_data.json"):
             "dropout_rate": [],
             "loss_function": [],
             "epochs": [],
-            "batch_size": []
+            "batch_size": [],
+            "run": []
         }
     else:
         with open(path, "r") as file:
@@ -76,6 +77,38 @@ def clear_history(path="data/epoch_data.json"):
         file.write(epoch_list)
     return
 
+def revert_history(path="data/epoch_data.json"):
+    if not os.path.exists(path):
+        print("WARNING: file doesn't exists")
+        return
+    if os.stat(path).st_size == 0:
+        print("WARNING: file is empty")
+        return
+    with open(path, "r") as file:
+        epoch_list = json.load(file)
+    if len(epoch_list["run"]) == 0:
+        print("LOG: nothing to revert")
+        return
+    rev_epochs = epoch_list["run"].count(epoch_list["run"][-1])
+    for keys in epoch_list.keys():
+        epoch_list[keys] = epoch_list[keys][:-rev_epochs]
+    epoch_list = json.dumps(epoch_list, indent=4)
+    open(path, "w").close()
+    with open(path, "w") as file:
+        file.write(epoch_list)
+    return
+            
+def get_run_num(path="data/epoch_data.json"):
+    if not os.path.exists(path):
+        return 0
+    if os.stat(path).st_size == 0:
+        return 0
+    with open(path, "r") as file:
+        epoch_list = json.load(file)
+    if len(epoch_list["run"]) == 0:
+        return 0
+    return int(epoch_list["run"][-1])+1
+
 '''
     WARNING: File path should be relativ
     from where you start the program
@@ -97,14 +130,17 @@ if __name__ == "__main__":
 
     #test dictionary
     dictionary = {
-        "loss": 1,
-        "accuracy": random.randint(0,100),
-        "learning_rate": 1,
-        "momentum": 1,
-        "dropout_rate": 1,
-        "loss_function": 1,
-        "epochs": 1,
-        "batch_size": 1
+        "loss": "1",
+        "accuracy": str(random.randint(0,100)),
+        "train_loss" : "1",
+        "train_accuracy" : "1",
+        "learning_rate": "1",
+        "momentum": "1",
+        "dropout_rate": "1",
+        "loss_function": "1",
+        "epochs": "1",
+        "batch_size": "1",
+        "run": "1"
     }
     match int(sys.argv[1]):
         case 1:
@@ -116,3 +152,6 @@ if __name__ == "__main__":
         case -2:
             print("history cleared")
             clear_history()
+        case -3:
+            print("revert history")
+            revert_history()
