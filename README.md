@@ -1,5 +1,6 @@
 ## LINKS
 todos: https://docs.google.com/spreadsheets/d/128ToeKJUO-rZcMXk5bAOppTXJHs30mdFSz-yu5_1URE/edit#gid=0
+milestone presentation: https://docs.google.com/presentation/d/1SL-duqA5HIOCD0AuGBo_jJ9eiIqQ4VWo91K07jfmLDw/edit#slide=id.g25316d8211d_0_0
 
 ## IDEE
 
