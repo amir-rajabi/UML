@@ -93,14 +93,12 @@ socket.on('update_chart', function(data){
 
 selector1.addEventListener("change", function(event) {
   selected1 = event.target.value;
-  console.log('triggered1');
   updateChart(selected1, dia1);
   saveDataToSessionStorage();
 });
 
 selector2.addEventListener("change", function(event) {
   selected2 = event.target.value;
-  console.log('triggered2');
   updateChart(selected2, dia2);
   saveDataToSessionStorage();
 });

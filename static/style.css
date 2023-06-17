@@ -118,9 +118,6 @@ input, label, select, button{
     display: flex;
     justify-content: end;
 }
-#control-buttons :first-child {
-    margin-right: 2%;
-}
 
 #start{
     display: block;
@@ -128,7 +125,8 @@ input, label, select, button{
 #stop{
     display: none;
 }
-#revert{
+#revert, #redo{
+    margin-right: 2%;
     display: block;
 }
 #redo{

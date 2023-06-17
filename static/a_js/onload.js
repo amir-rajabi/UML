@@ -5,22 +5,29 @@ window.adjustments_data = adjustments;
 window.defaults_data = defaults
 window.chartData = chartData;
 window.historyData = history;
+var stop = document.getElementById('stop');
+var start = document.getElementById('start');
 
 var first_run_flag = 1;
+var storedData = sessionStorage.getItem('UML_DATA_PIEQ4');
 
 socket.on('connect', function() {
     console.log('Connected to server.');
+    start.removeAttribute('disabled','');
     startRestoring();
 });
 
 socket.on('disconnect', function() {
+    stop.style.display = 'none';
+    start.style.display = 'block';
+    start.setAttribute('disabled','');
     console.log('Disconnected from server');
+
     sessionStorage.removeItem('UML_DATA_PIEQ4');
 });
 
 function startRestoring() {
-    var storedData = sessionStorage.getItem('UML_DATA_PIEQ4');
-    
+ 
     if (storedData) {
         var xhr = new XMLHttpRequest();
         xhr.open('POST', '/getadjust', true);

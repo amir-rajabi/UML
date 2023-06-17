@@ -63,7 +63,7 @@ socket.on('training_finished', function(data){
     });
 
 
-function un_block_button(button) {
+export function un_block_button(button) {
     if (button.disabled) {
         button.removeAttribute('disabled');
     } 
