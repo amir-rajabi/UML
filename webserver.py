@@ -8,8 +8,12 @@ from ml_utils.training import start_training as train
 from ml_utils.json_write import clear_history, revert_history
 from multiprocessing import Process
 
+#for end_training
+from ml_utils.training import stop_training
+
 #for test_method
 from ml_utils.testing import test_drawing
+
 
 
 app = Flask(__name__)
@@ -98,7 +102,7 @@ def check_revert():
         shutil.copy("data/model_new.pt", "data/model.pt")
         print("LOG: NO REVERT")
 
-@app.route('/start', methods=['POST'])  # (frontend is getting adjustments) 
+@app.route('/start', methods=['POST'])
 def start():
     print("LOG: RECEIVED TO RUN: " +str(adj))
     if testing_flag:
@@ -109,22 +113,11 @@ def start():
     start_training_dict(adj)
     return response
 
-#TODO: STOP TRAINING IF ONE IS RUNNING
-def stop_training():
-   
 
-   print('LOG: STOPPED')
-
-
-#TODO: make stop work
-#   likely should be done by lockfiles 
-#   and training checking for said lockfile, unlocking
-#   and posting update '-1'
-#   or maybe pass a variable that training and flask has access to
-@app.route('/stop', methods=['POST'])  # (frontend is getting adjustments) 
+@app.route('/stop', methods=['POST'])  
 def stop():
     print("LOG: STOP PRESSED")
-    stop_training();
+    stop_training()
     return response
 
 
@@ -132,7 +125,7 @@ def stop():
 #GOTO: start() -> check_revert()
 #this function will only set the Flag 
 #the action of reverting is done in check_revert
-@app.route('/revert', methods=['POST'])  # (frontend is getting adjustments) 
+@app.route('/revert', methods=['POST'])
 def revert():
     #TODO: add signal to update chart in JS
     global config_revert
@@ -140,7 +133,7 @@ def revert():
     print("LOG: REVERT PRESSED")
     return response
 
-@app.route('/redo', methods=['POST'])  # (frontend is getting adjustments) 
+@app.route('/redo', methods=['POST'])
 def redo():
     global config_revert
     config_revert = False
@@ -188,7 +181,7 @@ def handle_connect():
 
 @socketio.on('disconnect')
 def handle_disconnect():
-    stop_training();
+    stop_training()
     print('Client disconnected')
 
 if __name__ == '__main__':

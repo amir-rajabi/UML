@@ -19,6 +19,8 @@ from ml_utils.model import ConvolutionalNeuralNetwork
 from ml_utils.json_write import write_json, get_run_num
 
 loss = [F.cross_entropy, F.multi_margin_loss, F.nll_loss]
+stop_flag = False
+
 
 def train_step(model: Module, optimizer: Optimizer, data: Tensor,
                target: Tensor, cuda: bool, loss_func):
@@ -56,6 +58,12 @@ def train_step(model: Module, optimizer: Optimizer, data: Tensor,
     optimizer.step()
     optimizer.zero_grad()
 
+    if stop_flag:
+        # Bereinigen Sie den Gradienten und beenden Sie das Training
+        optimizer.zero_grad()
+        return
+
+
 
 def training(chart_data, socketio, dictionary, model: Module,
             optimizer: Optimizer,
@@ -70,12 +78,8 @@ def training(chart_data, socketio, dictionary, model: Module,
             data, target = batch
             train_step(model=model, optimizer=optimizer, cuda=cuda, data=data,
                        target=target, loss_func=loss_func)
-            #TODO: check for interrupt (probably a interrupt.lock)
-            #TODO: break loop
-            #if INTERRUPTPRESENT:
-            #   break
-            # this will break the nested loop, there is no need
-            # to break outer loop, see for ... else: structure
+            if stop_flag:
+                break
         else:
             #this else statement makes it so
             #that if an interrupt is send this block will not
@@ -135,6 +139,10 @@ def start_training(data, socketio, params):
     model = init_model(model)
     opt = SGD(model.parameters(), lr=float(params["learning_rate"]), 
               momentum=float(params["momentum"]))
+    
+    global stop_flag
+    stop_flag = False
+    
     training(
         data,
         socketio,
@@ -146,3 +154,8 @@ def start_training(data, socketio, params):
         batch_size=int(params["batch_size"]),
         loss_func=loss[int(params["loss_function"])]
     )
+
+def stop_training():
+    global stop_flag 
+    stop_flag = True
+    print('LOG: STOPPED')
