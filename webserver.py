@@ -5,7 +5,8 @@ import base64, io, os, sys, time, threading, json, webbrowser, shutil
 
 #for start_training method
 from ml_utils.training import start_training as train
-from ml_utils.json_write import clear_history, revert_history
+from ml_utils.json_write import clear_history as clear
+from ml_utils.json_write import revert_history
 from multiprocessing import Process
 
 #for end_training
@@ -44,7 +45,7 @@ adj = {
 response = ""
 
 #loads history
-def init_data():
+def update_data():
     try:
         with open("data/epoch_data.json", "r") as file:
             history = json.load(file)
@@ -89,9 +90,11 @@ def sendingAdjustments():
     return jsonify({'response': response})
 
 def check_revert():
+    global config_revert
     if config_revert:
         revert_history()
-        init_data()
+        update_data()
+        config_revert = False
         print("LOG: TRAINING OLD REVERTED MODEL")
         return
     elif os.path.exists("data/model_new.pt"):
@@ -145,13 +148,12 @@ def redo():
 #   this is basicly 2 lines of code at max
 @app.route('/clear_history', methods=['POST']) 
 def clear_history():
-   print("LOG: CLEAR HISTORY")
-
-   return response
+    print("LOG: CLEAR HISTORY")
+    return response
 
 
 @app.route('/predict_drawing', methods=['POST'])
-def predict_drawing():
+def predict_drawing(config_revert):
     data = request.get_json()
     image_data = data['image_data']   
     image_bytes = base64.b64decode(image_data.split(',')[1])
@@ -175,7 +177,7 @@ def handle_connect():
         testing_flag = True
         print("LOG: testing mode")
 
-    init_data()
+    update_data()
     print("Connected to client.")
     socketio.emit('update_chart', {'data': data})
 

@@ -58,12 +58,6 @@ def train_step(model: Module, optimizer: Optimizer, data: Tensor,
     optimizer.step()
     optimizer.zero_grad()
 
-    if stop_flag:
-        # Bereinigen Sie den Gradienten und beenden Sie das Training
-        optimizer.zero_grad()
-        return
-
-
 
 def training(chart_data, socketio, dictionary, model: Module,
             optimizer: Optimizer,
@@ -103,21 +97,21 @@ def training(chart_data, socketio, dictionary, model: Module,
             dictionary["train_accuracy"] = str(train_accuracy)
             dictionary["run"]=str(run_index)
             write_json(dictionary,path="data/epoch_data.json")
-            print(f'LOG: epoch={epoch}, train accuracy={train_accuracy}, train loss={train_loss}')
-            print(f'LOG: epoch={epoch}, test accuracy={test_accuracy}, test loss={test_loss}')
+            global_epoch = len(chart_data["d1"])
+            print(f'LOG: epoch={global_epoch}, train accuracy={train_accuracy}, train loss={train_loss}')
+            print(f'LOG: epoch={global_epoch}, test accuracy={test_accuracy}, test loss={test_loss}')
+            torch.save(model.state_dict(), 'data/model_new.pt')
+            print("LOG: model written")
             continue
         print('LOG: breaking double loop')
         break
     if cuda:
         empty_cache()
-    torch.save(model.state_dict(), 'data/model_new.pt')
-    print("LOG: TRAINING FINISHED")
+    if stop_flag:
+        print("LOG: interrupt successful")
+    else:
+        print("LOG: TRAINING FINISHED")
     socketio.emit('training_finished', {'data':chart_data})
-    print("LOG: model written")
-
-    #weights_m=model.get_weights()
-    #for i in range(8):
-    #    print(weights_m[i].shape)
 
 def init_model(model):
     if os.path.exists("data/model.pt"):
@@ -155,6 +149,7 @@ def start_training(data, socketio, params):
         loss_func=loss[int(params["loss_function"])]
     )
 
+#is called by frontend when interrupt ist set
 def stop_training():
     global stop_flag 
     stop_flag = True
