@@ -70,7 +70,7 @@ def clear_history(path="data/epoch_data.json"):
     with open(path, "r") as file:
         epoch_list = json.load(file)
     for i in epoch_list.keys():
-        epoch_list[i] = epoch_list[i][-1:]
+        epoch_list[i] = []
     epoch_list = json.dumps(epoch_list, indent=4)
     open(path, "w").close()
     with open(path, "w") as file:

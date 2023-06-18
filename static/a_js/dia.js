@@ -91,7 +91,7 @@ socket.on('update_chart', function(data){
   if (chartData.d1.length > 0 && !storedData && first_alert==0){
     first_alert = 1;
     createAlert(1,'Found and restored old data. If you want to delete it <button style="height:inherit; padding: 0; border: none; text-decoration: underline" type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#resetModal">click here</button>')
-  }
+  } else{first_alert = 1;}
 
   updateChart(selected1, dia1);
   updateChart(selected2, dia2);

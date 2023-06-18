@@ -143,9 +143,6 @@ def redo():
     print("LOG: REDO PRESSED")
     return response
 
-
-#TODO: already has an interface in json_write.py
-#   this is basicly 2 lines of code at max
 @app.route('/clear_history', methods=['POST']) 
 def clear_history_data():
     clear()
@@ -153,7 +150,6 @@ def clear_history_data():
     socketio.emit('update_chart', {'data':data})
     print("LOG: CLEAR HISTORY")
     return response
-
 
 @app.route('/predict_drawing', methods=['POST'])
 def predict_drawing(config_revert):
