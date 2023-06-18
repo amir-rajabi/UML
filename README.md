@@ -1,5 +1,6 @@
 ## LINKS
 todos: https://docs.google.com/spreadsheets/d/128ToeKJUO-rZcMXk5bAOppTXJHs30mdFSz-yu5_1URE/edit#gid=0
+
 milestone presentation: https://docs.google.com/presentation/d/1SL-duqA5HIOCD0AuGBo_jJ9eiIqQ4VWo91K07jfmLDw/edit#slide=id.g25316d8211d_0_0
 
 ## IDEE
@@ -39,18 +40,23 @@ Zur Verwendung muss flask installiert sein. Navigiere dazu in deine conda-Umgebu
 ```
 pip install flask flask_socketio
 ```
-Alternativ die Umgebung mithilfe der env.yml aktualisieren:
+So erstellst du eine kompatible conda-Umgebung:
 
 1. 
 ```
-conda activate UML
+conda env create -f env.yml
 ```
 2. 
 ```
-conda env update --file env.yml
+conda activate UML
+```
+3. 
+```
+python3 backend.py
 ```
 
 ## JAVASCRIPT und deren Erweiterungen
+Um die Erweiterungen zu benutzen werden diese in der directory ``static/node_modules`` aktuell gehalten.
 
 ### chart.js
 Als Darstellung der Daten kann chart.js verwendet werden. Es ist eine gut zu bedienendes und sehr anpassbare Bibliothek zur Erstellung von Diagrammen jeglicher Art. Graphen von Chart.js sind im laufenden Prozess aktualisierbar.

@@ -1,4 +1,6 @@
-import {chartData, socket} from './data.js';
+import {chartData, socket, storedData} from './data.js';
+import {createAlert} from './alerts.js';
+
 window.chartData = chartData;
 window.socket = socket;
 
@@ -78,12 +80,18 @@ const dia2 = new Chart(
 );
 
 //--------------- updater ---------------//
+var first_alert = 0;
 
 socket.on('update_chart', function(data){
   chartData.d1 = data.data.d1;
   chartData.d2 = data.data.d2;
   chartData.d3 = data.data.d3;
   chartData.d4 = data.data.d4;
+
+  if (chartData.d1.length > 0 && !storedData && first_alert==0){
+    first_alert = 1;
+    createAlert(1,'Found and restored old data. If you want to delete it <button style="height:inherit; padding: 0; border: none; text-decoration: underline" type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#resetModal">click here</button>')
+  }
 
   updateChart(selected1, dia1);
   updateChart(selected2, dia2);

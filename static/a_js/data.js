@@ -1,5 +1,7 @@
 export var socket = io();
 
+export var storedData = sessionStorage.getItem('UML_DATA_PIEQ4');
+
 export var adjustments = {
     learning_rate: null,
     momentum: null,

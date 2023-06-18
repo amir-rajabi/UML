@@ -1,5 +1,5 @@
-import { adjustments, chartData, history, updateAdjustments, socket, defaults, restoreAllAdjustments } from './data.js';
-import { sendAdjustments } from './send.js';
+import {adjustments, chartData, history, updateAdjustments, socket, defaults, restoreAllAdjustments, storedData} from './data.js';
+import {sendAdjustments} from './send.js';
 
 window.adjustments_data = adjustments;
 window.defaults_data = defaults
@@ -9,7 +9,6 @@ var stop = document.getElementById('stop');
 var start = document.getElementById('start');
 
 var first_run_flag = 1;
-var storedData = sessionStorage.getItem('UML_DATA_PIEQ4');
 
 socket.on('connect', function() {
     console.log('Connected to server.');
