@@ -12,7 +12,7 @@ from ml_utils.json_write import clear_history as clear
 from ml_utils.json_write import revert_history, verify_data, empty_missing_file
 from ml_utils.training import stop_training
 from ml_utils.testing import test_drawing
-from ml_utils.print_t import print_t
+from ml_utils.print_overwrite import print
 
 #---------------------- VARIABLES ----------------------#
 
@@ -78,9 +78,9 @@ def check_revert():
         else:
             #send this to frontend
             #socketio.emit('error', {'error': 'nothing to revert'})
-            print_t("LOG: nothing to revert")
+            print("LOG: nothing to revert")
         config_revert = False
-        print_t("LOG: TRAINING OLD REVERTED MODEL")
+        print("LOG: TRAINING OLD REVERTED MODEL")
         return
     elif os.path.exists("data/model_new.pt"):
         #aktualisiert das model
@@ -88,7 +88,7 @@ def check_revert():
         #model_new.pt is for the new one
         #that will be written into by trianing
         shutil.copy("data/model_new.pt", "data/model.pt")
-        print_t("LOG: NO REVERT")
+        print("LOG: NO REVERT")
 
 def sendAlert(style, content):
     data = {
@@ -121,11 +121,11 @@ def sendingAdjustments():
 
 @app.route('/start', methods=['POST'])
 def start():
-    print_t("LOG: RECEIVED TO RUN: " +str(adj))
+    print("LOG: RECEIVED TO RUN: " +str(adj))
     if testing_flag:
-        print_t("LOG: testing; training skipped")
+        print("LOG: testing; training skipped")
         return response
-    print_t("LOG: STARTING TRAINING")
+    print("LOG: STARTING TRAINING")
     check_revert()
     update_data()
     socketio.emit('update_chart', {'data':data})
@@ -134,7 +134,7 @@ def start():
 
 @app.route('/stop', methods=['POST'])  
 def stop():
-    print_t("LOG: STOP PRESSED")
+    print("LOG: STOP PRESSED")
     stop_training()
     return response
 
@@ -148,14 +148,14 @@ def revert():
     # this still applies. see fork graph
     global config_revert
     config_revert = True
-    print_t("LOG: REVERT PRESSED")
+    print("LOG: REVERT PRESSED")
     return response
 
 @app.route('/redo', methods=['POST'])
 def redo():
     global config_revert
     config_revert = False
-    print_t("LOG: REDO PRESSED")
+    print("LOG: REDO PRESSED")
     return response
 
 @app.route('/clear_history', methods=['POST']) 
@@ -163,7 +163,7 @@ def clear_history_data():
     clear()
     update_data()
     socketio.emit('update_chart', {'data':data})
-    print_t("LOG: CLEAR HISTORY")
+    print("LOG: CLEAR HISTORY")
     return response
 
 @app.route('/predict_drawing', methods=['POST'])
@@ -192,18 +192,18 @@ def handle_connect():
     if len(sys.argv) == 2:
         global testing_flag
         testing_flag = True
-        print_t("LOG: testing mode")
+        print("LOG: testing mode")
 
     verify_data()
     update_data()
-    print_t("Connected to client.")
+    print("Connected to client.")
     socketio.emit('update_chart', {'data': data})
 
 @socketio.on('disconnect')
 def handle_disconnect():
     stop_training()
-    print_t('Client disconnected')
+    print('Client disconnected')
 
 if __name__ == '__main__':
-    print_t('App started')
+    print('App started')
     socketio.run(app, host='127.0.0.1', port=5001, debug=False)

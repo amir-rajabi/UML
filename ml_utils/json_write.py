@@ -4,9 +4,9 @@ import sys
 import random
 
 if __name__ == "__main__":
-    from print_t import print_t
+    from print_overwrite import print
 else:
-    from ml_utils.print_t import print_t
+    from ml_utils.print_overwrite import print
 
 
 #dictionary for testing and verifying
@@ -59,7 +59,7 @@ def write_json(data, path="data/epoch_data.json"):
     json_object = json.dumps(listObj, indent=4)
     with open(path,"w") as file:
         file.write(json_object)
-    print_t("LOG: WRITE SUCCESS")
+    print("LOG: WRITE SUCCESS")
 
 
 '''
@@ -94,7 +94,7 @@ def revert_history(path="data/epoch_data.json"):
     with open(path, "r") as file:
         epoch_list = json.load(file)
     if len(epoch_list["run"]) == 0:
-        print_t("LOG: nothing to revert")
+        print("LOG: nothing to revert")
         return 0
     rev_epochs = epoch_list["run"].count(epoch_list["run"][-1])
     for keys in epoch_list.keys():
@@ -119,10 +119,10 @@ def get_run_num(path="data/epoch_data.json"):
 def empty_missing_file(path="data/epoch_data.json"):
     if not os.path.exists(path):
         open(path, "w").close()
-        print_t("WARNING: file was missing")
+        print("WARNING: file was missing")
         return 1
     if os.stat(path).st_size ==0:
-        print_t("WARNING: file is empty")
+        print("WARNING: file is empty")
         return 1
     return 0
 
@@ -157,7 +157,7 @@ def verify_data(path="data/epoch_data.json"):
             raise Exception("ERROR: json corrupted; missing key")
             return 1
 
-    print_t("LOG: verifying data SUCCESS!")
+    print("LOG: verifying data SUCCESS!")
 
 
 '''
@@ -182,17 +182,17 @@ if __name__ == "__main__":
     #test dictionary
     match int(sys.argv[1]):
         case 2:
-            print_t("LOG: verifying data")
+            print("LOG: verifying data")
             verify_data()
         case 1:
-            print_t("LOG: trying to write data")
+            print("LOG: trying to write data")
             write_json(dictionary)
         case -1:
-            print_t("LOG: file cleared")
+            print("LOG: file cleared")
             clear_file()
         case -2:
-            print_t("LOG: history cleared")
+            print("LOG: history cleared")
             clear_history()
         case -3:
-            print_t("LOG: revert history")
+            print("LOG: revert history")
             revert_history()

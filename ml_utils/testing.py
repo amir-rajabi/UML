@@ -3,7 +3,7 @@ import torch
 from torchvision import transforms
 from ml_utils.model import ConvolutionalNeuralNetwork
 import os
-from ml_utils.print_t import print_t
+from ml_utils.print_overwrite import print
 
 def test_drawing(revert):
     # Lade das trainierte Modell
@@ -13,7 +13,7 @@ def test_drawing(revert):
     elif os.path.exists('data/model.pt'):
         model.load_state_dict(torch.load('data/model.pt'))
     else: 
-        print_t("LOG: there is no model to evaluate")
+        print("LOG: there is no model to evaluate")
 
     model.eval()
 
