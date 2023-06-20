@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .alert-dialog {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #f8f8f8;
+      padding: 20px;
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      z-index: 9999;
+    }
+    
+    .alert-dialog h2 {
+      margin-top: 0;
+    }
+    
+    .alert-dialog p {
+      margin-bottom: 10px;
+    }
+    
+    .alert-dialog label {
+      display: block;
+      margin-bottom: 10px;
+    }
+    
+    .alert-dialog button {
+      margin-top: 10px;
+    }
+  </style>
+  <script>
+    function showAlertWindow() {
+      var hideAlert = sessionStorage.getItem("hideAlert");
+      if (hideAlert === "true") {
+        return;
+      }
+      var dialogContent = `
+        <div class="alert-dialog">
+          <h2>Alert</h2>
+          <p>xyz happens when you do this.</p>
+          <label>
+            <input type="checkbox" id="checkbox"> Do not show alert again
+          </label>
+          <button onclick="closeAlertDialog()">OK</button>
+        </div>
+      `;
+      document.body.insertAdjacentHTML("beforeend", dialogContent);
+    }
+
+    function closeAlertDialog() {
+      var checkbox = document.getElementById("checkbox");
+      if (checkbox.checked) {
+        sessionStorage.setItem("hideAlert", "true");
+      }
+
+      var dialog = document.querySelector(".alert-dialog");
+      if (dialog) {
+        dialog.remove();
+      }
+    }
+    window.onbeforeunload = function() {
+      sessionStorage.clear();
+    };
+  </script>
+</head>
+<body>
+  <button onclick="showAlertWindow()">xyz</button>
+</body>
+</html>
