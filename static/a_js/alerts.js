@@ -1,4 +1,12 @@
+import {socket} from './data.js'
+
 var alertCounter = 1;
+
+socket.on('sendAlert', function (data) {
+  var style = data.data.style;
+  var content = data.data.content;
+  createAlert(style, content);
+});
 
 export function createAlert(style, content) {
   var alertDiv = document.createElement("div");

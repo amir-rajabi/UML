@@ -1,3 +1,5 @@
+#---------------------- IMPORT ----------------------#
+
 from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO
 from PIL import Image
@@ -15,7 +17,7 @@ from ml_utils.training import stop_training
 #for test_method
 from ml_utils.testing import test_drawing
 
-
+#---------------------- VARIABLES ----------------------#
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -44,6 +46,8 @@ adj = {
 }
 response = ""
 
+#---------------------- FUNCTIONS ----------------------#
+
 #loads history
 def update_data():
     try:
@@ -59,7 +63,6 @@ def update_data():
     return
 
 #starts training in ml_utils.training.py with parameters
-
 def start_training_dict(params):
     #NOTE: what to do with sesed?
     # should it be chooseable or rolled randomly each time?
@@ -67,27 +70,6 @@ def start_training_dict(params):
     worker_process = threading.Thread(target=train, args=[data, socketio, params.copy()])
     worker_process.start()
     return
-
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-
-@app.route('/sendadjust', methods=['POST'])   # (frontend is sending adjustments) 
-def gettingAdjustments():
-  if request.method == 'POST':
-    data = request.get_json()   
-    for key, value in data.items():
-      if key in adj:
-        adj[key] = value
-    return response
-
-@app.route('/getadjust', methods=['POST'])  # (frontend is getting adjustments) 
-def sendingAdjustments():
-  print('\n DATA WIRD AUFGERUFEN', adj)
-  if request.method == 'POST':
-    response = adj;
-    return jsonify({'response': response})
 
 def check_revert():
     global config_revert
@@ -105,6 +87,35 @@ def check_revert():
         shutil.copy("data/model_new.pt", "data/model.pt")
         print("LOG: NO REVERT")
 
+def sendAlert(style, content):
+    data = {
+        'style': style,
+        'content': content
+    }
+    socketio.emit('sendAlert', {'data':data})   
+
+#---------------------- APP ROUTES FLASK ----------------------#
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/sendadjust', methods=['POST'])   # (frontend is sending adjustments) 
+def gettingAdjustments():
+  if request.method == 'POST':
+    data = request.get_json()   
+    for key, value in data.items():
+      if key in adj:
+        adj[key] = value
+    return response
+
+@app.route('/getadjust', methods=['POST'])  # (frontend is getting adjustments) 
+def sendingAdjustments():
+  print('\n DATA WIRD AUFGERUFEN', adj)
+  if request.method == 'POST':
+    response = adj;
+    return jsonify({'response': response})
+
 @app.route('/start', methods=['POST'])
 def start():
     print("LOG: RECEIVED TO RUN: " +str(adj))
@@ -115,7 +126,6 @@ def start():
     check_revert()
     start_training_dict(adj)
     return response
-
 
 @app.route('/stop', methods=['POST'])  
 def stop():
@@ -164,6 +174,9 @@ def predict_drawing(config_revert):
 
     return jsonify({'prediction': int(prediction)})
 
+
+#----------------------------------------------------------------#
+
 # start server & websocket connection 
 # any init stuff can be put here
 @socketio.on('connect')
@@ -189,4 +202,3 @@ if __name__ == '__main__':
     print('App started')
     # webbrowser.open('http://localhost:5001')
     socketio.run(app, host='127.0.0.1', port=5001, debug=False)
-    
