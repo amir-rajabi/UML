@@ -114,7 +114,7 @@ def gettingAdjustments():
 
 @app.route('/getadjust', methods=['POST'])  # (frontend is getting adjustments) 
 def sendingAdjustments():
-  print('\n DATA WIRD AUFGERUFEN', adj)
+  print('\n DATA WIRD AUFGERUFEN'+ str(adj))
   if request.method == 'POST':
     response = adj;
     return jsonify({'response': response})
