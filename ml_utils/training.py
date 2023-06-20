@@ -16,7 +16,8 @@ from flask_socketio import SocketIO
 from ml_utils.data import get_data_loaders
 from ml_utils.evaluate import accuracy
 from ml_utils.model import ConvolutionalNeuralNetwork
-from ml_utils.json_write import write_json, get_run_num
+from ml_utils.json_write import write_json, get_run_num 
+from ml_utils.print_t import print_t
 
 loss = [F.cross_entropy, F.multi_margin_loss, F.nll_loss]
 stop_flag = False
@@ -35,14 +36,14 @@ def train_step(model: Module, optimizer: Optimizer, data: Tensor,
     #   depending on the loss function
 
     #NOTE: for testing other loss functions
-    #print("Target\n")
-    #print(target)
-    #print(target.size())
-    #print("Prediction\n")
-    #print(prediction)
-    #print(prediction.size())
+    #print_t("Target\n")
+    #print_t(target)
+    #print_t(target.size())
+    #print_t("Prediction\n")
+    #print_t(prediction)
+    #print_t(prediction.size())
     #time.sleep(30)
-    #print("batch")
+    #print_t("batch")
 
     #NOTE: likely needs one_hot_encoding
     #loss = F.multilabel_margin_loss(prediction, target)
@@ -63,6 +64,7 @@ def training(chart_data, socketio, dictionary, model: Module,
             optimizer: Optimizer,
             cuda: bool, n_epochs: int,
             batch_size: int, loss_func):
+    global_epoch=len(chart_data["d1"])
     run_index = get_run_num()
     train_loader, test_loader = get_data_loaders(batch_size=batch_size)
     if cuda:
@@ -89,7 +91,7 @@ def training(chart_data, socketio, dictionary, model: Module,
             chart_data['d3'].append(train_accuracy)
             chart_data['d4'].append(train_loss)
             socketio.emit('update_chart', {'data':chart_data})
-            print("LOG: update chart")
+            print_t("LOG: update chart")
 
             dictionary["loss"] = str(test_loss)
             dictionary["accuracy"] = str(test_accuracy)
@@ -97,26 +99,26 @@ def training(chart_data, socketio, dictionary, model: Module,
             dictionary["train_accuracy"] = str(train_accuracy)
             dictionary["run"]=str(run_index)
             write_json(dictionary,path="data/epoch_data.json")
-            global_epoch = len(chart_data["d1"])
-            print(f'LOG: epoch={global_epoch}, train accuracy={train_accuracy}, train loss={train_loss}')
-            print(f'LOG: epoch={global_epoch}, test accuracy={test_accuracy}, test loss={test_loss}')
+            curr_glob_epoch = len(chart_data["d1"])
+            print_t(f'LOG: epoch={curr_glob_epoch}/{global_epoch+n_epochs}, train accuracy={train_accuracy}, train loss={train_loss}')
+            print_t(f'LOG: epoch={curr_glob_epoch}/{global_epoch+n_epochs}, test accuracy={test_accuracy}, test loss={test_loss}')
             torch.save(model.state_dict(), 'data/model_new.pt')
-            print("LOG: model written")
+            print_t("LOG: model written")
             continue
-        print('LOG: breaking double loop')
+        print_t('LOG: breaking double loop')
         break
     if cuda:
         empty_cache()
     if stop_flag:
-        print("LOG: interrupt successful")
+        print_t("LOG: interrupt successful")
     else:
-        print("LOG: TRAINING FINISHED")
+        print_t("LOG: TRAINING FINISHED")
     socketio.emit('training_finished', {'data':chart_data})
 
 def init_model(model):
     if os.path.exists("data/model.pt"):
         model.load_state_dict(torch.load("data/model.pt"))
-        print("LOG: model loaded")
+        print_t("LOG: model loaded")
     return model
 
 
@@ -126,7 +128,7 @@ def init_model(model):
 #that will be updated by training
 def start_training(data, socketio, params):
     #seed = random.randint(0,100)
-    seed = 0
+    seed = ((len(data["run"]) << 3)*31)%256
     manual_seed(seed)
     np.random.seed(seed)
     model = ConvolutionalNeuralNetwork(float(params["dropout_rate"]))
@@ -153,4 +155,4 @@ def start_training(data, socketio, params):
 def stop_training():
     global stop_flag 
     stop_flag = True
-    print('LOG: STOPPED')
+    print_t('LOG: STOPPED')

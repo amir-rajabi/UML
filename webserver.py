@@ -4,18 +4,15 @@ from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO
 from PIL import Image
 import base64, io, os, sys, time, threading, json, webbrowser, shutil
+from multiprocessing import Process
 
 #for start_training method
 from ml_utils.training import start_training as train
 from ml_utils.json_write import clear_history as clear
-from ml_utils.json_write import revert_history
-from multiprocessing import Process
-
-#for end_training
+from ml_utils.json_write import revert_history, verify_data, empty_missing_file
 from ml_utils.training import stop_training
-
-#for test_method
 from ml_utils.testing import test_drawing
+from ml_utils.print_t import print_t
 
 #---------------------- VARIABLES ----------------------#
 
@@ -50,11 +47,12 @@ response = ""
 
 #loads history
 def update_data():
-    try:
-        with open("data/epoch_data.json", "r") as file:
-            history = json.load(file)
-    except:
+    if empty_missing_file():
+        for key in data.keys():
+            data[key] = []
         return
+    with open("data/epoch_data.json", "r") as file:
+        history = json.load(file)
     data["d1"] = history["accuracy"]
     data["d2"] = history["loss"]
     data["d3"] = history["train_accuracy"]
@@ -74,10 +72,15 @@ def start_training_dict(params):
 def check_revert():
     global config_revert
     if config_revert:
-        revert_history()
-        update_data()
+        if os.path.exists("data/model_new.pt"):
+            revert_history()
+            os.remove("data/model_new.pt")
+        else:
+            #send this to frontend
+            #socketio.emit('error', {'error': 'nothing to revert'})
+            print_t("LOG: nothing to revert")
         config_revert = False
-        print("LOG: TRAINING OLD REVERTED MODEL")
+        print_t("LOG: TRAINING OLD REVERTED MODEL")
         return
     elif os.path.exists("data/model_new.pt"):
         #aktualisiert das model
@@ -85,7 +88,7 @@ def check_revert():
         #model_new.pt is for the new one
         #that will be written into by trianing
         shutil.copy("data/model_new.pt", "data/model.pt")
-        print("LOG: NO REVERT")
+        print_t("LOG: NO REVERT")
 
 def sendAlert(style, content):
     data = {
@@ -118,39 +121,41 @@ def sendingAdjustments():
 
 @app.route('/start', methods=['POST'])
 def start():
-    print("LOG: RECEIVED TO RUN: " +str(adj))
+    print_t("LOG: RECEIVED TO RUN: " +str(adj))
     if testing_flag:
-        print("LOG: testing; training skipped")
+        print_t("LOG: testing; training skipped")
         return response
-    print("LOG: STARTING TRAINING")
+    print_t("LOG: STARTING TRAINING")
     check_revert()
+    update_data()
+    socketio.emit('update_chart', {'data':data})
     start_training_dict(adj)
     return response
 
 @app.route('/stop', methods=['POST'])  
 def stop():
-    print("LOG: STOP PRESSED")
+    print_t("LOG: STOP PRESSED")
     stop_training()
     return response
 
 
-#TODO: make revert work
 #GOTO: start() -> check_revert()
 #this function will only set the Flag 
 #the action of reverting is done in check_revert
 @app.route('/revert', methods=['POST'])
 def revert():
     #TODO: add signal to update chart in JS
+    # this still applies. see fork graph
     global config_revert
     config_revert = True
-    print("LOG: REVERT PRESSED")
+    print_t("LOG: REVERT PRESSED")
     return response
 
 @app.route('/redo', methods=['POST'])
 def redo():
     global config_revert
     config_revert = False
-    print("LOG: REDO PRESSED")
+    print_t("LOG: REDO PRESSED")
     return response
 
 @app.route('/clear_history', methods=['POST']) 
@@ -158,11 +163,11 @@ def clear_history_data():
     clear()
     update_data()
     socketio.emit('update_chart', {'data':data})
-    print("LOG: CLEAR HISTORY")
+    print_t("LOG: CLEAR HISTORY")
     return response
 
 @app.route('/predict_drawing', methods=['POST'])
-def predict_drawing(config_revert):
+def predict_drawing():
     data = request.get_json()
     image_data = data['image_data']   
     image_bytes = base64.b64decode(image_data.split(',')[1])
@@ -170,7 +175,7 @@ def predict_drawing(config_revert):
     new_img = Image.new('RGB', img.size, 'black')
     new_img.paste(img, (0, 0), img)
     new_img.save('static/img.jpg', 'jpeg')
-    prediction = test_drawing()
+    prediction = test_drawing(config_revert)
 
     return jsonify({'prediction': int(prediction)})
 
@@ -187,18 +192,18 @@ def handle_connect():
     if len(sys.argv) == 2:
         global testing_flag
         testing_flag = True
-        print("LOG: testing mode")
+        print_t("LOG: testing mode")
 
+    verify_data()
     update_data()
-    print("Connected to client.")
+    print_t("Connected to client.")
     socketio.emit('update_chart', {'data': data})
 
 @socketio.on('disconnect')
 def handle_disconnect():
     stop_training()
-    print('Client disconnected')
+    print_t('Client disconnected')
 
 if __name__ == '__main__':
-    print('App started')
-    # webbrowser.open('http://localhost:5001')
+    print_t('App started')
     socketio.run(app, host='127.0.0.1', port=5001, debug=False)

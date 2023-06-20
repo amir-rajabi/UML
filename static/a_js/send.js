@@ -30,7 +30,6 @@ start.addEventListener('click', function(){
 stop.addEventListener('click', function(){
     start.style.display = 'block';
     stop.style.display = 'none';
-    un_block_button(revert);
     var xhr = new XMLHttpRequest();
     xhr.open('POST', '/stop', true);
     xhr.setRequestHeader('Content-Type', 'application/json');

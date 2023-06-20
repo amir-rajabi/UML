@@ -7,3 +7,5 @@ model.pt
 model_new.pt
 output.txt
 legacy_json_write.py
+temp
+DEV.conf
