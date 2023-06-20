@@ -39,7 +39,7 @@ button{
 }
 .settings-contents{
     max-height: 80vh;
-    overflow: scroll;
+    /* overflow: scroll; */
 }
 input, label, select, button{
     cursor: pointer;
@@ -173,6 +173,7 @@ input, label, select, button{
 }
 .adjust-input-ctr{
     margin-bottom: 10%;
+    position: relative;
 }
 .adjust-input{
     margin-top: 2%;
@@ -284,4 +285,47 @@ thead th{
 #drawingcanvas {
     border: 1px solid white;
     background-color: black;
+}
+
+
+/*------- explanation help boxes -------*/
+
+.learning-qm:hover + .help-tip-learning{
+    display: block;
+}
+
+.momentum-qm:hover + .help-tip-momentum{
+    display: block;
+}
+
+.dropout-qm:hover + .help-tip-dropout{
+    display: block;
+}
+
+.loss-qm:hover + .help-tip-loss{
+    display: block;
+}
+
+.epochs-qm:hover + .help-tip-epochs{
+    display: block;
+}
+
+.batch-qm:hover + .help-tip-batch{
+    display: block;
+}
+
+.help-tip{
+    display: none;
+    text-align: center;
+    position: absolute;
+    top: 30px;
+    z-index: 1000;
+    background-color: #1E2021;
+    padding: 20px;
+    width: 300px;
+    border-radius: 20px;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+    color: #FFF;
+    font-size: 13px;
+    line-height: 1.4;
 }
