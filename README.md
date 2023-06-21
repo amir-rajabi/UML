@@ -52,7 +52,7 @@ conda activate UML
 ```
 3. 
 ```
-python3 backend.py
+python3 webserver.py
 ```
 
 ## JAVASCRIPT und deren Erweiterungen
