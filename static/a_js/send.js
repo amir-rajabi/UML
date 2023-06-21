@@ -14,11 +14,10 @@ var stop = document.getElementById('stop');
 var revert = document.getElementById('revert');
 var redo = document.getElementById('redo');
 
-
 start.addEventListener('click', function(){
     revert.style.display = 'block';
     redo.style.display = 'none';
-    un_block_button(revert);
+    block_button(revert, true);
     start.style.display = 'none';
     stop.style.display = 'block';
     var xhr = new XMLHttpRequest();
@@ -56,17 +55,30 @@ redo.addEventListener('click', function(){
 
 
 socket.on('training_finished', function(data){
-    un_block_button(revert);
+    block_button(revert, false);
     start.style.display = 'block';
     stop.style.display = 'none';
     });
 
+socket.on('revert_allowed', function(data){
+    if (data == true){
+        block_button(revert, false);
+    }
+});
 
-export function un_block_button(button) {
-    if (button.disabled) {
-        button.removeAttribute('disabled');
-    } 
-    else {
-        button.setAttribute('disabled','');
+export function block_button(button, block) {
+    if (block == true) {
+        console.log('true');
+        if (!button.disabled){
+            console.log('not diabled to disabled');
+            button.setAttribute('disabled','');
+        }
+    }
+    else if (block == false) {
+        console.log('false');
+        if (button.disabled){
+            console.log('disabled to not disabled');
+            button.removeAttribute('disabled');
+        }
     }
 }

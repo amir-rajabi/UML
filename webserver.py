@@ -44,6 +44,9 @@ adj = {
 response = ""
 
 #---------------------- FUNCTIONS ----------------------#
+def checkRevert(): #if revert is allowed, tell frontend
+    if os.path.exists("data/model_new.pt"):
+        socketio.emit('revert_allowed', True)
 
 #loads history
 def update_data():
@@ -196,7 +199,8 @@ def handle_connect():
 
     verify_data()
     update_data()
-    print("Connected to client.")
+    print_t("Connected to client.")
+    checkRevert()
     socketio.emit('update_chart', {'data': data})
 
 @socketio.on('disconnect')
