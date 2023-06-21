@@ -199,7 +199,7 @@ def handle_connect():
 
     verify_data()
     update_data()
-    print_t("Connected to client.")
+    print("Connected to client.")
     checkRevert()
     socketio.emit('update_chart', {'data': data})
 
