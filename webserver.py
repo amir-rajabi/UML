@@ -12,7 +12,7 @@ from ml_utils.json_write import clear_history as clear
 from ml_utils.json_write import revert_history, verify_data, empty_missing_file
 from ml_utils.training import stop_training
 from ml_utils.testing import test_drawing
-from ml_utils.print_overwrite import print
+from ml_utils.print_overwrite import print, init_print
 
 #---------------------- VARIABLES ----------------------#
 
@@ -189,7 +189,7 @@ def predict_drawing():
 # any init stuff can be put here
 @socketio.on('connect')
 def handle_connect():
-
+    init_print()
     #disables training, give 
     #arguments only for testing
     if len(sys.argv) == 2:

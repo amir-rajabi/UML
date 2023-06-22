@@ -9,3 +9,5 @@ output.txt
 legacy_json_write.py
 temp
 DEV.conf
+temp.py
+epoch_data_backup.json
