@@ -15,7 +15,7 @@
                 </p>
             </div>
             <div class="input adjust-slider" id="adjust-slider1">
-                <input type="range" class="form-range adjust-input" min="0" max="1" step="0.1" id="customRange1">
+                <input type="range" class="form-range adjust-input" min="0" max="1" step="0.05" id="customRange1">
                 <div class="sliderValue" id="sliderValue1">0</div>
             </div>
         </div>
@@ -29,7 +29,7 @@
                 </p>
             </div>
             <div class="input adjust-slider" id="adjust-slider2">
-                <input type="range" class="form-range adjust-input" min="0" max="1" step="0.1"  id="customRange2">
+                <input type="range" class="form-range adjust-input" min="0" max="1" step="0.05"  id="customRange2">
                 <div class="sliderValue" id="sliderValue2">0</div>
             </div>
         </div>
@@ -38,12 +38,12 @@
                 <div>Dropout rate</div>
                 <img class="adjust-qm dropout-qm" src="{{ url_for('static', filename='images/qm.svg') }}">
                 <p class="help-tip-dropout help-tip">
-                    The dropout rate reduces overfitting (the model is too specific to the training data) by dropping nodes during training.
-                    The dropout rate can be a number between 0.0 and 1.0.
+                    The dropout rate reduces overfitting (the model is too specific to the training data) by zeroing out certains pixel.
+		    The dropout rate is set through a probability between 0.0 and 1.0 with which a given pixel is zeroed out.
                 </p>
             </div>
             <div class="input adjust-slider" id="adjust-slider3">
-                <input type="range" class="form-range adjust-input" min="0" max="1" step="0.1" id="customRange3">
+                <input type="range" class="form-range adjust-input" min="0" max="1" step="0.05" id="customRange3">
                 <div class="sliderValue" id="sliderValue3">0</div>
             </div>
         </div>
@@ -52,7 +52,7 @@
                 <div>Loss function</div>
                 <img class="adjust-qm loss-qm" src="{{ url_for('static', filename='images/qm.svg') }}">
                 <p class="help-tip-loss help-tip">
-                    The loss function measures the performance of the neural network in predicting the output values.
+		    The loss function measures the distance between the prediction of the neural network compared to the correct answer.
                 </p>
             </div>
             <select class="form-select adjust-input" aria-label="loss-function" id="adjust-dropdown1">
@@ -70,12 +70,13 @@
                 <div>Epochs</div>
                 <img class="adjust-qm epochs-qm" src="{{ url_for('static', filename='images/qm.svg') }}">
                 <p class="help-tip-epochs help-tip">
-                    In each epoch, the model is trained with a certain number of steps with one part of the data and then tested with the other part.
+		    In each epoch, the model interates over the entire data set and gets evaluated on the end of the epoch.
+		    An epoch consists out of smaller steps called batches.
                     This slider determines how many epochs the model should run through.
                 </p>
             </div>
             <div class="input adjust-slider" id="adjust-slider4">
-                <input type="range" class="form-range adjust-input" min="1" max="10" step="1" id="customRange4">
+                <input type="range" class="form-range adjust-input" min="1" max="20" step="1" id="customRange4">
                 <div class="sliderValue" id="sliderValue4">1</div>
             </div>
         </div>
