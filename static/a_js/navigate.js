@@ -86,6 +86,9 @@ function findActive() {
 
 
 document.addEventListener('keydown', e => {
+	if(e.ctrlKey === true){
+		return
+	}
 	let key = e.key.toLowerCase() 
 	let num = 0;
 	let active = findActive();
