@@ -22,6 +22,7 @@ socketio = SocketIO(app)
 config_revert = False
 #disable training by giving webserver any number
 testing_flag = False
+data_corrupted = False
 
 data = {
     'd1': [],   #accuracy
@@ -94,6 +95,7 @@ def check_revert():
         print("LOG: NO REVERT")
 
 def sendAlert(style, content):
+    '''style 1-normal; 2-success; 3-danger; 4-warning'''
     data = {
         'style': style,
         'content': content
@@ -184,7 +186,6 @@ def predict_drawing():
 
 
 #----------------------------------------------------------------#
-
 # start server & websocket connection 
 # any init stuff can be put here
 @socketio.on('connect')
@@ -197,11 +198,16 @@ def handle_connect():
         testing_flag = True
         print("LOG: testing mode")
 
-    verify_data()
-    update_data()
-    print("Connected to client.")
-    checkRevert()
-    socketio.emit('update_chart', {'data': data})
+    error =  verify_data()
+    if error:
+        sendAlert(3, "ERROR: please read logs")
+        socketio.emit('verify_error')
+    else:
+        update_data()
+        print("Connected to client.")
+        checkRevert()
+        socketio.emit('update_chart', {'data': data})
+
 
 @socketio.on('disconnect')
 def handle_disconnect():

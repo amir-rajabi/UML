@@ -7,10 +7,22 @@ window.chartData = chartData;
 window.historyData = history;
 var stop = document.getElementById('stop');
 var start = document.getElementById('start');
+var error = false;
 
 var first_run_flag = 1;
 
+socket.on('verify_error', function() {
+    stop.style.display = 'none';
+    start.style.display = 'block';
+    start.setAttribute('disabled','');
+    console.log('Disconnected from server');
+    error = true;
+});
+
 socket.on('connect', function() {
+    if(error){
+        return
+    }
     console.log('Connected to server.');
     start.removeAttribute('disabled','');
     startRestoring();
@@ -24,6 +36,8 @@ socket.on('disconnect', function() {
 
     sessionStorage.removeItem('UML_DATA_PIEQ4');
 });
+
+
 
 function startRestoring() {
  

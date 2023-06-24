@@ -2,6 +2,7 @@ import json
 import os
 import sys
 import random
+from time import sleep
 
 if __name__ == "__main__":
     from print_overwrite import print
@@ -127,8 +128,8 @@ def empty_missing_file(path="data/epoch_data.json"):
     return 0
 
 
-''' verifying that data format is correct '''
-def verify_data(path="data/epoch_data.json"):
+''' LEGACY VERIFY '''
+def verify_data_legacy(path="data/epoch_data.json"):
     if empty_missing_file(path=path):
         return 0
     with open(path, "r") as file:
@@ -137,17 +138,14 @@ def verify_data(path="data/epoch_data.json"):
         except:
             raise Exception("ERROR: json corrupted")
             return 1
-
         if not isinstance(data, dict):
             raise Exception("ERROR: data is not a dictionary")
             return 1
-
         try:
             num_elems= len(data["run"])
         except:
             raise Exception("ERROR: json corrupted; run missing")
             return 1
-
         try:
             for key in dictionary.keys():
                 if len(data[key]) != num_elems:
@@ -156,9 +154,26 @@ def verify_data(path="data/epoch_data.json"):
         except:
             raise Exception("ERROR: json corrupted; missing key")
             return 1
-
     print("LOG: verifying data SUCCESS!")
+    return 0
 
+
+''' verifying that data format is correct '''
+def verify_data(path="data/epoch_data.json"):
+    if empty_missing_file(path=path):
+        return 0
+    with open(path, "r") as file:
+        try:
+            data = json.load(file)
+            num_elems= len(data["run"])
+            for key in dictionary.keys():
+                if data[key][num_elems-1]:
+                    continue
+        except:
+            print("ERROR: json corrupted")
+            return 1
+    print("LOG: verifying data SUCCESS!")
+    return 0
 
 '''
     WARNING: File path should be relativ
@@ -176,7 +191,7 @@ def verify_data(path="data/epoch_data.json"):
     and for clearing file
 '''
 if __name__ == "__main__":
-    #input arg 4, 1, -1, -2, -3 to:
+    #input arg 2, 1, -1, -2, -3 to:
     # verify, add, nuke, clear, revert
 
     #test dictionary
