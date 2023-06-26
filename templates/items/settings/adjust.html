@@ -38,8 +38,8 @@
                 <div>Dropout rate</div>
                 <img class="adjust-qm dropout-qm" src="{{ url_for('static', filename='images/qm.svg') }}">
                 <p class="help-tip-dropout help-tip">
-                    The dropout rate reduces overfitting (the model is too specific to the training data) by zeroing out certains pixel.
-		    The dropout rate is set through a probability between 0.0 and 1.0 with which a given pixel is zeroed out.
+                    The dropout rate reduces overfitting (the model is too specific to the training data) by dropping out certain pixel.
+		            The dropout rate is set through a probability between 0.0 and 1.0 with which a given pixel is dropped out.
                 </p>
             </div>
             <div class="input adjust-slider" id="adjust-slider3">
@@ -52,7 +52,7 @@
                 <div>Loss function</div>
                 <img class="adjust-qm loss-qm" src="{{ url_for('static', filename='images/qm.svg') }}">
                 <p class="help-tip-loss help-tip">
-		    The loss function measures the distance between the prediction of the neural network compared to the correct answer.
+		            The loss function measures the distance between the prediction of the neural network compared to the correct answer.
                 </p>
             </div>
             <select class="form-select adjust-input" aria-label="loss-function" id="adjust-dropdown1">
@@ -70,8 +70,8 @@
                 <div>Epochs</div>
                 <img class="adjust-qm epochs-qm" src="{{ url_for('static', filename='images/qm.svg') }}">
                 <p class="help-tip-epochs help-tip">
-		    In each epoch, the model interates over the entire data set and gets evaluated on the end of the epoch.
-		    An epoch consists out of smaller steps called batches.
+                    In each epoch, the model iterates over the entire data set and gets evaluated at the end of the epoch.
+                    An epoch consists of smaller steps called batches.
                     This slider determines how many epochs the model should run through.
                 </p>
             </div>
