@@ -24,6 +24,7 @@ def print(message):
         builtins.print(message)
 
 if __name__ == "__main__":
+    init_print()
     print("WARNING:testing")
     print("ERROR:testing")
     print("LOG:testing")
