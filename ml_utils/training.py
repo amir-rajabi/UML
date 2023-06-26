@@ -92,12 +92,11 @@ def training(chart_data, socketio, dictionary, model: Module,
             torch.save(model.state_dict(), 'data/model_new.pt')
             print("LOG: model written")
             continue
-        print('LOG: breaking double loop')
         break
     if cuda:
         empty_cache()
     if stop_flag:
-        print("LOG: interrupt successful")
+        print('LOG: STOPPED')
     else:
         print("LOG: TRAINING FINISHED")
     socketio.emit('training_finished', {'data':chart_data})
@@ -114,7 +113,7 @@ def init_model(model):
 #data is the current graph in JS
 #that will be updated by training
 def start_training(data, socketio, params):
-    #seed = random.randint(0,100)
+    
     seed = ((len(data["run"]) << 3)*31)%256
     manual_seed(seed)
     np.random.seed(seed)
@@ -125,14 +124,18 @@ def start_training(data, socketio, params):
     
     global stop_flag
     stop_flag = False
-    
+
+    cuda = False
+    if os.path.exists("data/CUDA.conf"):
+        cuda = True
+
     training(
         data,
         socketio,
         params,
         model=model,
         optimizer=opt,
-        cuda=False,
+        cuda=cuda,
         n_epochs=int(params["epochs"]),
         batch_size=int(params["batch_size"]),
         loss_nr=int(params["loss_function"])
@@ -142,5 +145,4 @@ def start_training(data, socketio, params):
 def stop_training():
     global stop_flag 
     stop_flag = True
-    print('LOG: STOPPED')
 
