@@ -252,10 +252,10 @@ input, label, select, button{
     margin-top: 1%;
     margin-left: 5%;
 }
-#dia2-ctr, #second-card-body{
+#dia2-ctr, #second-card-body, #dia3-ctr{
     display: none;
 }
-#dia1, #dia2{
+#dia1, #dia2, #dia3{
     max-height: 40vh;
 }
 #dia2{
