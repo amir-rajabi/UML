@@ -18,6 +18,7 @@ def test_drawing(revert):
         model.load_state_dict(torch.load('data/model.pt'))
     else:
         print("LOG: there is no model to evaluate")
+        return -1
 
     model.eval()
 

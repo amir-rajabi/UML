@@ -181,6 +181,9 @@ def predict_drawing():
     new_img.paste(img, (0, 0), img)
     new_img.save('static/img.jpg', 'jpeg')
     prediction = test_drawing(config_revert)
+    if prediction == -1:
+        sendAlert(3, "ERROR: no model to found")
+        return response
 
     return jsonify({'prediction': int(prediction)})
 
