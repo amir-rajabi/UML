@@ -36,7 +36,7 @@ dictionary = {
     manually EVERYTHING is deleted
     otherwise will lead to parsing errors
 '''
-def write_json(data, path="data/epoch_data.json"):
+def write_json(data, path):
     if empty_missing_file(path=path):
         listObj = {
             "loss": [],
@@ -67,29 +67,11 @@ def write_json(data, path="data/epoch_data.json"):
     nukes file
     be careful with this
 '''
-def clear_file(path="data/epoch_data.json"):
+def clear_file(path):
     open(path, "w").close()
-
-'''
-    clears everything except last element
-    currently has epoch_data.json as default 
-    arg, should likely be changed later
-'''
-def clear_history(path="data/epoch_data.json"):
-    if empty_missing_file(path=path):
-        return 0
-    with open(path, "r") as file:
-        epoch_list = json.load(file)
-    for i in epoch_list.keys():
-        epoch_list[i] = []
-    epoch_list = json.dumps(epoch_list, indent=4)
-    open(path, "w").close()
-    with open(path, "w") as file:
-        file.write(epoch_list)
-    return
 
 '''removes all elements in each array'''
-def revert_history(path="data/epoch_data.json"):
+def revert_history(path):
     if empty_missing_file(path=path):
         return 0
     with open(path, "r") as file:
@@ -107,7 +89,7 @@ def revert_history(path="data/epoch_data.json"):
     return 0
             
 ''' get the run number; used by training '''
-def get_run_num(path="data/epoch_data.json"):
+def get_run_num(path):
     if empty_missing_file(path=path) :
         return 0
     with open(path, "r") as file:
@@ -117,7 +99,7 @@ def get_run_num(path="data/epoch_data.json"):
     return int(epoch_list["run"][-1])+1
 
 ''' returns 1 if missing or empty file '''
-def empty_missing_file(path="data/epoch_data.json"):
+def empty_missing_file(path):
     if not os.path.exists(path):
         open(path, "w").close()
         print("WARNING: file was missing")
@@ -127,39 +109,8 @@ def empty_missing_file(path="data/epoch_data.json"):
         return 1
     return 0
 
-
-''' LEGACY VERIFY '''
-def verify_data_legacy(path="data/epoch_data.json"):
-    if empty_missing_file(path=path):
-        return 0
-    with open(path, "r") as file:
-        try:
-            data = json.load(file)
-        except:
-            raise Exception("ERROR: json corrupted")
-            return 1
-        if not isinstance(data, dict):
-            raise Exception("ERROR: data is not a dictionary")
-            return 1
-        try:
-            num_elems= len(data["run"])
-        except:
-            raise Exception("ERROR: json corrupted; run missing")
-            return 1
-        try:
-            for key in dictionary.keys():
-                if len(data[key]) != num_elems:
-                    raise Exception("ERROR: json corrupted; index error")
-                    return 1
-        except:
-            raise Exception("ERROR: json corrupted; missing key")
-            return 1
-    print("LOG: verifying data SUCCESS!")
-    return 0
-
-
 ''' verifying that data format is correct '''
-def verify_data(path="data/epoch_data.json"):
+def verify_data(path):
     if empty_missing_file(path=path):
         return 0
     with open(path, "r") as file:
@@ -180,7 +131,7 @@ def verify_data(path="data/epoch_data.json"):
     from where you start the program
 
     if you use the default values given
-    on epoch_data.json then start
+    on _epoch_data.json then start
     in the same directory as the 
     file epoch_data.json
 
@@ -198,16 +149,16 @@ if __name__ == "__main__":
     match int(sys.argv[1]):
         case 2:
             print("LOG: verifying data")
-            verify_data()
+            verify_data("data/_epoch_data.json")
         case 1:
             print("LOG: trying to write data")
             write_json(dictionary)
         case -1:
             print("LOG: file cleared")
-            clear_file()
+            clear_file("data/_epoch_data.json")
         case -2:
             print("LOG: history cleared")
-            clear_history()
+            clear_history("data/_epoch_data.json")
         case -3:
             print("LOG: revert history")
-            revert_history()
+            revert_history("data/_epoch_data.json")

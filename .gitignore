@@ -6,13 +6,15 @@ DEV.conf
 CUDA.conf
 
 temp.py
-epoch_data.json
+*epoch_data.json
 model.pth
-model.pt
+*model.pt
 model_new.pt
+*model_new.pt
 
 epoch_data_backup.json
 legacy_json_write.py
 
 temp
+temp.py
 output.txt
