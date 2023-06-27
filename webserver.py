@@ -8,7 +8,7 @@ from multiprocessing import Process
 
 #for start_training method
 from ml_utils.training import start_training as train
-from ml_utils.json_write import clear_history as clear
+from ml_utils.json_write import clear_file as clear
 from ml_utils.json_write import revert_history, verify_data, empty_missing_file
 from ml_utils.training import stop_training
 from ml_utils.testing import test_drawing
@@ -23,6 +23,9 @@ config_revert = False
 #disable training by giving webserver any number
 testing_flag = False
 data_corrupted = False
+
+#will be used for saving and loading models
+current_model = ""
 
 data = {
     'd1': [],   #accuracy
@@ -45,17 +48,17 @@ adj = {
 response = ""
 
 #---------------------- FUNCTIONS ----------------------#
-def checkRevert(): #if revert is allowed, tell frontend
-    if os.path.exists("data/model_new.pt"):
+def block_revert(): #if revert is allowed, tell frontend
+    if os.path.exists(f"data/{current_model}_model_new.pt"):
         socketio.emit('revert_allowed', True)
 
 #loads history
 def update_data():
-    if empty_missing_file():
+    if empty_missing_file(f"data/{current_model}_epoch_data.json"):
         for key in data.keys():
             data[key] = []
         return
-    with open("data/epoch_data.json", "r") as file:
+    with open(f"data/{current_model}_epoch_data.json", "r") as file:
         history = json.load(file)
     data["d1"] = history["accuracy"]
     data["d2"] = history["loss"]
@@ -66,32 +69,29 @@ def update_data():
 
 #starts training in ml_utils.training.py with parameters
 def start_training_dict(params):
-    #NOTE: what to do with sesed?
-    # should it be chooseable or rolled randomly each time?
-    # or options for both?
-    worker_process = threading.Thread(target=train, args=[data, socketio, params.copy()])
+    worker_process = threading.Thread(target=train, args=[current_model,data,
+                                                          socketio, params.copy()])
     worker_process.start()
     return
 
 def check_revert():
     global config_revert
     if config_revert:
-        if os.path.exists("data/model_new.pt"):
-            revert_history()
-            os.remove("data/model_new.pt")
+        if os.path.exists(f"data/{current_model}_model_new.pt"):
+            revert_history(f"data/{current_model}_epoch_data.json")
+            os.remove(f"data/{current_model}_model_new.pt")
         else:
-            #send this to frontend
-            #socketio.emit('error', {'error': 'nothing to revert'})
+            sendAlert(4,"Nothing to revert")
             print("LOG: nothing to revert")
         config_revert = False
         print("LOG: TRAINING OLD REVERTED MODEL")
         return
-    elif os.path.exists("data/model_new.pt"):
+    elif os.path.exists(f"data/{current_model}_model_new.pt"):
         #aktualisiert das model
         #model is always loaded by training
         #model_new.pt is for the new one
         #that will be written into by trianing
-        shutil.copy("data/model_new.pt", "data/model.pt")
+        shutil.copy(f"data/{current_model}_model_new.pt", f"data/{current_model}_model.pt")
         print("LOG: NO REVERT")
 
 def sendAlert(style, content):
@@ -107,6 +107,43 @@ def sendAlert(style, content):
 @app.route('/')
 def index():
     return render_template('index.html')
+
+def load_model():
+    global current_model
+    #semi-pseudocode
+    #might need adjustment
+    #request should be sometihng that is sent by JS frontend
+    current_model = request.name
+
+    error =  verify_data(f"data/{current_model}_epoch_data.json")
+    if error:
+        sendAlert(3, "ERROR: please read logs")
+        socketio.emit('verify_error')
+    else: 
+        sendAlert(2, f"Successfully loaded {current_model}")
+        update_data()
+
+def save_model():
+    if config_revert:
+        #copy model.pt
+        model = f"{current_model}_model.pt"
+    else: 
+        #copy new_model.pt
+        model = f"{current_model}_new_model.pt"
+
+    #throw error
+    if not os.path.exists(f"data/{model}"):
+        sendAlert(3,"Model to store was not found")
+        print(f"ERROR:{model} doesn't exists")
+        return
+    #pseudo call from json, might have to be changed later
+    #request should be sometihng that is sent by JS frontend
+    name = request.name
+
+    #copy the current model and epoch_data
+    shutil.copy(f"data/{model}", f"data/{name}_model.pt")
+    shutil.copy(f"data/{model}", f"data/{name}_epoch_data.json")
+
 
 @app.route('/sendadjust', methods=['POST'])   # (frontend is sending adjustments) 
 def gettingAdjustments():
@@ -165,7 +202,7 @@ def redo():
 
 @app.route('/clear_history', methods=['POST']) 
 def clear_history_data():
-    clear()
+    clear(f"data/{current_model}_epoch_data.json")
     update_data()
     socketio.emit('update_chart', {'data':data})
     print("LOG: CLEAR HISTORY")
@@ -180,9 +217,9 @@ def predict_drawing():
     new_img = Image.new('RGB', img.size, 'black')
     new_img.paste(img, (0, 0), img)
     new_img.save('static/img.jpg', 'jpeg')
-    prediction = test_drawing(config_revert)
+    prediction = test_drawing(current_model,config_revert)
     if prediction == -1:
-        sendAlert(3, "ERROR: no model to found")
+        sendAlert(3, "ERROR: model not found")
         return response
 
     return jsonify({'prediction': int(prediction)})
@@ -201,14 +238,14 @@ def handle_connect():
         testing_flag = True
         print("LOG: testing mode")
 
-    error =  verify_data()
+    error =  verify_data(f"data/{current_model}_epoch_data.json")
     if error:
         sendAlert(3, "ERROR: please read logs")
         socketio.emit('verify_error')
     else:
         update_data()
         print("Connected to client.")
-        checkRevert()
+        block_revert()
         socketio.emit('update_chart', {'data': data})
 
 

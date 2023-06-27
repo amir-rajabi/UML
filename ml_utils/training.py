@@ -47,12 +47,12 @@ def train_step(model: Module, optimizer: Optimizer, data: Tensor,
     optimizer.zero_grad()
 
 
-def training(chart_data, socketio, dictionary, model: Module,
+def training(name, chart_data, socketio, dictionary, model: Module,
             optimizer: Optimizer,
             cuda: bool, n_epochs: int,
             batch_size: int, loss_nr):
     global_epoch=len(chart_data["d1"])
-    run_index = get_run_num()
+    run_index = get_run_num(f"data/{name}_epoch_data.json")
     train_loader, test_loader = get_data_loaders(batch_size=batch_size)
     if cuda:
         model.cuda()
@@ -85,11 +85,11 @@ def training(chart_data, socketio, dictionary, model: Module,
             dictionary["train_loss"] = str(train_loss)
             dictionary["train_accuracy"] = str(train_accuracy)
             dictionary["run"]=str(run_index)
-            write_json(dictionary,path="data/epoch_data.json")
+            write_json(dictionary,path=f"data/{name}_epoch_data.json")
             curr_glob_epoch = len(chart_data["d1"])
             print(f'LOG: epoch={curr_glob_epoch}/{global_epoch+n_epochs}, train accuracy={train_accuracy}, train loss={train_loss}')
             print(f'LOG: epoch={curr_glob_epoch}/{global_epoch+n_epochs}, test accuracy={test_accuracy}, test loss={test_loss}')
-            torch.save(model.state_dict(), 'data/model_new.pt')
+            torch.save(model.state_dict(), f'data/{name}_model_new.pt')
             print("LOG: model written")
             continue
         break
@@ -101,10 +101,11 @@ def training(chart_data, socketio, dictionary, model: Module,
         print("LOG: TRAINING FINISHED")
     socketio.emit('training_finished', {'data':chart_data})
 
-def init_model(model):
-    if os.path.exists("data/model.pt"):
-        model.load_state_dict(torch.load("data/model.pt"))
-        print("LOG: model loaded")
+#init model
+def init_model(name,model):
+    if os.path.exists(f"data/{name}_model.pt"):
+        model.load_state_dict(torch.load(f"data/{name}_model.pt"))
+        print(f"LOG:{name} model loaded")
     return model
 
 
@@ -112,13 +113,13 @@ def init_model(model):
 #socket to JS frontend
 #data is the current graph in JS
 #that will be updated by training
-def start_training(data, socketio, params):
+def start_training(name, data, socketio, params):
     
     seed = ((len(data["run"]) << 3)*31)%256
     manual_seed(seed)
     np.random.seed(seed)
     model = ConvolutionalNeuralNetwork(float(params["dropout_rate"]))
-    model = init_model(model)
+    model = init_model(name,model)
     opt = SGD(model.parameters(), lr=float(params["learning_rate"]), 
               momentum=float(params["momentum"]))
     
@@ -130,6 +131,7 @@ def start_training(data, socketio, params):
         cuda = True
 
     training(
+        name,
         data,
         socketio,
         params,
