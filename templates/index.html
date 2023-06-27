@@ -9,6 +9,20 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bs.css') }}">
     <title>UsableML</title>
 
+    <script src="{{ url_for('static', filename='node_modules/chart.js/dist/chart.umd.js') }}"></script>
+    <script src="{{ url_for('static', filename='node_modules/socket.io/client-dist/socket.io.js') }}"></script>
+    <script src="{{ url_for('static', filename='node_modules/bootstrap/dist/js/bootstrap.bundle.js') }}"></script>
+    <script src="{{ url_for('static', filename='node_modules/jquery/dist/jquery.min.js') }}"></script>
+
+    <script type="module" src="{{ url_for('static', filename='a_js/dia.js') }}" ></script>
+    <script type="module" src="{{ url_for('static', filename='a_js/navigate.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='a_js/adjust.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='a_js/send.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='a_js/onload.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='a_js/draw.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='a_js/reset.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='a_js/alerts.js') }}"></script>
+
 </head>
 <body>
     <div id="root">
@@ -49,19 +63,4 @@
         </div>
     </div>
 </body>
-
-<script src="{{ url_for('static', filename='node_modules/chart.js/dist/chart.umd.js') }}"></script>
-<script src="{{ url_for('static', filename='node_modules/socket.io/client-dist/socket.io.js') }}"></script>
-<script src="{{ url_for('static', filename='node_modules/bootstrap/dist/js/bootstrap.bundle.js') }}"></script>
-<script src="{{ url_for('static', filename='node_modules/jquery/dist/jquery.min.js') }}"></script>
-
-<script type="module" src="{{ url_for('static', filename='a_js/dia.js') }}" ></script>
-<script type="module" src="{{ url_for('static', filename='a_js/navigate.js') }}"></script>
-<script type="module" src="{{ url_for('static', filename='a_js/adjust.js') }}"></script>
-<script type="module" src="{{ url_for('static', filename='a_js/send.js') }}"></script>
-<script type="module" src="{{ url_for('static', filename='a_js/onload.js') }}"></script>
-<script type="module" src="{{ url_for('static', filename='a_js/draw.js') }}"></script>
-<script type="module" src="{{ url_for('static', filename='a_js/reset.js') }}"></script>
-<script type="module" src="{{ url_for('static', filename='a_js/alerts.js') }}"></script>
-
 </html>
