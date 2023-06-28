@@ -7,7 +7,7 @@
             <div class="input-txt" id="adjust-a1">
                 <div class="adjust-txt" >Learning rate</div>
                 
-                <button type="button" class="btn btn-secondary qm-pop" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="
+                <button type="button" class="btn btn-secondary tooltip-button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="
                 The learning rate controls how large the changes to the model are. 
                 If the learning rate is too small, it takes a very long time to find a solution, while too large a learning rate can cause the model to reach a suboptimal solution too quickly.
                 The learning rate can be a number between 0.0 and 1.0.">
@@ -27,7 +27,7 @@
         <div class="adjust-input-ctr">
             <div class="input-txt" id="adjust-a2">
                 <div class="adjust-txt">Momentum</div>
-                <button type="button" class="btn btn-secondary qm-pop" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="
+                <button type="button" class="btn btn-secondary tooltip-button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="
                 The momentum controls how much the previous updates of the model affect the current update of the model.
                 The momentum can be a number between 0.0 and 1.0.">
                 <img class="adjust-qm" src="{{ url_for('static', filename='images/qm.svg') }}">
@@ -41,7 +41,7 @@
         <div class="adjust-input-ctr">
             <div class="input-txt" id="adjust-a3">
                 <div class="adjust-txt">Dropout rate</div>
-                <button type="button" class="btn btn-secondary qm-pop" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="
+                <button type="button" class="btn btn-secondary tooltip-button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="
                 The dropout rate reduces overfitting (the model is too specific to the training data) by dropping out certain pixel.
 		        The dropout rate is set through a probability between 0.0 and 1.0 with which a given pixel is dropped out.">
                 <img class="adjust-qm" src="{{ url_for('static', filename='images/qm.svg') }}">
@@ -55,7 +55,7 @@
         <div class="adjust-input-ctr">
             <div class="input-txt" id="adjust-a2">
                 <div class="adjust-txt">Loss function</div>
-                <button type="button" class="btn btn-secondary qm-pop" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="
+                <button type="button" class="btn btn-secondary tooltip-button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="
                 The loss function measures the distance between the prediction of the neural network compared to the correct answer.">
                 <img class="adjust-qm" src="{{ url_for('static', filename='images/qm.svg') }}">
                 </button>
@@ -73,7 +73,7 @@
         <div class="adjust-input-ctr">
             <div class="input-txt" id="adjust-a4">
                 <div class="adjust-txt">Epochs</div>
-                <button type="button" class="btn btn-secondary qm-pop" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="
+                <button type="button" class="btn btn-secondary tooltip-button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="
                 In each epoch, the model iterates over the entire data set and gets evaluated at the end of the epoch.
                 An epoch consists of smaller steps called batches.
                 This slider determines how many epochs the model should run through.">
@@ -88,7 +88,7 @@
         <div class="adjust-input-ctr">
             <div class="input-txt" id="adjust-a5">
                 <div class="adjust-txt">Batch size</div>
-                <button type="button" class="btn btn-secondary qm-pop" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="
+                <button type="button" class="btn btn-secondary tooltip-button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="
                 The batch size determines how large each step in the training and testing should be.">
                 <img class="adjust-qm" src="{{ url_for('static', filename='images/qm.svg') }}">
                 </button>
@@ -101,31 +101,3 @@
         </div>
     </div>
 </div>
-
-
-<script>
-    const elements = document.getElementsByClassName('qm-pop');
-
-    for (let i = 0; i < elements.length; i++) {
-    const element = elements[i];
-    const options = {
-        delay: { show: 200, hide: 200 },
-        animation: true,
-        container: '.settings-contents',
-    };
-    const tooltip = new bootstrap.Tooltip(element, options);
-    }
-</script>
-
-<style>
-    .qm-pop{
-        background-color: none;
-        padding: 0;
-        border: none;
-        --bs-btn-bg: none;
-        --bs-btn-hover-bg: none;
-        height: auto;
-        width: auto;
-    }
-
-</style>

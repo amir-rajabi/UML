@@ -140,6 +140,7 @@ const dia3 = new Chart(
 
 //--------------- updater ---------------//
 var first_alert = 0;
+var currentAccuracy = document.getElementById('current-accuracy');
 
 socket.on('update_chart', function(data){
   chartData.d1 = data.data.d1;
@@ -155,6 +156,8 @@ socket.on('update_chart', function(data){
   updateChart(selected1, dia1);
   updateChart(selected2, dia2);
   updateChart(selected1, dia3, selected2);
+
+  currentAccuracy.textContent = chartData.d1[chartData.d1.length-1];  
 });
 
 //--------------- progressbar ---------------//

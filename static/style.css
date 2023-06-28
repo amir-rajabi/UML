@@ -35,7 +35,7 @@ button{
 .line{
     border-bottom: 1px solid white;
     margin-top: 1%;
-    margin-bottom: 5%;
+    margin-bottom: 3%;
 }
 .settings-contents{
     max-height: 80vh;
@@ -48,6 +48,20 @@ input, label, select, button{
 ::-webkit-scrollbar {
     width: 0;
 }
+
+.tooltip-button{
+    padding: 0 !important;
+    border: none !important;
+    height: auto;
+    width: auto;
+    --bs-btn-bg: none !important;
+    --bs-btn-hover-bg: none !important;
+}
+.tooltip-inner {
+    background-color: white !important; 
+    color: #000000 !important; 
+}
+
 /*------- columns -------*/
 .column{
     height: 100vh;
@@ -215,7 +229,7 @@ input, label, select, button{
 }
 .visual-ctr{
     width: 100%;
-    height: 95%;
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -226,9 +240,6 @@ input, label, select, button{
     justify-content: center;
     width: 90%;
     height: 100%;
-}
-.tab-content{
-    height: 95%;
 }
 .tab-pane{
     height: 100%;
@@ -246,8 +257,14 @@ input, label, select, button{
 #succ_pred_alert{
     margin-top: 1%;
 }
-#visual-lower-ctr{
+#visual-upper-ctr{
     position: relative;
+    height: 5%;
+}
+#pills-tabContent{
+    height: 90%;
+}
+#visual-lower-ctr{
     height: 5%;
 }
 #alerts_ctr{
@@ -291,4 +308,51 @@ thead th{
     background-color: black;
 }
 
-/*------- design of popovers  -------*/
+/*------- progressbar -------*/
+#visual-lower{
+    height: 100% !important;
+    margin-bottom: 1%;
+    margin-left: 2%;
+    margin-right: 2%;
+}
+.progress{
+    height: 25% !important;
+}
+.server-dot{
+    height: 10px;
+}
+#server-dot-green{
+    display: none;
+}
+#progress-ctr{
+    margin-top: .5%;
+    display: flex;
+    justify-content: space-between;
+}
+#status-ctr{
+    border-right: 1px solid white;
+    height: 50%;
+    display: flex;
+    width: 33.3%;
+}
+#status-dot{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 1%;
+}
+#current-accuracy-ctr{
+    display: flex;
+    justify-content: center;
+    width: 33.3%;
+}
+#current-accuracy{
+    margin-left: 3%;
+}
+#runs-ctr{
+    border-left: 1px solid white;
+    height: 100%;
+    display: flex;
+    justify-content: end;
+    width: 33.3%;
+}

@@ -92,7 +92,7 @@ document.addEventListener('keydown', e => {
 	let key = e.key.toLowerCase() 
 	let num = 0;
 	let active = findActive();
-	console.log(e);
+	// console.log(e);
 
 	switch (key) {
 	  case 'q':

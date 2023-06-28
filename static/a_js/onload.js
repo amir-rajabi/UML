@@ -1,14 +1,17 @@
-import {adjustments, chartData, history, updateAdjustments, socket, defaults, restoreAllAdjustments, storedData} from './data.js';
+import {adjustments, chartData, history, updateAdjustments, socket, defaults, restoreAllAdjustments, storedData, statustxt} from './data.js';
 import {sendAdjustments} from './send.js';
 
 window.adjustments_data = adjustments;
 window.defaults_data = defaults
 window.chartData = chartData;
 window.historyData = history;
+window.statustxt = statustxt;
 var stop = document.getElementById('stop');
 var start = document.getElementById('start');
-var error = false;
+var redDot = document.getElementById('server-dot-red');
+var greenDot = document.getElementById('server-dot-green');
 
+var error = false;
 var first_run_flag = 1;
 
 socket.on('verify_error', function() {
@@ -23,7 +26,9 @@ socket.on('connect', function() {
     if(error){
         return
     }
-    console.log('Connected to server.');
+    greenDot.style.display = 'flex';
+    redDot.style.display = 'none';
+    statustxt.textContent = "READY FOR TRAINING"
     start.removeAttribute('disabled','');
     startRestoring();
 });
@@ -32,8 +37,8 @@ socket.on('disconnect', function() {
     stop.style.display = 'none';
     start.style.display = 'block';
     start.setAttribute('disabled','');
-    console.log('Disconnected from server');
-
+    greenDot.style.display = 'none';
+    redDot.style.display = 'flex';
     sessionStorage.removeItem('UML_DATA_PIEQ4');
 });
 
