@@ -302,13 +302,17 @@ window.addEventListener('DOMContentLoaded', function() {
   if (sessionStorage.getItem('second')){
     second = sessionStorage.getItem('second');
     dia2switch.checked = second === 'true'; // Convert the value to a boolean
-    if (joined) {
+    if (joined === 'true' && second === 'true') {
       dia1ctr.style.display = 'none';
       dia2ctr.style.display = 'none';
       dia3ctr.style.display = 'block';
-    } else {  
-      dia2ctr.style.display = second ? 'block' : 'none';
+      secondcardbody.style.display = 'block';
+    } else if (second === 'true') {  
+      dia2ctr.style.display = 'block';
+      secondcardbody.style.display = 'block';
+    } else {
+      dia2ctr.style.display = 'none';
+      secondcardbody.style.display = 'none';
     }
-    secondcardbody.style.display = second ? 'block' : 'none';
   }
 });
