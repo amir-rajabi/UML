@@ -143,6 +143,7 @@ def save_model():
     #copy the current model and epoch_data
     shutil.copy(f"data/{model}", f"data/{name}_model.pt")
     shutil.copy(f"data/{model}", f"data/{name}_epoch_data.json")
+    sendAlert(2,f"Successfully saved {current_model}")
 
 
 @app.route('/sendadjust', methods=['POST'])   # (frontend is sending adjustments) 
