@@ -54,8 +54,7 @@ revert_confirmed.addEventListener('click', function(){
         sessionStorage.setItem('UML_revert', 1);
         revert.removeAttribute('data-bs-toggle');
         revert.removeAttribute('data-bs-target');
-    }
-    
+    }    
     revert.style.display = 'none';
     redo.style.display = 'block';
     var xhr = new XMLHttpRequest();
@@ -64,6 +63,13 @@ revert_confirmed.addEventListener('click', function(){
     xhr.send(1);
 });
 
+window.addEventListener("load", function() {
+    var revert_confirm = sessionStorage.getItem('UML_revert');
+    if (revert_confirm){
+        revert.removeAttribute('data-bs-toggle');
+        revert.removeAttribute('data-bs-target');
+    }
+});
 
 redo.addEventListener('click', function(){
     revert.style.display = 'block';

@@ -44,8 +44,7 @@ socket.on('disconnect', function() {
 
 
 
-function startRestoring() {
- 
+function startRestoring() { 
     if (storedData) {
         var xhr = new XMLHttpRequest();
         xhr.open('POST', '/getadjust', true);
@@ -65,3 +64,4 @@ function startRestoring() {
         restoreAllAdjustments();
     }
 }
+
