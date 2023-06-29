@@ -13,6 +13,8 @@ var start = document.getElementById('start');
 var stop = document.getElementById('stop');
 var revert = document.getElementById('revert');
 var redo = document.getElementById('redo');
+var revert_confirmed = document.getElementById('revert_confirmed');
+var revertChecked = document.getElementById('revertChecked');
 
 start.addEventListener('click', function(){
     revert.style.display = 'block';
@@ -35,7 +37,25 @@ stop.addEventListener('click', function(){
     xhr.send(1);
 });
 
-revert.addEventListener('click', function(){
+revert.addEventListener('click', function() {
+    var revert_confirm = sessionStorage.getItem('UML_revert');
+    if (revert_confirm) {
+        revert.style.display = 'none';
+        redo.style.display = 'block';
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/revert', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(1);
+    }
+});
+  
+revert_confirmed.addEventListener('click', function(){
+    if (revertChecked.checked){
+        sessionStorage.setItem('UML_revert', 1);
+        revert.removeAttribute('data-bs-toggle');
+        revert.removeAttribute('data-bs-target');
+    }
+    
     revert.style.display = 'none';
     redo.style.display = 'block';
     var xhr = new XMLHttpRequest();
@@ -43,6 +63,7 @@ revert.addEventListener('click', function(){
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send(1);
 });
+
 
 redo.addEventListener('click', function(){
     revert.style.display = 'block';
