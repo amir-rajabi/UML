@@ -65,3 +65,22 @@ function startRestoring() {
     }
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/restore_saved_models_html', true);
+    xhr.send();
+  
+    xhr.onload = function () {
+      if (xhr.status === 200) {
+        var response = JSON.parse(xhr.responseText);
+        var htmlContent = response.htmlContent;
+        var accSavedModels = document.getElementById('acc_saved_models');
+        
+        if (htmlContent !== false) {
+          accSavedModels.innerHTML = htmlContent;
+        }
+      } else {
+        console.log('Fehler, Statuscode: ' + xhr.status);
+      }
+    };
+});

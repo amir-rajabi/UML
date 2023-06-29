@@ -225,6 +225,41 @@ def predict_drawing():
 
     return jsonify({'prediction': int(prediction)})
 
+@app.route('/saved_models_html', methods=['POST'])
+def send_saved_models_html():
+    saved_models_json = 'data/saved_models.json'
+
+    data = request.get_json()
+    html_content = data.get('htmlContent')
+
+    if not os.path.exists(saved_models_json):
+        with open(saved_models_json, 'w') as file:
+            json.dump({}, file)
+
+    with open(saved_models_json, 'r+') as file:
+        json_data = json.load(file)
+        json_data.update(html_content)
+        file.seek(0)
+        json.dump(json_data, file, indent=4) 
+    return response
+
+@app.route('/restore_saved_models_html', methods=['GET'])
+def restore_saved_models_html():
+    saved_models_json = 'data/saved_models.json'
+
+    if os.path.exists(saved_models_json):
+        with open(saved_models_json, 'r') as file:
+            json_data = json.load(file)
+            html_content = json_data.get('htmlContent')
+        return jsonify(htmlContent=html_content)
+    else:
+        return jsonify(htmlContent=False)
+
+@app.route('/save_model', methods=['POST'])
+def for_save_model():
+    current_model = request.json.get('new_model_name')
+    print (current_model)
+    return response
 
 #----------------------------------------------------------------#
 # start server & websocket connection 

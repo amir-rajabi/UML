@@ -25,7 +25,7 @@ function draw(event) {
     context.beginPath();
     context.moveTo(previousX, previousY);
     context.lineTo(offsetX, offsetY);
-    context.lineWidth = 10; // Setzen Sie die Linienbreite nach Bedarf
+    context.lineWidth = 10;             // Liniendicke verändern
     context.strokeStyle = 'white';
     context.lineCap = "round";
     context.stroke();
