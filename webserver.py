@@ -257,7 +257,7 @@ def save_model():
 
     #copy the current model and epoch_data
     shutil.copy(f"data/{model}", f"data/{name}_model.pt")
-    shutil.copy(f"data/{model}", f"data/{name}_epoch_data.json")
+    shutil.copy(f"data/{current_model}_epoch_data.json", f"data/{name}_epoch_data.json")
     sendAlert(2,f"Successfully saved {name}")
     print ("LOG: saved: " + name)
     return response

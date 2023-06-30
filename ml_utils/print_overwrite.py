@@ -17,7 +17,12 @@ def init_print():
 prints logs only if data/DEV.conf exits
 warnings and errors are always printed
 '''
-def print(message):
+def print(message, flag=0):
+    ''' use optional flag input if you're trying to print 
+    something that isn't a string to buypass the slice
+    and print it directly '''
+    if flag:
+        builtins.print(message)
     warning = (message[0:7]=="WARNING")
     error = (message[0:5]=="ERROR")
     if conf_show_logs or error or warning:
