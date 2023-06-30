@@ -1,4 +1,4 @@
-import {chartData, socket, storedData} from './data.js';
+import {chartData, socket, storedData, history} from './data.js';
 import {createAlert} from './alerts.js';
 
 window.chartData = chartData;
@@ -20,6 +20,33 @@ var selected2 ='1';
 var labels = ['Accuracy (test-set)', 'Loss (test-set)', 'Accuracy (train-set)', 'Loss (train-set)'];
 var second = false;
 var joined = false;
+
+var ctx = document.getElementById('dia1').getContext('2d');
+const arbitraryLine = {
+  id: 'arbitraryLine',
+  afterDraw(chart, args, options){
+    const { ctx, chartArea: {top, right, bottom, left, width, height }, scales: {x, y} } = chart;
+    ctx.save();
+    let runCount = -1;
+
+    for (let i = 0; i < options.runs.length; i++) {
+      // counting epochs of runs
+      runCount += options.runs[i];
+
+      // run line
+      ctx.strokeStyle = 'red';
+      ctx.strokeRect(x.getPixelForValue(runCount), top, 0, height);
+      ctx.restore(); 
+
+      // run number
+      ctx.font = '12px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = 'white';
+      // - 0 falls central
+      ctx.fillText("Run " + (i+1), x.getPixelForValue(runCount) - 22, top + 12);
+    }
+  }
+}
 
 //--------------- set displaying content ---------------//
 dia2switch.addEventListener('click', function(){
@@ -89,8 +116,14 @@ const dia1 = new Chart(
     },
     options: {
       responsive: true,
-      maintainAspectRatio: true
-    }
+      maintainAspectRatio: true,
+      plugins: {
+        arbitraryLine: {
+          runs: [],
+        }
+      }
+    },
+    plugins: [arbitraryLine]
   }
 );
 //--------------- dia 2 ---------------//
@@ -109,8 +142,14 @@ const dia2 = new Chart(
     },
     options: {
       responsive: true,
-      maintainAspectRatio: true
-    }
+      maintainAspectRatio: true,
+      plugins: {
+        arbitraryLine: {
+          runs: [],
+        }
+      }
+    },
+    plugins: [arbitraryLine]
   }
 );
 //--------------- dia 3 ---------------//
@@ -133,8 +172,14 @@ const dia3 = new Chart(
     },
     options: {
       responsive: true,
-      maintainAspectRatio: true
-    }
+      maintainAspectRatio: true,
+      plugins: {
+        arbitraryLine: {
+          runs: [],
+        }
+      }
+    },
+    plugins: [arbitraryLine]
   }
 );
 
@@ -147,6 +192,16 @@ socket.on('update_chart', function(data){
   chartData.d2 = data.data.d2;
   chartData.d3 = data.data.d3;
   chartData.d4 = data.data.d4;
+
+  // convert normal run format to needed ([0,0,0,0,1,1,1,2] to [4,3,1])
+  for (let i = 0; i < data.data.run.length; i++) {
+    let count = data.data.run.filter(x => x == i).length;
+    if (data.data.run.filter(x => x == i).length > 0) {
+      chartData.run[i] = count;
+    }
+  }
+  chartData.run.pop();
+
 
   if (chartData.d1.length > 0 && !storedData && first_alert==0){
     first_alert = 1;
@@ -200,6 +255,8 @@ selector2.addEventListener("change", function(event) {
 function updateChart(selectedValue, dia, secondSelectedValue = -1){
   var selected;
   var secondSelected;
+
+  dia.options.plugins.arbitraryLine.runs = chartData.run;
   
   if (selectedValue === '0') {
     selected = chartData.d1;
@@ -299,18 +356,20 @@ window.addEventListener('DOMContentLoaded', function() {
   
   if (sessionStorage.getItem('joined')){
     joined = sessionStorage.getItem('joined');
-    dia3join.checked = joined === 'true'; // Convert the value to a boolean
+    joined = joined === 'true';
+    dia3join.checked = joined; // Convert the value to a boolean
   }
 
   if (sessionStorage.getItem('second')){
     second = sessionStorage.getItem('second');
-    dia2switch.checked = second === 'true'; // Convert the value to a boolean
-    if (joined === 'true' && second === 'true') {
+    second = second === 'true';
+    dia2switch.checked = second; // Convert the value to a boolean
+    if (joined && second) {
       dia1ctr.style.display = 'none';
       dia2ctr.style.display = 'none';
       dia3ctr.style.display = 'block';
       secondcardbody.style.display = 'block';
-    } else if (second === 'true') {  
+    } else if (second) {  
       dia2ctr.style.display = 'block';
       secondcardbody.style.display = 'block';
     } else {

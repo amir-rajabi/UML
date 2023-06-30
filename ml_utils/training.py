@@ -77,6 +77,7 @@ def training(name, chart_data, socketio, dictionary, model: Module,
             chart_data['d2'].append(test_loss)
             chart_data['d3'].append(train_accuracy)
             chart_data['d4'].append(train_loss)
+            chart_data['run'].append(str(run_index))
             socketio.emit('update_chart', {'data':chart_data})
             print("LOG: update chart")
 

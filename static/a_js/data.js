@@ -26,7 +26,8 @@ export var chartData = {
     d1: [],
     d2: [],
     d3: [],
-    d4: []
+    d4: [],
+    run: []
 };
 
 export var history = {
