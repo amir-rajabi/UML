@@ -108,44 +108,6 @@ def sendAlert(style, content):
 def index():
     return render_template('index.html')
 
-def load_model():
-    global current_model
-    #semi-pseudocode
-    #might need adjustment
-    #request should be sometihng that is sent by JS frontend
-    current_model = request.name
-
-    error =  verify_data(f"data/{current_model}_epoch_data.json")
-    if error:
-        sendAlert(3, "ERROR: please read logs")
-        socketio.emit('verify_error')
-    else: 
-        sendAlert(2, f"Successfully loaded {current_model}")
-        update_data()
-
-def save_model():
-    if config_revert:
-        #copy model.pt
-        model = f"{current_model}_model.pt"
-    else: 
-        #copy new_model.pt
-        model = f"{current_model}_new_model.pt"
-
-    #throw error
-    if not os.path.exists(f"data/{model}"):
-        sendAlert(3,"Model to store was not found")
-        print(f"ERROR:{model} doesn't exists")
-        return
-    #pseudo call from json, might have to be changed later
-    #request should be sometihng that is sent by JS frontend
-    name = request.name
-
-    #copy the current model and epoch_data
-    shutil.copy(f"data/{model}", f"data/{name}_model.pt")
-    shutil.copy(f"data/{model}", f"data/{name}_epoch_data.json")
-    sendAlert(2,f"Successfully saved {current_model}")
-
-
 @app.route('/sendadjust', methods=['POST'])   # (frontend is sending adjustments) 
 def gettingAdjustments():
   if request.method == 'POST':
@@ -225,6 +187,8 @@ def predict_drawing():
 
     return jsonify({'prediction': int(prediction)})
 
+#---------------------- ROUTE SAVE LOAD ----------------------#
+ 
 @app.route('/saved_models_html', methods=['POST'])
 def send_saved_models_html():
     saved_models_json = 'data/saved_models.json'
@@ -255,11 +219,50 @@ def restore_saved_models_html():
     else:
         return jsonify(htmlContent=False)
 
+
+def load_model():
+    global current_model
+    #semi-pseudocode
+    #might need adjustment
+    #request should be sometihng that is sent by JS frontend
+    current_model = request.name
+
+    error =  verify_data(f"data/{current_model}_epoch_data.json")
+    if error:
+        sendAlert(3, "ERROR: please read logs")
+        socketio.emit('verify_error')
+    else: 
+        sendAlert(2, f"Successfully loaded {current_model}")
+        update_data()
+
 @app.route('/save_model', methods=['POST'])
-def for_save_model():
-    current_model = request.json.get('new_model_name')
-    print (current_model)
+def save_model():
+    if config_revert:
+        #copy model.pt
+        model = f"{current_model}_model.pt"
+    else: 
+        #copy new_model.pt
+        model = f"{current_model}_model_new.pt"
+
+    print("LOG: model to save: " + model)
+    #throw error
+    if not os.path.exists(f"data/{model}"):
+        sendAlert(3,"Model to store was not found")
+        print(f"ERROR:{model} doesn't exists")
+        return response
+
+    #the current model ist not set to the new
+    #nameing space, it only saves without loading
+    name = request.json.get('new_model_name')
+
+    #copy the current model and epoch_data
+    shutil.copy(f"data/{model}", f"data/{name}_model.pt")
+    shutil.copy(f"data/{model}", f"data/{name}_epoch_data.json")
+    sendAlert(2,f"Successfully saved {name}")
+    print ("LOG: saved: " + name)
     return response
+
+
 
 #----------------------------------------------------------------#
 # start server & websocket connection 
