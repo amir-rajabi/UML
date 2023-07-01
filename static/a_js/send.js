@@ -95,16 +95,12 @@ socket.on('revert_allowed', function(data){
 
 export function block_button(button, block) {
     if (block == true) {
-        console.log('true');
         if (!button.disabled){
-            console.log('not diabled to disabled');
             button.setAttribute('disabled','');
         }
     }
     else if (block == false) {
-        console.log('false');
         if (button.disabled){
-            console.log('disabled to not disabled');
             button.removeAttribute('disabled');
         }
     }

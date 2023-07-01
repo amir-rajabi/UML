@@ -1,6 +1,8 @@
 var save_model = document.getElementById('save-current-model');
 var new_model_name = document.getElementById('new-model-name');
 var model_name = document.getElementById('model_name');
+var already_taken_alert = document.getElementById('already-taken-alert');
+var all_model_names = document.getElementsByClassName('saved-models-name');
 
 save_model.addEventListener('click', function(){
     var savedModelItems = document.querySelectorAll('.saved-model-item');
@@ -22,8 +24,8 @@ save_model.addEventListener('click', function(){
 
     var accordionTitle = document.createElement('div');
     accordionTitle.id = 'acc-saved-models-headtitle-' + (savedModelsCount);
-    var modelNameInput = document.getElementById('model_name');
-    accordionTitle.textContent = modelNameInput.value;
+    accordionTitle.className = 'saved-models-name'
+    accordionTitle.textContent = model_name.value;
 
     accordionButton.appendChild(accordionTitle);
     accordionHeader.appendChild(accordionButton);
@@ -93,7 +95,7 @@ save_model.addEventListener('click', function(){
     xhr.setRequestHeader('Content-Type', 'application/json');
 
     var modelName = {
-    new_model_name: modelNameInput.value
+    new_model_name: model_name.value
     };
     xhr.send(JSON.stringify(modelName));
 
@@ -107,12 +109,13 @@ save_model.addEventListener('click', function(){
     };
     xhr.send(JSON.stringify({ htmlContent }));
 
-    modelNameInput.value = '';
+    model_name.value = '';
+    save_model.setAttribute('disabled', 'true');
 });
 
 model_name.addEventListener('input', function() {
     if (model_name.value.trim() !== '') {
-        save_model.removeAttribute('disabled');
+        checkIfModelExists();
     } else {
         save_model.setAttribute('disabled', 'true');
     }
@@ -127,4 +130,27 @@ model_name.addEventListener('keypress', function(event) {
         model_name.value = newValue;
         model_name.setSelectionRange(caretPos + 1, caretPos + 1);
     }
+    checkIfModelExists();
 });
+
+
+function checkIfModelExists() {
+    var checkname = model_name.value;
+    var amnl = all_model_names.length;
+
+    if (amnl > 0) {
+        for (var i = 0; i < amnl; i++) {
+            if (checkname == all_model_names[i].textContent) {
+                save_model.setAttribute('disabled', 'true');
+                already_taken_alert.style.display = 'block';
+                break;
+            } else{
+                save_model.removeAttribute('disabled');
+                already_taken_alert.style.display = 'none';
+            }
+        }
+    } else{
+        save_model.removeAttribute('disabled');
+        already_taken_alert.style.display = 'none';
+    };
+}
