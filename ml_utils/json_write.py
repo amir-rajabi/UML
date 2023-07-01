@@ -24,17 +24,40 @@ dictionary = {
     "batch_size": "1",
     "run": "1"
 }
+#-----------------general functions---------------#
+
+'''
+    nukes file
+    be careful with this
+'''
+def clear_file(path):
+    open(path, "w").close()
+
+
+
+'''
+returns 1 if missing or empty file 
+if you want to only check and not create
+file pass create=0 to func
+'''
+def empty_missing_file(path, create=1):
+    if not os.path.exists(path) and create:
+        open(path, "w").close()
+        print("WARNING: file was missing")
+        return 1
+    if os.stat(path).st_size ==0:
+        print("WARNING: file is empty")
+        return 1
+    return 0
+
+#-----------------epoch_data functions--------------#
 
 '''
     general interface for writing to json
     file specified with path
 
     assumes that the file in path is 
-    either completely empty or contains list
-
-    WARNING: make sure when clearing files 
-    manually EVERYTHING is deleted
-    otherwise will lead to parsing errors
+    either completely empty or contains a dict
 '''
 def write_json(data, path):
     if empty_missing_file(path=path):
@@ -64,13 +87,9 @@ def write_json(data, path):
 
 
 '''
-    nukes file
-    be careful with this
+clears data associated to a run 
+for all keys
 '''
-def clear_file(path):
-    open(path, "w").close()
-
-'''removes all elements in each array'''
 def revert_history(path):
     if empty_missing_file(path=path):
         return 0
@@ -88,6 +107,7 @@ def revert_history(path):
         file.write(epoch_list)
     return 0
             
+
 ''' get the run number; used by training '''
 def get_run_num(path):
     if empty_missing_file(path=path) :
@@ -98,16 +118,6 @@ def get_run_num(path):
         return 0
     return int(epoch_list["run"][-1])+1
 
-''' returns 1 if missing or empty file '''
-def empty_missing_file(path):
-    if not os.path.exists(path):
-        open(path, "w").close()
-        print("WARNING: file was missing")
-        return 1
-    if os.stat(path).st_size ==0:
-        print("WARNING: file is empty")
-        return 1
-    return 0
 
 ''' verifying that data format is correct '''
 def verify_data(path):
@@ -121,10 +131,13 @@ def verify_data(path):
                 if data[key][num_elems-1]:
                     continue
         except:
-            print("ERROR: json corrupted")
+            print("ERROR: epoch data corrupted")
             return 1
-    print("LOG: verifying data SUCCESS!")
+    print("LOG: verifying epoch data SUCCESS!")
     return 0
+
+
+#---------------Testing------------------#
 
 '''
     WARNING: File path should be relativ
