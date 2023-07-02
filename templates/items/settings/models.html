@@ -45,11 +45,16 @@
         <div class="modal-body">
             <div class="input-group mb-3">
                 <span class="input-group-text" id="new-model-name">>></span>
-                <input id="model_name" type="text" class="form-control" placeholder="Type in a name for the model" aria-label="modelname" aria-describedby="basic-addon1" style="cursor: text;">
+                <input id="model_name" type="text" class="form-control" placeholder="Type in a name for the model" aria-label="modelname" aria-describedby="basic-addon1" style="cursor: text;" maxlength="20">
               </div>
         </div>
-        <div id="already-taken-alert" style="padding-right: var(--bs-modal-padding); padding-left: var(--bs-modal-padding); display:none;">
+        <div id="too-long-alert" style="padding-right: var(--bs-modal-padding); padding-left: var(--bs-modal-padding); display:none;">
             <div class="alert alert-warning" role="alert">
+                Maximum number of characters reached.
+            </div>
+        </div>
+        <div id="already-taken-alert" style="padding-right: var(--bs-modal-padding); padding-left: var(--bs-modal-padding); display:none;">
+            <div class="alert alert-danger" role="alert">
                 This name is already taken.
             </div>
         </div>

@@ -154,9 +154,9 @@ def clear_history_data():
 @app.route('/revert_possible', methods=['POST'])
 def revert_possible():
     if os.path.exists(f"data/{current_model}_model_new.pt"):
-        return ("0")
+        return ("1")
     else: 
-        return ("1")        
+        return ("0")        
 
 
 @app.route('/predict_drawing', methods=['POST'])

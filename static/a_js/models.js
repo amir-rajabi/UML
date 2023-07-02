@@ -2,6 +2,7 @@ var save_model = document.getElementById('save-current-model');
 var new_model_name = document.getElementById('new-model-name');
 var model_name = document.getElementById('model_name');
 var already_taken_alert = document.getElementById('already-taken-alert');
+var too_long_alert = document.getElementById('too-long-alert');
 var all_model_names = document.getElementsByClassName('saved-models-name');
 
 save_model.addEventListener('click', function(){
@@ -119,16 +120,26 @@ model_name.addEventListener('input', function() {
     } else {
         save_model.setAttribute('disabled', 'true');
     }
+
+    if (model_name.value.length >= model_name.maxLength) {
+        model_name.addEventListener('keydown', function() {
+            too_long_alert.style.display = "block";
+        });
+      } else {
+        too_long_alert.style.display = "none";
+      }      
 });
 
 model_name.addEventListener('keypress', function(event) {
     if (event.keyCode === 32) {
-        event.preventDefault();
-        var currentValue = model_name.value;
-        var caretPos = model_name.selectionStart;
-        var newValue = currentValue.slice(0, caretPos) + '-' + currentValue.slice(caretPos);
-        model_name.value = newValue;
-        model_name.setSelectionRange(caretPos + 1, caretPos + 1);
+        if (!(model_name.value.length >= model_name.maxLength)){  
+            event.preventDefault();
+            var currentValue = model_name.value;
+            var caretPos = model_name.selectionStart;
+            var newValue = currentValue.slice(0, caretPos) + '-' + currentValue.slice(caretPos);
+            model_name.value = newValue;
+            model_name.setSelectionRange(caretPos + 1, caretPos + 1);         
+        }
     }
     checkIfModelExists();
 });
