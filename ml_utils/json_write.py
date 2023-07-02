@@ -128,6 +128,10 @@ def verify_data(path):
             data = json.load(file)
             num_elems= len(data["run"])
             for key in dictionary.keys():
+                if num_elems == 0 and len(data[key])==num_elems:
+                    continue
+                elif num_elems == 0:
+                    raise
                 if data[key][num_elems-1]:
                     continue
         except:
