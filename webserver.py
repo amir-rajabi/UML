@@ -74,9 +74,8 @@ def start_training_dict(params):
     worker_process.start()
     return
 
-def check_revert():
-    global config_revert
-    if config_revert:
+def check_revert(revert):
+    if revert:
         if os.path.exists(f"data/{current_model}_model_new.pt"):
             revert_history(f"data/{current_model}_epoch_data.json")
             os.remove(f"data/{current_model}_model_new.pt")
@@ -126,12 +125,13 @@ def sendingAdjustments():
 
 @app.route('/start', methods=['POST'])
 def start():
+    revert = request.get_json()
     print("LOG: RECEIVED TO RUN: " +str(adj))
     if testing_flag:
         print("LOG: testing; training skipped")
         return response
     print("LOG: STARTING TRAINING")
-    check_revert()
+    check_revert(revert)
     update_data()
     socketio.emit('update_chart', {'data':data})
     start_training_dict(adj)
@@ -141,26 +141,6 @@ def start():
 def stop():
     print("LOG: STOP PRESSED")
     stop_training()
-    return response
-
-
-#GOTO: start() -> check_revert()
-#this function will only set the Flag 
-#the action of reverting is done in check_revert
-@app.route('/revert', methods=['POST'])
-def revert():
-    #TODO: add signal to update chart in JS
-    # this still applies. see fork graph
-    global config_revert
-    config_revert = True
-    print("LOG: REVERT PRESSED")
-    return response
-
-@app.route('/redo', methods=['POST'])
-def redo():
-    global config_revert
-    config_revert = False
-    print("LOG: REDO PRESSED")
     return response
 
 @app.route('/clear_history', methods=['POST']) 

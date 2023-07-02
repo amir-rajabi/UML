@@ -139,11 +139,15 @@ input, label, select, button{
 #stop{
     display: none;
 }
-#revert, #redo{
-    margin-right: 2%;
-    display: block;
+#cb-left{
+    position: absolute;
+    left: 1%;
+    width: 70%;
 }
-#redo{
+#revert-ctr{
+    display: flex;
+}
+#revertlabel_notooltip{
     display: none;
 }
 

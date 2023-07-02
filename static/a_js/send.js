@@ -12,20 +12,69 @@ export function sendAdjustments() {
 var start = document.getElementById('start');
 var stop = document.getElementById('stop');
 var revert = document.getElementById('revert');
-var redo = document.getElementById('redo');
+var dsa_revert = document.getElementById('dsa_revert');
 var revert_confirmed = document.getElementById('revert_confirmed');
-var revertChecked = document.getElementById('revertChecked');
+var revertlabel_withtooltip = document.getElementById('revertlabel_withtooltip');
+var revertlabel_notooltip = document.getElementById('revertlabel_notooltip');
 
-start.addEventListener('click', function(){
-    revert.style.display = 'block';
-    redo.style.display = 'none';
+revert.addEventListener('change', function(){
+    var dsa_revert_flag = sessionStorage.getItem('UML_revert');
+    if (revert.checked) {
+        if (!dsa_revert_flag){
+            start.setAttribute('data-bs-toggle', 'modal');
+            start.setAttribute('data-bs-target', '#revertModal');
+        }
+        else {
+            start.removeAttribute('data-bs-toggle');
+            start.removeAttribute('data-bs-target');
+        }
+    } else {
+        start.removeAttribute('data-bs-toggle');
+        start.removeAttribute('data-bs-target');
+    }
+});
+
+revert_confirmed.addEventListener('click', function(){
+    if (dsa_revert.checked){
+        revertlabel_withtooltip.style.display = 'none';
+        revertlabel_notooltip.style.display = 'block';
+        sessionStorage.setItem('UML_revert', 1);
+        start.removeAttribute('data-bs-toggle');
+        start.removeAttribute('data-bs-target');
+    }
+    revert.checked = false;
     block_button(revert, true);
     start.style.display = 'none';
     stop.style.display = 'block';
     var xhr = new XMLHttpRequest();
     xhr.open('POST', '/start', true);
     xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.send(1);
+    xhr.send(true);
+});
+
+start.addEventListener('click', function(){
+    var dsa_revert_flag = sessionStorage.getItem('UML_revert');
+    if (revert.checked){
+        if (dsa_revert_flag){
+            revert.checked = false;
+            block_button(revert, true);
+            start.style.display = 'none';
+            stop.style.display = 'block';
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/start', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(true);
+        }
+    } else{
+        revert.checked = false;
+        block_button(revert, true);
+        start.style.display = 'none';
+        stop.style.display = 'block';
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/start', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(false);
+    }
 });
 
 stop.addEventListener('click', function(){
@@ -36,50 +85,6 @@ stop.addEventListener('click', function(){
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send(1);
 });
-
-revert.addEventListener('click', function() {
-    var revert_confirm = sessionStorage.getItem('UML_revert');
-    if (revert_confirm) {
-        revert.style.display = 'none';
-        redo.style.display = 'block';
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', '/revert', true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.send(1);
-    }
-});
-  
-revert_confirmed.addEventListener('click', function(){
-    if (revertChecked.checked){
-        sessionStorage.setItem('UML_revert', 1);
-        revert.removeAttribute('data-bs-toggle');
-        revert.removeAttribute('data-bs-target');
-    }    
-    revert.style.display = 'none';
-    redo.style.display = 'block';
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', '/revert', true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.send(1);
-});
-
-window.addEventListener("load", function() {
-    var revert_confirm = sessionStorage.getItem('UML_revert');
-    if (revert_confirm){
-        revert.removeAttribute('data-bs-toggle');
-        revert.removeAttribute('data-bs-target');
-    }
-});
-
-redo.addEventListener('click', function(){
-    revert.style.display = 'block';
-    redo.style.display = 'none';
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', '/redo', true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.send(1);
-});
-
 
 socket.on('training_finished', function(data){
     block_button(revert, false);
