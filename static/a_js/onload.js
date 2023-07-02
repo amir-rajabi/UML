@@ -10,6 +10,7 @@ var stop = document.getElementById('stop');
 var start = document.getElementById('start');
 var redDot = document.getElementById('server-dot-red');
 var greenDot = document.getElementById('server-dot-green');
+var revert = document.getElementById('revert');
 
 var error = false;
 var first_run_flag = 1;
@@ -67,12 +68,26 @@ function startRestoring() {
 
 document.addEventListener('DOMContentLoaded', function() {
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', '/restore_saved_models_html', true);
-    xhr.send();
+        xhr.open('POST', '/revert_possible', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var response = JSON.parse(xhr.responseText);
+                if (response == "1"){
+                    revert.disabled = true;
+                }
+            }
+        };
+        xhr.send(1);
+
+
+    var xhr1 = new XMLHttpRequest();
+    xhr1.open('GET', '/restore_saved_models_html', true);
+    xhr1.send();
   
-    xhr.onload = function () {
-      if (xhr.status === 200) {
-        var response = JSON.parse(xhr.responseText);
+    xhr1.onload = function () {
+      if (xhr1.status === 200) {
+        var response = JSON.parse(xhr1.responseText);
         var htmlContent = response.htmlContent;
         var accSavedModels = document.getElementById('acc_saved_models');
         

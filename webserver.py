@@ -151,6 +151,14 @@ def clear_history_data():
     print("LOG: CLEAR HISTORY")
     return response
 
+@app.route('/revert_possible', methods=['POST'])
+def revert_possible():
+    if os.path.exists(f"data/{current_model}_model_new.pt"):
+        return ("0")
+    else: 
+        return ("1")        
+
+
 @app.route('/predict_drawing', methods=['POST'])
 def predict_drawing():
     data = request.get_json()

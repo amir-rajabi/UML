@@ -90,6 +90,21 @@ socket.on('training_finished', function(data){
     block_button(revert, false);
     start.style.display = 'block';
     stop.style.display = 'none';
+    
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/revert_possible', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var response = JSON.parse(xhr.responseText);
+            if (response == "1"){
+                revert.disabled = true;
+            } else {
+                revert.disabled = false;
+            }
+        }
+    };
+    xhr.send(1);
     });
 
 socket.on('revert_allowed', function(data){
