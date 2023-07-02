@@ -259,6 +259,8 @@ input, label, select, button{
     display: block;
 }
 #succ_pred_alert{
+    display: flex;
+    justify-content: center;
     margin-top: 1%;
 }
 #visual-upper-ctr{
@@ -308,8 +310,35 @@ thead th{
     padding-right: 5%;
 }
 #drawingcanvas {
+    cursor: url('../static/images/pencil.png'), auto;
     border: 1px solid white;
     background-color: black;
+}
+#prediction-ctr{
+    margin-top: 2%;
+    display: flex;
+}
+#prediction-txt{
+    margin-right: 10%;
+}
+#drawing-ctr{
+    border-bottom: 1px solid white;
+    padding-bottom: 3%;
+    display: flex;
+    justify-content: center;
+    width: 90%;
+}
+#output-img-ctr{
+    position: relative;
+    display: flex;
+    width:140px; 
+    height:140px;
+    border: 1px solid white;
+    margin-left: 10%;
+    background-color: #222529;
+}
+#output-img-placeholder{
+    position: absolute;
 }
 
 /*------- progressbar -------*/

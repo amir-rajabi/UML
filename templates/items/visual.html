@@ -24,15 +24,36 @@
     </div>
     <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" tabindex="0">
         <div class="visual-ctr" id="drawing_tab">
-            <canvas id="drawingcanvas" width="280" height="280"></canvas>
-            
-            <div class="alert text-bg-dark alert-success " role="alert" id="succ_pred_alert">
-                <span id="predicted_no"></span>
-              </div>
-
+            <div id="drawing-ctr">
+                <div>
+                    <div class="alert text-bg-dark" role="alert">
+                        <span> Draw a number (0-9) in the following box: </span>
+                    </div>
+                    <canvas id="drawingcanvas" width="280" height="280"></canvas>
+                </div>
+                <div id="drawing2ndcolumn">
+                    <div class="alert" role="alert">&nbsp;</div>
+                    <div id="output-img-ctr">
+                        <div></div>
+                        <div id="output-img-placeholder">
+                            <button type="button" class="btn btn-secondary tooltip-button" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="an image will appear here showing how the model will receive the image.">
+                                <img src="{{ url_for('static', filename='images/x-placeholder.png') }}" alt="">
+                            </button> 
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div id="drawing_buttons">
                 <button type="button" class="btn btn-outline-light btn-lg" id="clear_drawing">Clear</button>
-                <button type="button" class="btn btn-success btn-lg" id="predict_drawing">Predict</button>
+                <button type="button" class="btn btn-success btn-lg" id="predict_drawing" disabled>Predict</button>
+            </div>
+            <div id="prediction-ctr">
+                <div class="alert" id="prediction-txt" role="alert">
+                    <span> Prediction: </span>
+                    <div class="alert text-bg-dark alert-success " role="alert" id="succ_pred_alert">
+                        <span id="predicted_no">&nbsp;</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
