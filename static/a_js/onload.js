@@ -86,16 +86,14 @@ document.addEventListener('DOMContentLoaded', function() {
     xhr1.send();
   
     xhr1.onload = function () {
-      if (xhr1.status === 200) {
-        var response = JSON.parse(xhr1.responseText);
-        var htmlContent = response.htmlContent;
-        var accSavedModels = document.getElementById('acc_saved_models');
-        
-        if (htmlContent !== false) {
-          accSavedModels.innerHTML = htmlContent;
+        if (xhr1.status === 200) {
+        var htmlContent = JSON.parse(xhr1.responseText);
+            if (htmlContent !== 0){
+                var accSavedModels = document.getElementById('saved_models_frontend');
+                if (htmlContent !== false) {
+                    accSavedModels.innerHTML = htmlContent;
+                }
+            }
         }
-      } else {
-        console.log('Fehler, Statuscode: ' + xhr.status);
-      }
     };
 });

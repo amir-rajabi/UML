@@ -186,6 +186,8 @@ const dia3 = new Chart(
 //--------------- updater ---------------//
 var first_alert = 0;
 var currentAccuracy = document.getElementById('current-accuracy');
+var currentAccuracyModel = document.getElementById('current-acc-model');
+var currentModelEpochs = document.getElementById('current-model-epochs');
 
 socket.on('update_chart', function(data){
   chartData.d1 = data.data.d1;
@@ -213,6 +215,8 @@ socket.on('update_chart', function(data){
   updateChart(selected1, dia3, selected2);
 
   currentAccuracy.textContent = chartData.d1[chartData.d1.length-1];  
+  currentAccuracyModel.textContent = chartData.d1[chartData.d1.length-1];
+  currentModelEpochs.textContent = chartData.d1.length;
 });
 
 //--------------- progressbar ---------------//

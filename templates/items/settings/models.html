@@ -13,11 +13,11 @@
                         <tr></tr>
                         <tr>
                             <td>Accuracy</td>
-                            <td><span id="model-acc-current">99</span> %</td>
+                            <td><span id="current-acc-model">99</span> %</td>
                         </tr>
                         <tr>
                             <td>Total epochs trained</td>
-                            <td><span id="model-epochs-current">123</span></td>
+                            <td><span id="current-model-epochs">123</span></td>
                         </tr>
                         </tbody>
                     </table>   
@@ -29,8 +29,33 @@
         </div>
         <div class="line"></div>
         <div id="saved_models_ctr">
+            <script>
+                function delete_model(index){
+                    var modalElement = "reset_model_window_" + index;
+                    var model_acc = "acc-item-ctr-" + index;
+                    var model_name_ctr = "acc-saved-models-headtitle-" + index;
+                    var model_name = document.getElementById(model_name_ctr).textContent;
+
+                    document.getElementById(modalElement).remove();
+                    document.getElementById(model_acc).remove();
+
+                    var xhr0 = new XMLHttpRequest();
+                    xhr0.open('POST', '/delete_model', true);
+                    xhr0.setRequestHeader('Content-Type', 'application/json');
+                    xhr0.send(JSON.stringify( model_name ));
+
+                    var allModels = document.getElementById('saved_models_frontend').innerHTML;
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST', '/saved_models_html', true);
+                    xhr.setRequestHeader('Content-Type', 'application/json');
+                    xhr.send(JSON.stringify({ savedModelsHTML: allModels }));
+                }
+            </script>
             <div class="model_ctr_headline">Saved models</div>
-            <div class="accordion " id="acc_saved_models" data-bs-theme="dark"></div>
+            <div id="saved_models_frontend">
+                <div class="accordion " id="acc_saved_models" data-bs-theme="dark"></div>
+                <div id="delete_model_modals"></div>
+            </div>
         </div>
     </div>
 </div>

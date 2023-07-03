@@ -23,10 +23,10 @@ export var defaults = {
 };
 
 export var chartData = {
-    d1: [],
-    d2: [],
-    d3: [],
-    d4: [],
+    d1: [],                 // accuracy
+    d2: [],                 // loss
+    d3: [],                 // training accuracy
+    d4: [],                 // training loss
     run: []
 };
 

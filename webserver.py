@@ -181,18 +181,14 @@ def predict_drawing():
 def send_saved_models_html():
     saved_models_json = 'data/saved_models.json'
 
-    data = request.get_json()
-    html_content = data.get('htmlContent')
-
     if not os.path.exists(saved_models_json):
         with open(saved_models_json, 'w') as file:
             json.dump({}, file)
 
-    with open(saved_models_json, 'r+') as file:
-        json_data = json.load(file)
-        json_data.update(html_content)
-        file.seek(0)
-        json.dump(json_data, file, indent=4) 
+    savedModelsHTML = request.json.get('savedModelsHTML')
+
+    with open('data/saved_models.json', 'w') as file:
+        json.dump(savedModelsHTML, file)
     return response
 
 @app.route('/restore_saved_models_html', methods=['GET'])
@@ -202,10 +198,9 @@ def restore_saved_models_html():
     if os.path.exists(saved_models_json):
         with open(saved_models_json, 'r') as file:
             json_data = json.load(file)
-            html_content = json_data.get('htmlContent')
-        return jsonify(htmlContent=html_content)
+        return jsonify(json_data)
     else:
-        return jsonify(htmlContent=False)
+        return "0"
 
 
 def load_model():
@@ -250,8 +245,12 @@ def save_model():
     print ("LOG: saved: " + name)
     return response
 
-
-
+@app.route('/delete_model', methods=['POST'])
+def delete_model():
+    name = request.get_json()
+    os.remove(f"data/{name}_model.pt")
+    os.remove(f"data/{name}_epoch_data.json")
+    return response
 #----------------------------------------------------------------#
 # start server & websocket connection 
 # any init stuff can be put here
