@@ -19,7 +19,7 @@
     scrollbar-color: transparent transparent; /* Chrome, Safari, Opera (optional, um den Hintergrund transparent zu machen) */
 }
 body{
-    /* overflow: hidden; */
+    overflow: hidden;
     position: relative;
     padding: 0;
     margin: 0;
