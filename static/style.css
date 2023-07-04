@@ -12,7 +12,11 @@
     color: white;
     font-size: 12px;
     font-family: 'uml';
-    scrollbar-width: none;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer und Microsoft Edge */
+    overflow: -moz-scrollbars-none; /* Alte Versionen von Firefox */
+    scrollbar-width: thin; /* Chrome, Safari, Opera */
+    scrollbar-color: transparent transparent; /* Chrome, Safari, Opera (optional, um den Hintergrund transparent zu machen) */
 }
 body{
     /* overflow: hidden; */
