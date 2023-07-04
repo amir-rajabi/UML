@@ -70,8 +70,8 @@ def training(name, chart_data, socketio, dictionary, model: Module,
             #the interrupt, then it will execute
             #this means that on interrupt the current epoch is
             #aborted
-            test_loss, test_accuracy = accuracy(model, test_loader, cuda)
-            train_loss, train_accuracy = accuracy(model, train_loader, cuda)
+            test_loss, test_accuracy = accuracy(loss_nr, model, test_loader, cuda)
+            train_loss, train_accuracy = accuracy(loss_nr, model, train_loader, cuda)
 
             chart_data['d1'].append(test_accuracy)
             chart_data['d2'].append(test_loss)

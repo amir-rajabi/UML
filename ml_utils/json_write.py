@@ -46,7 +46,7 @@ def empty_missing_file(path, create=1):
         print("WARNING: file was missing")
         return 1
     if os.stat(path).st_size ==0:
-        print("WARNING: file is empty")
+        print(f"WARNING: file is empty {path}")
         return 1
     return 0
 
@@ -132,7 +132,9 @@ def verify_data(path):
                     continue
                 elif num_elems == 0:
                     raise
-                if data[key][num_elems-1]:
+                if data[key][num_elems-1] == "nan":
+                    raise
+                else:
                     continue
         except:
             print("ERROR: epoch data corrupted")

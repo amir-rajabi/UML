@@ -178,20 +178,25 @@ def predict_drawing():
 @app.route('/get_adjustments_data', methods=['GET'])
 def get_adjustments_data():
     file_path = os.path.join("data", f"{current_model}_epoch_data.json")
+    adjustments_data = {
+        "learning_rate": [],
+        "momentum": [],
+        "dropout_rate": [],
+        "loss_function": [],
+        "epochs": [],
+        "batch_size": []
+    }
 
-    if os.path.exists(file_path):
-        with open(file_path, 'r') as file:
-            data = json.load(file)
-
-        adjustments_data = {
-            "learning_rate": data["learning_rate"],
-            "momentum": data["momentum"],
-            "dropout_rate": data["dropout_rate"],
-            "loss_function": data["loss_function"],
-            "epochs": data["epochs"],
-            "batch_size": data["batch_size"]
-        }
+    if empty_missing_file(file_path):
+        print("LOG: empty history update sent")
         return jsonify(adjustments_data)
+
+    with open(file_path, 'r') as file:
+        data = json.load(file)
+    for key in adjustments_data.keys():
+        adjustments_data[key]=data[key]
+    print("LOG: history update sent to frontend")
+    return jsonify(adjustments_data)
 
 #---------------------- ROUTE SAVE LOAD ----------------------#
  
@@ -266,8 +271,15 @@ def save_model():
 @app.route('/delete_model', methods=['POST'])
 def delete_model():
     name = request.get_json()
-    os.remove(f"data/{name}_model.pt")
-    os.remove(f"data/{name}_epoch_data.json")
+    if os.path.exists(f"data/{name}_model.pt"):
+        os.remove(f"data/{name}_model.pt")
+    else:
+        print("ERRROR: model to be deleted does not exist")
+        sendAlert(3, "ERROR: Model to be deleted does not exist")
+    if os.path.exists(f"data/{name}_model_new.pt"):
+        os.remove(f"data/{name}_model_new.pt")
+    if os.path.exists(f"data/{name}_epoch_data.json"):
+        os.remove(f"data/{name}_epoch_data.json")
     return response
 #----------------------------------------------------------------#
 # start server & websocket connection 

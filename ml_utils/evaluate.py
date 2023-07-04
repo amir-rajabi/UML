@@ -7,7 +7,10 @@ from torch.nn import Module
 from torch.utils.data import DataLoader
 
 
-def accuracy(model: Module, loader: DataLoader, cuda: bool) -> (float, float):
+loss_func = [F.cross_entropy, F.multi_margin_loss, F.multilabel_soft_margin_loss,
+        F.soft_margin_loss, F.l1_loss, F.smooth_l1_loss, F.poisson_nll_loss]
+
+def accuracy(loss_nr, model: Module, loader: DataLoader, cuda: bool) -> (float, float):
     model.eval()
     losses = []
     correct = 0
@@ -17,10 +20,12 @@ def accuracy(model: Module, loader: DataLoader, cuda: bool) -> (float, float):
                 data, target = data.cuda(), target.cuda()
             data, target = Variable(data), Variable(target)
             output = model(data)
-            losses.append(F.cross_entropy(output, target).item())
+            if loss_nr > 1:
+                target = F.one_hot(target)
+            losses.append(loss_func[loss_nr](output, target).item())
             pred = output.data.max(1, keepdim=True)[1]
             correct += pred.eq(target.data.view_as(pred)).cpu().sum().item()
-    eval_loss = float(np.mean(losses))
+    eval_loss = float(np.nanmean(losses))
     return eval_loss, 100. * correct / len(loader.dataset)
 
 

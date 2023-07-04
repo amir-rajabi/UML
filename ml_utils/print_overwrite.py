@@ -23,10 +23,13 @@ def print(message, flag=0):
     and print it directly '''
     if flag:
         builtins.print(message)
-    warning = (message[0:7]=="WARNING")
-    error = (message[0:5]=="ERROR")
-    if conf_show_logs or error or warning:
-        builtins.print(message)
+    try:
+        warning = (message[0:7]=="WARNING")
+        error = (message[0:5]=="ERROR")
+        if conf_show_logs or error or warning:
+            builtins.print(message)
+    except:
+        print("ERROR: failed to slice object. Convert your object to string first")
 
 if __name__ == "__main__":
     init_print()
