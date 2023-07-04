@@ -9,6 +9,7 @@ var clear_history = document.getElementById('flexCheckDefault');
 var reset = document.getElementById('reset');
 var revert = document.getElementById('revert');
 var resetModal = document.getElementById('resetModal');
+var accordion_history = document.getElementById('accordion_history');
 
 
 reset.addEventListener('click', function(){
@@ -21,6 +22,7 @@ reset.addEventListener('click', function(){
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(1);
         block_button(revert, true)
+        accordion_history.innerHTML = '';
         createAlert(2, 'All settings have been reset and the history has been deleted.')
     }
     else if (reset_settings.checked){
@@ -35,6 +37,7 @@ reset.addEventListener('click', function(){
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(1);
         block_button(revert, true)
+        accordion_history.innerHTML = '';
         createAlert(2, 'The history has been deleted.');
     }
     else {

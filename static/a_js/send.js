@@ -55,6 +55,7 @@ revert_confirmed.addEventListener('click', function(){
 });
 
 start.addEventListener('click', function(){
+    sessionStorage.setItem('UML_epochs', chartData.run.length);
     var dsa_revert_flag = sessionStorage.getItem('UML_revert');
     if (revert.checked){
         if (dsa_revert_flag){
@@ -109,25 +110,29 @@ socket.on('training_finished', function(data){
     xhr.send(1);
 
     getAdjustmentsData().then(function(adjData) {
-        var lastElement = chartData.run.length - 1;
-        var numofEpochs = 0;
-        for (var i = 0; i < lastElement; i++) {
-          if (chartData.run[i] == chartData.run[lastElement]) {
-            numofEpochs++;
-          }
+        var saved_length = sessionStorage.getItem('UML_epochs');
+        if (saved_length == chartData.run.length){} 
+        else{
+            var lastElement = chartData.run.length-1;
+            var numofEpochs = 0;
+            for (var i = 0; i < lastElement+1; i++) {
+                if (chartData.run[i] == chartData.run[lastElement]) {
+                    numofEpochs++;
+                }
+            }
+            console.log("training finished");
+            createHistoryItem(
+                chartData.d1[lastElement],
+                adjData.learning_rate[lastElement],
+                adjData.momentum[lastElement],
+                adjData.dropout_rate[lastElement],
+                adjData.loss_function[lastElement],
+                numofEpochs
+            );
         }
-        console.log("training finished");
-        createHistoryItem(
-          chartData.d1[lastElement],
-          adjData.learning_rate[lastElement],
-          adjData.momentum[lastElement],
-          adjData.dropout_rate[lastElement],
-          adjData.loss_function[lastElement],
-          numofEpochs
-        );
-      }).catch(function(error) {
+    }).catch(function(error) {
         console.log("Error:", error);
-      });
+        });
 });
 
 socket.on('revert_allowed', function(data){

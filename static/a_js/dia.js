@@ -257,7 +257,8 @@ socket.on('update_chart', function(data){
   chartData.d3 = data.data.d3;
   chartData.d4 = data.data.d4;
   chartData.run = data.data.run;
-
+  console.log(chartData.run);
+  console.log(data.data.run);
   
   // convert normal run format to needed ([0,0,0,0,1,1,1,2] to [4,3,1])
   for (let i = 0; i < data.data.run.length; i++) {
@@ -268,7 +269,7 @@ socket.on('update_chart', function(data){
   }
 
   lastIndexRun = revertIndexCalc(epochs_per_runs, data.data.run.length);
-  chartData.run.pop();
+  epochs_per_runs.pop();
 
   if (createHistory == true){
     createHistory = false;

@@ -9,10 +9,12 @@ export function historyFrontend() {
       for (var x = 0; x < numRuns; x++) {
         var numofEpochs = 0;
         for (var j = 0; j < chartData.run.length; j++) {
-          if (chartData.run[j] === String(x)) {
+          if (chartData.run[j] == x) {
+            console.log(numofEpochs);
             numofEpochs++;
           }
         }
+        console.log(numofEpochs);
         var lastIndex = chartData.run.lastIndexOf(String(x));
         if (lastIndex == -1){
           lastIndex = chartData.run.length;
@@ -51,7 +53,7 @@ export function historyFrontend() {
 
 function getnumRuns() {
   var numRuns_arr = [];
-  for (var i = 0; i < chartData.run.length+1; i++) {
+  for (var i = 0; i < chartData.run.length; i++) {
     var element = Number(chartData.run[i]);
     if (!numRuns_arr.includes(element)) {
       numRuns_arr.push(element);
