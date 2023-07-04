@@ -20,8 +20,17 @@ var selected2 ='1';
 var labels = ['Accuracy (test-set)', 'Loss (test-set)', 'Accuracy (train-set)', 'Loss (train-set)'];
 var second = false;
 var joined = false;
+var revert = document.getElementById('revert');
+var revertChecked = revert.checked;
+var lastIndexRun = revertIndexCalc(chartData.run);
 
-var ctx = document.getElementById('dia1').getContext('2d');
+const dash = (ctx, value) => {
+  if (revertChecked) {
+    return ctx.p0DataIndex > lastIndexRun ? value : [6, 0];
+  }
+  return [6,0];
+};
+
 const arbitraryLine = {
   id: 'arbitraryLine',
   afterDraw(chart, args, options){
@@ -34,17 +43,26 @@ const arbitraryLine = {
       runCount += options.runs[i];
 
       // run line
-      ctx.strokeStyle = 'red';
+      ctx.strokeStyle = 'lightgray';
       ctx.strokeRect(x.getPixelForValue(runCount), top, 0, height);
+      ctx.strokeWidth = 1;
       ctx.restore(); 
 
       // run number
-      ctx.font = '12px Arial';
-      ctx.textAlign = 'center';
-      ctx.fillStyle = 'white';
+      // ctx.font = '12px Arial';
+      // ctx.textAlign = 'center';
+      // ctx.fillStyle = 'white';
       // - 0 falls central
-      ctx.fillText("Run " + (i+1), x.getPixelForValue(runCount) - 22, top + 12);
+      // ctx.fillText("Run " + (i+1), x.getPixelForValue(runCount) - 22, top + 12);
     }
+  }
+}
+
+function revertIndexCalc(runs, epochCount) {
+  if (epochCount > 0) {
+    let lastElement = runs.slice(-1);
+    let lastRunStart = epochCount - lastElement;
+    return (lastRunStart - 2);
   }
 }
 
@@ -110,7 +128,11 @@ const dia1 = new Chart(
       datasets: [
         {
           label: labels[0],
-          data: selected_data1
+          data: selected_data1,
+          tension: 0.4,
+          segment: {
+            borderDash: ctx => dash(ctx, [6,6])
+          }
         }
       ]
     },
@@ -136,7 +158,11 @@ const dia2 = new Chart(
       datasets: [
         {
           label: labels[1],
-          data: selected_data2
+          data: selected_data2,
+          tension: 0.4,
+          segment: {
+            borderDash: ctx => dash(ctx, [6,6])
+          }
         }
       ]
     },
@@ -162,11 +188,19 @@ const dia3 = new Chart(
       datasets: [
         {
           label: labels[0],
-          data: selected_data1
+          data: selected_data1,
+          tension: 0.4,
+          segment: {
+            borderDash: ctx => dash(ctx, [6,6])
+          }
         },
         {
           label: labels[1],
-          data: selected_data2
+          data: selected_data2,
+          tension: 0.4,
+          segment: {
+            borderDash: ctx => dash(ctx, [6,6])
+          }
         }
       ]
     },
@@ -202,6 +236,7 @@ socket.on('update_chart', function(data){
       chartData.run[i] = count;
     }
   }
+  lastIndexRun = revertIndexCalc(chartData.run, data.data.run.length);
   chartData.run.pop();
 
 
@@ -254,6 +289,13 @@ selector2.addEventListener("change", function(event) {
   updateChart(selected2, dia2);
   updateChart(selected1, dia3, selected2);
   saveDataToSessionStorage();
+});
+
+revert.addEventListener("change", function(event) {
+  revertChecked = event.target.checked;
+  updateChart(selected1, dia1);
+  updateChart(selected2, dia2);
+  updateChart(selected1, dia3, selected2);
 });
 
 function updateChart(selectedValue, dia, secondSelectedValue = -1){
