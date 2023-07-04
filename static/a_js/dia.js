@@ -1,6 +1,6 @@
 import {chartData, socket, storedData, epochs_per_runs} from './data.js';
 import {createAlert} from './alerts.js';
-import {createHistoryItem, historyFrontend} from './history.js';
+import {historyFrontend} from './history.js';
 
 window.chartData = chartData;
 window.epr = epochs_per_runs;
@@ -12,6 +12,7 @@ var dia3ctr = document.getElementById('dia3-ctr');
 var dia2switch = document.getElementById('flexSwitchCheckDefault');
 var dia3join = document.getElementById('joinDiagramsSwitch');
 var secondcardbody = document.getElementById('second-card-body');
+var dia_join_ctr = document.getElementById('dia_join_ctr');
 
 var selector1 = document.querySelector('.adjust-dropdown1');
 var selector2 = document.querySelector('.adjust-dropdown2');
@@ -75,6 +76,7 @@ function revertIndexCalc(runs, epochCount) {
 //--------------- set displaying content ---------------//
 dia2switch.addEventListener('click', function(){
   if (dia2switch.checked == true){
+    console.log('true');
     second = true;
     saveDataToSessionStorage();
     if (joined) {
@@ -86,14 +88,21 @@ dia2switch.addEventListener('click', function(){
       dia3ctr.style.display = 'none';
     }
     secondcardbody.style.display = 'block';
+    dia_join_ctr.style.display = 'block';
+    dia_join_ctr.style.display = 'block';
   }
   else if (dia2switch.checked == false){
+    console.log('false');
     second = false;
+    joined = false;
     saveDataToSessionStorage();
     dia1ctr.style.display = 'block';
     dia2ctr.style.display = 'none';
     dia3ctr.style.display = 'none';
     secondcardbody.style.display = 'none';
+    dia_join_ctr.style.display = 'none';
+    dia_join_ctr.style.display = 'none';
+    dia3join.checked = false;
   }
 });
 
@@ -138,7 +147,9 @@ const dia1 = new Chart(
           tension: 0.4,
           segment: {
             borderDash: ctx => dash(ctx, [6,6])
-          }
+          },
+          borderColor: '#0b6ffd',
+          backgroundColor: 'rgba(11, 80, 179, 0.8)',
         }
       ]
     },
@@ -149,11 +160,19 @@ const dia1 = new Chart(
         arbitraryLine: {
           runs: [],
         }
+      },
+      scales: {
+        y: {
+          grid: {
+            color: 'rgba(77, 77, 77, 0.1)'
+          }
+        }
       }
     },
     plugins: [arbitraryLine]
   }
 );
+
 //--------------- dia 2 ---------------//
 const dia2 = new Chart(
   document.getElementById('dia2'),
@@ -168,7 +187,9 @@ const dia2 = new Chart(
           tension: 0.4,
           segment: {
             borderDash: ctx => dash(ctx, [6,6])
-          }
+          },
+          borderColor: '#0b6ffd',
+          backgroundColor: 'rgba(11, 80, 179, 0.8)'
         }
       ]
     },
@@ -179,7 +200,14 @@ const dia2 = new Chart(
         arbitraryLine: {
           runs: [],
         }
-      }
+      },
+      scales: {
+        y: {
+          grid: {
+            color: 'rgba(77, 77, 77, 0.1)'
+          }
+        }
+      }  
     },
     plugins: [arbitraryLine]
   }
@@ -199,6 +227,8 @@ const dia3 = new Chart(
           segment: {
             borderDash: ctx => dash(ctx, [6,6])
           },
+          borderColor: '#0b6ffd',
+          backgroundColor: 'rgba(11, 80, 179, 0.8)',
           yAxisID: 'y1'
         },
         {
@@ -208,6 +238,8 @@ const dia3 = new Chart(
           segment: {
             borderDash: ctx => dash(ctx, [6,6])
           },
+          borderColor: '#bb2d3c',
+          backgroundColor: 'rgba(179, 18, 34, 0.8)',
           yAxisID: 'y2'
         }
       ]
@@ -221,6 +253,11 @@ const dia3 = new Chart(
         }
       },
       scales: {
+        y: {
+          grid: {
+            color: 'rgba(77, 77, 77, 0.1)'
+          }
+        },
         y1: {
           type: 'linear',
           display: true,
@@ -257,8 +294,6 @@ socket.on('update_chart', function(data){
   chartData.d3 = data.data.d3;
   chartData.d4 = data.data.d4;
   chartData.run = data.data.run;
-  console.log(chartData.run);
-  console.log(data.data.run);
   
   // convert normal run format to needed ([0,0,0,0,1,1,1,2] to [4,3,1])
   for (let i = 0; i < data.data.run.length; i++) {
@@ -475,12 +510,15 @@ window.addEventListener('DOMContentLoaded', function() {
       dia2ctr.style.display = 'none';
       dia3ctr.style.display = 'block';
       secondcardbody.style.display = 'block';
+      dia_join_ctr.style.display = 'block';
     } else if (second) {  
       dia2ctr.style.display = 'block';
       secondcardbody.style.display = 'block';
+      dia_join_ctr.style.display = 'block';
     } else {
       dia2ctr.style.display = 'none';
       secondcardbody.style.display = 'none';
+      dia_join_ctr.style.display = 'none';
     }
   }
 });

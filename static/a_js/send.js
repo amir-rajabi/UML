@@ -120,13 +120,13 @@ socket.on('training_finished', function(data){
                     numofEpochs++;
                 }
             }
-            console.log("training finished");
             createHistoryItem(
                 chartData.d1[lastElement],
                 adjData.learning_rate[lastElement],
                 adjData.momentum[lastElement],
                 adjData.dropout_rate[lastElement],
                 adjData.loss_function[lastElement],
+                adjData.batch_size[lastElement],
                 numofEpochs
             );
         }

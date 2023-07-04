@@ -1,6 +1,5 @@
 import {adjustments, chartData, updateAdjustments, socket, defaults, restoreAllAdjustments, storedData, statustxt} from './data.js';
 import {sendAdjustments} from './send.js';
-import {historyFrontend} from './history.js';
 
 window.adjustments_data = adjustments;
 window.defaults_data = defaults
@@ -42,8 +41,6 @@ socket.on('disconnect', function() {
     redDot.style.display = 'flex';
     sessionStorage.removeItem('UML_DATA_PIEQ4');
 });
-
-
 
 function startRestoring() { 
     if (storedData) {

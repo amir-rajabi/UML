@@ -1,4 +1,4 @@
-import {updateAdjustments, defaults, restoreAllAdjustments, socket} from './data.js';
+import {updateAdjustments, defaults, restoreAllAdjustments} from './data.js';
 import {sendAdjustments, block_button} from './send.js';
 import {createAlert} from './alerts.js';
 

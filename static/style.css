@@ -248,6 +248,9 @@ input, label, select, button{
     width: 90%;
     height: 100%;
 }
+#dia1-ctr, #dia2-ctr, #dia3-ctr{
+    cursor: crosshair !important;
+}
 .tab-pane{
     height: 100%;
 }
@@ -282,7 +285,7 @@ input, label, select, button{
     margin-top: 1%;
     margin-left: 5%;
 }
-#dia2-ctr, #second-card-body, #dia3-ctr{
+#dia2-ctr, #second-card-body, #dia3-ctr, #dia_join_ctr{
     display: none;
 }
 #dia1, #dia2, #dia3{
