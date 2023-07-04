@@ -17,7 +17,6 @@ export function historyFrontend() {
         if (lastIndex == -1){
           lastIndex = chartData.run.length;
         }
-        console.log(lastIndex)
         createHistoryItem(chartData.d1[lastIndex], 
           adjData.learning_rate[lastIndex], 
           adjData.momentum[lastIndex], 
