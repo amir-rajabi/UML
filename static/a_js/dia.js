@@ -192,7 +192,8 @@ const dia3 = new Chart(
           tension: 0.4,
           segment: {
             borderDash: ctx => dash(ctx, [6,6])
-          }
+          },
+          yAxisID: 'y1'
         },
         {
           label: labels[1],
@@ -200,7 +201,8 @@ const dia3 = new Chart(
           tension: 0.4,
           segment: {
             borderDash: ctx => dash(ctx, [6,6])
-          }
+          },
+          yAxisID: 'y2'
         }
       ]
     },
@@ -211,7 +213,27 @@ const dia3 = new Chart(
         arbitraryLine: {
           runs: [],
         }
-      }
+      },
+      scales: {
+        y1: {
+          type: 'linear',
+          display: true,
+          position: 'left',
+          title: {
+            display: true,
+            text: labels[0],
+          },
+        },
+        y2: {
+          type: 'linear',
+          display: true,
+          position: 'right',
+          title: {
+            display: true,
+            text: labels[1],
+          },
+        },
+      },
     },
     plugins: [arbitraryLine]
   }
@@ -311,6 +333,9 @@ function updateChart(selectedValue, dia, secondSelectedValue = -1){
     });
     dia.data.datasets[0].data = selected;
     dia.data.datasets[0].label = labels[0];
+    if (dia == dia3) {
+      dia.options.scales.y1.title.text = labels[0];
+    }
     dia.update();
   } 
   else if (selectedValue === '1') {
@@ -320,6 +345,9 @@ function updateChart(selectedValue, dia, secondSelectedValue = -1){
     });
     dia.data.datasets[0].data = selected;
     dia.data.datasets[0].label = labels[1];
+    if (dia == dia3) {
+      dia.options.scales.y1.title.text = labels[1];
+    }
     dia.update();
   } 
   else if (selectedValue === '2') {
@@ -329,6 +357,9 @@ function updateChart(selectedValue, dia, secondSelectedValue = -1){
     });
     dia.data.datasets[0].data = selected;
     dia.data.datasets[0].label = labels[2];
+    if (dia == dia3) {
+      dia.options.scales.y1.title.text = labels[2];
+    }
     dia.update();
   } else if (selectedValue === '3') {
     selected = chartData.d4;
@@ -337,6 +368,9 @@ function updateChart(selectedValue, dia, secondSelectedValue = -1){
     });
     dia.data.datasets[0].data = selected;
     dia.data.datasets[0].label = labels[3];
+    if (dia == dia3) {
+      dia.options.scales.y1.title.text = labels[3];
+    }
     dia.update();
   }
   
@@ -347,6 +381,9 @@ function updateChart(selectedValue, dia, secondSelectedValue = -1){
     });
     dia.data.datasets[1].data = secondSelected;
     dia.data.datasets[1].label = labels[0];
+    if (dia == dia3) {
+      dia.options.scales.y2.title.text = labels[0];
+    }
     dia.update();
   } 
   else if (secondSelectedValue === '1') {
@@ -356,6 +393,9 @@ function updateChart(selectedValue, dia, secondSelectedValue = -1){
     });
     dia.data.datasets[1].data = secondSelected;
     dia.data.datasets[1].label = labels[1];
+    if (dia == dia3) {
+      dia.options.scales.y2.title.text = labels[1];
+    }
     dia.update();
   } 
   else if (secondSelectedValue === '2') {
@@ -365,6 +405,9 @@ function updateChart(selectedValue, dia, secondSelectedValue = -1){
     });
     dia.data.datasets[1].data = secondSelected;
     dia.data.datasets[1].label = labels[2];
+    if (dia == dia3) {
+      dia.options.scales.y2.title.text = labels[2];
+    }
     dia.update();
   } else if (secondSelectedValue === '3') {
     secondSelected = chartData.d4;
@@ -373,6 +416,9 @@ function updateChart(selectedValue, dia, secondSelectedValue = -1){
     });
     dia.data.datasets[1].data = secondSelected;
     dia.data.datasets[1].label = labels[3];
+    if (dia == dia3) {
+      dia.options.scales.y2.title.text = labels[3];
+    }
     dia.update();
   }
 }
