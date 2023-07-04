@@ -175,6 +175,24 @@ def predict_drawing():
 
     return jsonify({'prediction': int(prediction)})
 
+@app.route('/get_adjustments_data', methods=['GET'])
+def get_adjustments_data():
+    file_path = os.path.join("data", f"{current_model}_epoch_data.json")
+
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as file:
+            data = json.load(file)
+
+        adjustments_data = {
+            "learning_rate": data["learning_rate"],
+            "momentum": data["momentum"],
+            "dropout_rate": data["dropout_rate"],
+            "loss_function": data["loss_function"],
+            "epochs": data["epochs"],
+            "batch_size": data["batch_size"]
+        }
+        return jsonify(adjustments_data)
+
 #---------------------- ROUTE SAVE LOAD ----------------------#
  
 @app.route('/saved_models_html', methods=['POST'])
@@ -200,7 +218,7 @@ def restore_saved_models_html():
             json_data = json.load(file)
         return jsonify(json_data)
     else:
-        return "0"
+        return "response"
 
 
 def load_model():

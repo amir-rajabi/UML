@@ -1,10 +1,10 @@
-import {adjustments, chartData, history, updateAdjustments, socket, defaults, restoreAllAdjustments, storedData, statustxt} from './data.js';
+import {adjustments, chartData, updateAdjustments, socket, defaults, restoreAllAdjustments, storedData, statustxt} from './data.js';
 import {sendAdjustments} from './send.js';
+import {historyFrontend} from './history.js';
 
 window.adjustments_data = adjustments;
 window.defaults_data = defaults
 window.chartData = chartData;
-window.historyData = history;
 window.statustxt = statustxt;
 var stop = document.getElementById('stop');
 var start = document.getElementById('start');
@@ -79,7 +79,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         };
         xhr.send(1);
-
 
     var xhr1 = new XMLHttpRequest();
     xhr1.open('GET', '/restore_saved_models_html', true);

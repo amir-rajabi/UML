@@ -16,13 +16,9 @@ save_model.addEventListener('click', function(){
     for (var i = 0; i < savedModelItems.length; i++) {
         var element = savedModelItems[i];
         var id = element.id;
-        console.log('hello from for loop')
         if (id) {
-            console.log('there is a id')
-            var match = id.match(/\d+$/);
-            console.log(match)      
+            var match = id.match(/\d+$/);   
             savedModelsCount = parseInt(match[0]);
-            console.log(savedModelsCount);
         }
     }  
     if (savedModelsCount !== null) {

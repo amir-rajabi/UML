@@ -14,7 +14,7 @@
     font-family: 'uml';
 }
 body{
-    overflow: hidden;
+    /* overflow: hidden; */
     position: relative;
     padding: 0;
     margin: 0;
@@ -305,7 +305,6 @@ thead th{
 .history-restore-ctr button:first-child {
     margin-right: 2% !important;
 }
-
 .reset-irreversible{
     color: #ffc107;
     width: 100%;
@@ -393,4 +392,13 @@ thead th{
 .model_ctr_headline{
     font-size: 15px;
     margin-bottom: 1%;
+}
+
+/*------- history-tab -------*/
+.history_acc_headtitle{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    margin-left: 1%;
+    margin-right: 1%;
 }

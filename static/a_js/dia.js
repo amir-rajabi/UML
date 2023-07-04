@@ -1,7 +1,9 @@
-import {chartData, socket, storedData, history} from './data.js';
+import {chartData, socket, storedData, epochs_per_runs} from './data.js';
 import {createAlert} from './alerts.js';
+import {createHistoryItem, historyFrontend} from './history.js';
 
 window.chartData = chartData;
+window.epr = epochs_per_runs;
 window.socket = socket;
 
 var dia1ctr = document.getElementById('dia1-ctr');
@@ -20,6 +22,9 @@ var selected2 ='1';
 var labels = ['Accuracy (test-set)', 'Loss (test-set)', 'Accuracy (train-set)', 'Loss (train-set)'];
 var second = false;
 var joined = false;
+
+var createHistory = true;
+
 var revert = document.getElementById('revert');
 var revertChecked = revert.checked;
 var lastIndexRun = revertIndexCalc(chartData.run);
@@ -30,6 +35,7 @@ const dash = (ctx, value) => {
   }
   return [6,0];
 };
+
 
 const arbitraryLine = {
   id: 'arbitraryLine',
@@ -250,17 +256,26 @@ socket.on('update_chart', function(data){
   chartData.d2 = data.data.d2;
   chartData.d3 = data.data.d3;
   chartData.d4 = data.data.d4;
+  chartData.run = data.data.run;
+  console.log(chartData.run);
 
+  
   // convert normal run format to needed ([0,0,0,0,1,1,1,2] to [4,3,1])
   for (let i = 0; i < data.data.run.length; i++) {
     let count = data.data.run.filter(x => x == i).length;
     if (data.data.run.filter(x => x == i).length > 0) {
-      chartData.run[i] = count;
+      epochs_per_runs[i] = count;
     }
   }
-  lastIndexRun = revertIndexCalc(chartData.run, data.data.run.length);
+
+  lastIndexRun = revertIndexCalc(epochs_per_runs, data.data.run.length);
   chartData.run.pop();
 
+  if (createHistory == true){
+    createHistory = false;
+    console.log("init history triggered")
+    historyFrontend();
+  }
 
   if (chartData.d1.length > 0 && !storedData && first_alert==0){
     first_alert = 1;
@@ -324,7 +339,7 @@ function updateChart(selectedValue, dia, secondSelectedValue = -1){
   var selected;
   var secondSelected;
 
-  dia.options.plugins.arbitraryLine.runs = chartData.run;
+  dia.options.plugins.arbitraryLine.runs = epochs_per_runs;
   
   if (selectedValue === '0') {
     selected = chartData.d1;

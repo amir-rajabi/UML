@@ -1,5 +1,7 @@
-import {adjustments, chartData} from './data.js';
+import {adjustments, chartData, socket, adjustmentsData} from './data.js';
+import { getAdjustmentsData, createHistoryItem } from './history.js';
 window.adjustments = adjustments;
+window.adjData = adjustmentsData;
 
 export function sendAdjustments() {
     var xhr = new XMLHttpRequest();
@@ -105,7 +107,28 @@ socket.on('training_finished', function(data){
         }
     };
     xhr.send(1);
-    });
+
+    getAdjustmentsData().then(function(adjData) {
+        var lastElement = chartData.run.length - 1;
+        var numofEpochs = 0;
+        for (var i = 0; i < lastElement; i++) {
+          if (chartData.run[i] == chartData.run[lastElement]) {
+            numofEpochs++;
+          }
+        }
+        console.log("training finished");
+        createHistoryItem(
+          chartData.d1[lastElement],
+          adjData.learning_rate[lastElement],
+          adjData.momentum[lastElement],
+          adjData.dropout_rate[lastElement],
+          adjData.loss_function[lastElement],
+          numofEpochs
+        );
+      }).catch(function(error) {
+        console.log("Error:", error);
+      });
+});
 
 socket.on('revert_allowed', function(data){
     if (data == true){

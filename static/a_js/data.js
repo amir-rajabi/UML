@@ -30,12 +30,9 @@ export var chartData = {
     run: []
 };
 
-export var history = {
-    r1: [],
-    r2: [],
-    r3: [],
-    r4: []
-};
+export var epochs_per_runs = [];
+
+export var adjustmentsData = {};
 
 export function updateAdjustments(data) {
     adjustments.learning_rate = data.learning_rate;
