@@ -12,6 +12,7 @@
     color: white;
     font-size: 12px;
     font-family: 'uml';
+    scrollbar-width: none;
 }
 body{
     /* overflow: hidden; */
