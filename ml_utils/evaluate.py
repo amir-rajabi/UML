@@ -20,9 +20,10 @@ def accuracy(loss_nr, model: Module, loader: DataLoader, cuda: bool) -> (float, 
                 data, target = data.cuda(), target.cuda()
             data, target = Variable(data), Variable(target)
             output = model(data)
+            target_input = target
             if loss_nr > 1:
-                target = F.one_hot(target)
-            losses.append(loss_func[loss_nr](output, target).item())
+                target_input = F.one_hot(target)
+            losses.append(loss_func[loss_nr](output, target_input).item())
             pred = output.data.max(1, keepdim=True)[1]
             correct += pred.eq(target.data.view_as(pred)).cpu().sum().item()
     eval_loss = float(np.nanmean(losses))
