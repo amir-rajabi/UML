@@ -129,10 +129,10 @@ save_model.addEventListener('click', function(){
     createModalElement(savedModelsCount, model_name.value);
 
     var allModels = document.getElementById('saved_models_frontend').innerHTML;
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', '/saved_models_html', true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.send(JSON.stringify({ savedModelsHTML: allModels }));
+    var xhr1 = new XMLHttpRequest();
+    xhr1.open('POST', '/saved_models_html', true);
+    xhr1.setRequestHeader('Content-Type', 'application/json');
+    xhr1.send(JSON.stringify({ savedModelsHTML: allModels }));
 
     model_name.value = '';
     save_model.setAttribute('disabled', 'true');
