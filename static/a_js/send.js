@@ -83,6 +83,7 @@ start.addEventListener('click', function(){
 stop.addEventListener('click', function(){
     start.style.display = 'block';
     stop.style.display = 'none';
+    block_button(start, true);
     var xhr = new XMLHttpRequest();
     xhr.open('POST', '/stop', true);
     xhr.setRequestHeader('Content-Type', 'application/json');
@@ -91,6 +92,7 @@ stop.addEventListener('click', function(){
 
 socket.on('training_finished', function(data){
     block_button(revert, false);
+    block_button(start, false);
     start.style.display = 'block';
     stop.style.display = 'none';
     
