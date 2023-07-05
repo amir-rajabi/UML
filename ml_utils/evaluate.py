@@ -22,7 +22,7 @@ def accuracy(loss_nr, model: Module, loader: DataLoader, cuda: bool) -> (float, 
             output = model(data)
             target_input = target
             if loss_nr > 1:
-                target_input = F.one_hot(target)
+                target_input = F.one_hot(target,10)
             losses.append(loss_func[loss_nr](output, target_input).item())
             pred = output.data.max(1, keepdim=True)[1]
             correct += pred.eq(target.data.view_as(pred)).cpu().sum().item()

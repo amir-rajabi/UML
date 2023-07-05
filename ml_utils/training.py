@@ -6,9 +6,7 @@ import torch.nn as nn
 import torch
 from torch.optim import Optimizer, SGD
 
-import time
-import random
-import os
+import time, random, os, math
 
 from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO
@@ -24,7 +22,8 @@ from ml_utils.print_overwrite import print
 #smooth_l1_loss decent
 #poisson_nll_loss decent
 
-#
+start_timer = 0
+
 loss_func = [F.cross_entropy, F.multi_margin_loss, F.multilabel_soft_margin_loss,
         F.soft_margin_loss, F.l1_loss, F.smooth_l1_loss, F.poisson_nll_loss]
 stop_flag = False
@@ -38,7 +37,7 @@ def train_step(model: Module, optimizer: Optimizer, data: Tensor,
     prediction = model(data)
 
     if loss_nr > 1:
-        target = F.one_hot(target)
+        target = F.one_hot(target, 10)
 
     #currently uses loss_function intput into the function
     loss = loss_func[loss_nr](prediction, target)
@@ -72,6 +71,19 @@ def training(name, chart_data, socketio, dictionary, model: Module,
             #aborted
             test_loss, test_accuracy = accuracy(loss_nr, model, test_loader, cuda)
             train_loss, train_accuracy = accuracy(loss_nr, model, train_loader, cuda)
+
+            if not epoch:
+                print(f"LOG: time for one epoch: {time.time()-start_timer}")
+
+            #should likely not pop up, delete this in production
+            if str(test_loss) == "nan":
+                test_loss = 1
+                print("WARNING: BIG WARNING BIG WARNING BIG WARNING")
+                print("WARNING: BIG WARNING BIG WARNING BIG WARNING")
+            if str(train_loss) == "nan":
+                train_loss = 1
+                print("WARNING: BIG WARNING BIG WARNING BIG WARNING")
+                print("WARNING: BIG WARNING BIG WARNING BIG WARNING")
 
             chart_data['d1'].append(test_accuracy)
             chart_data['d2'].append(test_loss)
@@ -130,7 +142,8 @@ def start_training(name, data, socketio, params):
     cuda = False
     if os.path.exists("data/CUDA.conf"):
         cuda = True
-
+    global start_timer
+    start_timer = time.time()
     training(
         name,
         data,
