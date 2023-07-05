@@ -316,6 +316,7 @@ socket.on('update_chart', function(data){
     createAlert(1,'Found and restored old data. If you want to delete it <button style="height:inherit; padding: 0; border: none; text-decoration: underline" type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#resetModal">click here</button>')
   } else{first_alert = 1;}
 
+  revertChecked = revert.checked;
   updateChart(selected1, dia1);
   updateChart(selected2, dia2);
   updateChart(selected1, dia3, selected2);
