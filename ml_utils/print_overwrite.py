@@ -3,13 +3,22 @@ import builtins
 
 conf_show_logs = 0
 
+'''this should never pop up'''
+def default_error(code, message):
+    builtins.print(f"code={code}: you should not be seeing this [{message}]")
+    return
+
+error_function=default_error
+
 '''
 instead of checking every print for file
 the conf_show_logs variable is initialized
 at the start, defining if logs will be show
 throughout the entire instance of the program
 '''
-def init_print():
+def init_print(error_func):
+    global error_function
+    error_function = error_func
     if os.path.exists("data/DEV.conf"):
         global conf_show_logs
         conf_show_logs=1
@@ -29,10 +38,11 @@ def print(message, flag=0):
         if conf_show_logs or error or warning:
             builtins.print(message)
     except:
-        print("ERROR: failed to slice object. Convert your object to string first")
+        error_function(3,"ERROR: Something is wrong in the backend, check logs")
+        builtins.print("ERROR: failed to slice object. Convert your object to string first")
 
 if __name__ == "__main__":
-    init_print()
+    init_print(default_error)
     print("WARNING:testing")
     print("ERROR:testing")
     print("LOG:testing")

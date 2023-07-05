@@ -20,13 +20,12 @@ app = Flask(__name__)
 socketio = SocketIO(app)
 
 config_revert = False
-#disable training by giving webserver any number
-testing_flag = False
 data_corrupted = False
 
 #will be used for saving and loading models
 current_model = ""
 
+#chart data
 data = {
     'd1': [],   #accuracy
     'd2': [],   #loss
@@ -35,8 +34,7 @@ data = {
     'run': []
 }
 
-# DO NOT CHANGE THIS
-# default values should be changed in javascript (data.js)
+#adjustment data
 adj = {
     "learning_rate": 0,
     "momentum": 0,
@@ -45,14 +43,17 @@ adj = {
     "epochs": 0,
     "batch_size": 0
 }
+
+#default reponse
 response = ""
 
 #---------------------- FUNCTIONS ----------------------#
-def block_revert(): #if revert is allowed, tell frontend
+#if revert is allowed, tell frontend
+def block_revert():
     if os.path.exists(f"data/{current_model}_model_new.pt"):
         socketio.emit('revert_allowed', True)
 
-#loads history
+#loads chart
 def update_data():
     if empty_missing_file(f"data/{current_model}_epoch_data.json"):
         for key in data.keys():
@@ -74,6 +75,7 @@ def start_training_dict(params):
     worker_process.start()
     return
 
+#acts according to revert param
 def check_revert(revert):
     if revert:
         if os.path.exists(f"data/{current_model}_model_new.pt"):
@@ -93,8 +95,8 @@ def check_revert(revert):
         shutil.copy(f"data/{current_model}_model_new.pt", f"data/{current_model}_model.pt")
         print("LOG: NO REVERT")
 
+#style 1-normal; 2-success; 3-danger; 4-warning
 def sendAlert(style, content):
-    '''style 1-normal; 2-success; 3-danger; 4-warning'''
     data = {
         'style': style,
         'content': content
@@ -107,7 +109,8 @@ def sendAlert(style, content):
 def index():
     return render_template('index.html')
 
-@app.route('/sendadjust', methods=['POST'])   # (frontend is sending adjustments) 
+    #--------------------slider adjustments-----------#
+@app.route('/sendadjust', methods=['POST'])
 def gettingAdjustments():
   if request.method == 'POST':
     data = request.get_json()   
@@ -116,65 +119,14 @@ def gettingAdjustments():
         adj[key] = value
     return response
 
-@app.route('/getadjust', methods=['POST'])  # (frontend is getting adjustments) 
+@app.route('/getadjust', methods=['POST']) 
 def sendingAdjustments():
   print('\n DATA WIRD AUFGERUFEN'+ str(adj))
   if request.method == 'POST':
     response = adj;
     return jsonify({'response': response})
 
-@app.route('/start', methods=['POST'])
-def start():
-    revert = request.get_json()
-    print("LOG: RECEIVED TO RUN: " +str(adj))
-    if testing_flag:
-        print("LOG: testing; training skipped")
-        return response
-    print("LOG: STARTING TRAINING")
-    check_revert(revert)
-    update_data()
-    socketio.emit('update_chart', {'data':data})
-    start_training_dict(adj)
-    return response
-
-@app.route('/stop', methods=['POST'])  
-def stop():
-    print("LOG: STOP PRESSED")
-    stop_training()
-    return response
-
-@app.route('/clear_history', methods=['POST']) 
-def clear_history_data():
-    clear(f"data/{current_model}_epoch_data.json")
-    update_data()
-    socketio.emit('update_chart', {'data':data})
-    print("LOG: CLEAR HISTORY")
-    return response
-
-@app.route('/revert_possible', methods=['POST'])
-def revert_possible():
-    if os.path.exists(f"data/{current_model}_model_new.pt"):
-        return ("1")
-    else: 
-        return ("0")        
-
-
-@app.route('/predict_drawing', methods=['POST'])
-def predict_drawing():
-    data = request.get_json()
-    image_data = data['image_data']   
-    image_bytes = base64.b64decode(image_data.split(',')[1])
-    img = Image.open(io.BytesIO(image_bytes))    
-    new_img = Image.new('RGB', img.size, 'black')
-    new_img.paste(img, (0, 0), img)
-    new_img.save('static/img.jpg', 'jpeg')
-    prediction = test_drawing(current_model,config_revert)
-    if prediction == -1:
-        sendAlert(3, "ERROR: model not found")
-        return response
-
-    return jsonify({'prediction': int(prediction)})
-
+    #--------------------------history adjustments --------------------#
 @app.route('/get_adjustments_data', methods=['GET'])
 def get_adjustments_data():
     file_path = os.path.join("data", f"{current_model}_epoch_data.json")
@@ -198,7 +150,58 @@ def get_adjustments_data():
     print("LOG: history update sent to frontend")
     return jsonify(adjustments_data)
 
-#---------------------- ROUTE SAVE LOAD ----------------------#
+    #---------------start -stop ------------------#
+@app.route('/start', methods=['POST'])
+def start():
+    revert = request.get_json()
+    print("LOG: RECEIVED TO RUN: " +str(adj))
+    print("LOG: STARTING TRAINING")
+    check_revert(revert)
+    update_data()
+    socketio.emit('update_chart', {'data':data})
+    start_training_dict(adj)
+    return response
+
+@app.route('/stop', methods=['POST'])  
+def stop():
+    print("LOG: STOP PRESSED")
+    stop_training()
+    return response
+
+    #----------------------other buttons --------------#
+@app.route('/clear_history', methods=['POST']) 
+def clear_history_data():
+    clear(f"data/{current_model}_epoch_data.json")
+    update_data()
+    socketio.emit('update_chart', {'data':data})
+    print("LOG: CLEAR HISTORY")
+    return response
+
+@app.route('/revert_possible', methods=['POST'])
+def revert_possible():
+    if os.path.exists(f"data/{current_model}_model_new.pt"):
+        return ("1")
+    else: 
+        return ("0")        
+
+    #--------------------drawing ------------------------#
+@app.route('/predict_drawing', methods=['POST'])
+def predict_drawing():
+    data = request.get_json()
+    image_data = data['image_data']   
+    image_bytes = base64.b64decode(image_data.split(',')[1])
+    img = Image.open(io.BytesIO(image_bytes))    
+    new_img = Image.new('RGB', img.size, 'black')
+    new_img.paste(img, (0, 0), img)
+    new_img.save('static/img.jpg', 'jpeg')
+    prediction = test_drawing(current_model,config_revert)
+    if prediction == -1:
+        sendAlert(3, "ERROR: model not found")
+        return response
+
+    return jsonify({'prediction': int(prediction)})
+
+    #---------------------- ROUTE SAVE LOAD ----------------#
  
 @app.route('/saved_models_html', methods=['POST'])
 def send_saved_models_html():
@@ -224,7 +227,6 @@ def restore_saved_models_html():
         return jsonify(json_data)
     else:
         return "response"
-
 
 def load_model():
     global current_model
@@ -274,25 +276,21 @@ def delete_model():
     if os.path.exists(f"data/{name}_model.pt"):
         os.remove(f"data/{name}_model.pt")
     else:
-        print("ERRROR: model to be deleted does not exist")
+        print("ERROR: model to be deleted does not exist")
         sendAlert(3, "ERROR: Model to be deleted does not exist")
     if os.path.exists(f"data/{name}_model_new.pt"):
         os.remove(f"data/{name}_model_new.pt")
     if os.path.exists(f"data/{name}_epoch_data.json"):
         os.remove(f"data/{name}_epoch_data.json")
     return response
+
+
 #----------------------------------------------------------------#
 # start server & websocket connection 
 # any init stuff can be put here
 @socketio.on('connect')
 def handle_connect():
-    init_print()
-    #disables training, give 
-    #arguments only for testing
-    if len(sys.argv) == 2:
-        global testing_flag
-        testing_flag = True
-        print("LOG: testing mode")
+    init_print(sendAlert)
 
     error =  verify_data(f"data/{current_model}_epoch_data.json")
     if error:
