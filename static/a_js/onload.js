@@ -80,16 +80,21 @@ document.addEventListener('DOMContentLoaded', function() {
     var xhr1 = new XMLHttpRequest();
     xhr1.open('GET', '/restore_saved_models_html', true);
     xhr1.send();
-  
+    
     xhr1.onload = function () {
         if (xhr1.status === 200) {
-        var htmlContent = JSON.parse(xhr1.responseText);
-            if (htmlContent !== 0){
-                var accSavedModels = document.getElementById('saved_models_frontend');
-                if (htmlContent !== false) {
-                    accSavedModels.innerHTML = htmlContent;
+            var htmlContent = xhr1.responseText;
+            try {
+                var parsedContent = JSON.parse(htmlContent);
+                if (parsedContent !== 0) {
+                    var accSavedModels = document.getElementById('saved_models_frontend');
+                    if (parsedContent !== "response") {
+                        accSavedModels.innerHTML = parsedContent;
+                    }
                 }
+            } catch (error) {
+                console.error('Error parsing JSON:', error);
             }
         }
-    };
+    };      
 });

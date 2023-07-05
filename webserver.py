@@ -226,7 +226,7 @@ def restore_saved_models_html():
             json_data = json.load(file)
         return jsonify(json_data)
     else:
-        return "response"
+        return jsonify("response")
 
 def load_model():
     global current_model
