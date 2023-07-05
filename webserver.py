@@ -13,6 +13,7 @@ from ml_utils.json_write import revert_history, verify_data, empty_missing_file
 from ml_utils.training import stop_training
 from ml_utils.testing import test_drawing
 from ml_utils.print_overwrite import print, init_print
+from ml_utils.evaluate import stop_eval
 
 #---------------------- VARIABLES ----------------------#
 
@@ -165,6 +166,7 @@ def start():
 @app.route('/stop', methods=['POST'])  
 def stop():
     print("LOG: STOP PRESSED")
+    stop_eval()
     stop_training()
     return response
 
