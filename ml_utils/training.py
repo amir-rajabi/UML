@@ -12,7 +12,7 @@ from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO
 
 from ml_utils.data import get_data_loaders
-from ml_utils.evaluate import accuracy
+from ml_utils.evaluate import accuracy, stop_eval
 from ml_utils.model import ConvolutionalNeuralNetwork
 from ml_utils.json_write import write_json, get_run_num 
 from ml_utils.print_overwrite import print
@@ -71,6 +71,9 @@ def training(name, chart_data, socketio, dictionary, model: Module,
             #aborted
             test_loss, test_accuracy = accuracy(loss_nr, model, test_loader, cuda)
             train_loss, train_accuracy = accuracy(loss_nr, model, train_loader, cuda)
+
+            if stop_flag or test_accuracy == -1:
+                break
 
             if not epoch:
                 print(f"LOG: time for one epoch: {time.time()-start_timer}")
@@ -161,4 +164,5 @@ def start_training(name, data, socketio, params):
 def stop_training():
     global stop_flag 
     stop_flag = True
+    stop_eval()
 

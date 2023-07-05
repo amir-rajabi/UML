@@ -6,6 +6,7 @@ from torch.autograd import Variable
 from torch.nn import Module
 from torch.utils.data import DataLoader
 
+stop_flag = False
 
 loss_func = [F.cross_entropy, F.multi_margin_loss, F.multilabel_soft_margin_loss,
         F.soft_margin_loss, F.l1_loss, F.smooth_l1_loss, F.poisson_nll_loss]
@@ -16,6 +17,8 @@ def accuracy(loss_nr, model: Module, loader: DataLoader, cuda: bool) -> (float, 
     correct = 0
     with torch.no_grad():
         for data, target in loader:
+            if stop_flag:
+                return -1,-1
             if cuda:
                 data, target = data.cuda(), target.cuda()
             data, target = Variable(data), Variable(target)
@@ -51,3 +54,8 @@ def accuracy_per_class(model: Module, loader: DataLoader, cuda: bool) \
                     wrong[label] += 1
     assert correct.sum() + wrong.sum() == len(loader.dataset)
     return 100. * correct / (correct + wrong)
+
+#is called through stop_training() by frontend in training.py
+def stop_eval():
+    global stop_flag
+    stop_flag = True
