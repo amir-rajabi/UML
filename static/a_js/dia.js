@@ -236,6 +236,12 @@ const dia2 = new Chart(
             pinch: {
               enabled: true
             },
+            drag: {
+              enabled: true,
+              backgroundColor: '#272c36',
+              borderWidth: '1',
+              borderColor: '#ffffff',
+            },
             mode: 'y',
           }
         }
@@ -297,6 +303,12 @@ const dia3 = new Chart(
             },
             pinch: {
               enabled: true
+            },
+            drag: {
+              enabled: true,
+              backgroundColor: '#272c36',
+              borderWidth: '1',
+              borderColor: '#ffffff',
             },
             mode: 'y',
           }
