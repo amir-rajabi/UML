@@ -253,11 +253,6 @@ const dia3 = new Chart(
         }
       },
       scales: {
-        y: {
-          grid: {
-            color: 'rgba(77, 77, 77, 0.1)'
-          }
-        },
         y1: {
           type: 'linear',
           display: true,
@@ -266,6 +261,9 @@ const dia3 = new Chart(
             display: true,
             text: labels[0],
           },
+          grid: {
+            color: 'rgba(77, 77, 77, 0.1)'
+          }
         },
         y2: {
           type: 'linear',
@@ -274,7 +272,7 @@ const dia3 = new Chart(
           title: {
             display: true,
             text: labels[1],
-          },
+          }
         },
       },
     },
