@@ -387,6 +387,12 @@ thead th{
     align-items: center;
     margin-right: 1%;
 }
+.reset-dia-zoom-ctr{
+    margin-top: 1%;
+    width:100%;
+    display: flex;
+    justify-content: end;
+}
 #current-accuracy-ctr{
     display: flex;
     justify-content: end;

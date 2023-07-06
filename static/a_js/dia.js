@@ -133,6 +133,16 @@ window.addEventListener('resize', function() {
   dia2.resize();
   dia3.resize();
 });
+
+//--------------- zoom-functionality ---------------//
+function resetZoom() {
+  Chart.helpers.each(Chart.instances, function(instance) {
+    instance.resetZoom();
+  });
+}
+
+document.getElementById('reset-zoom-button').addEventListener('click', resetZoom);
+
 //--------------- dia 1 ---------------//
 const dia1 = new Chart(
   document.getElementById('dia1'),
@@ -159,6 +169,24 @@ const dia1 = new Chart(
       plugins: {
         arbitraryLine: {
           runs: [],
+        },
+        zoom: {
+          zoom: {
+            wheel: {
+              enabled: true,
+              speed: 0.05,
+            },
+            pinch: {
+              enabled: true,
+            },
+            drag: {
+              enabled: true,
+              backgroundColor: '#272c36',
+              borderWidth: '1',
+              borderColor: '#ffffff',
+            },
+            mode: 'y',
+          }
         }
       },
       scales: {
@@ -199,6 +227,17 @@ const dia2 = new Chart(
       plugins: {
         arbitraryLine: {
           runs: [],
+        },
+        zoom: {
+          zoom: {
+            wheel: {
+              enabled: true,
+            },
+            pinch: {
+              enabled: true
+            },
+            mode: 'y',
+          }
         }
       },
       scales: {
@@ -250,6 +289,17 @@ const dia3 = new Chart(
       plugins: {
         arbitraryLine: {
           runs: [],
+        },
+        zoom: {
+          zoom: {
+            wheel: {
+              enabled: true,
+            },
+            pinch: {
+              enabled: true
+            },
+            mode: 'y',
+          }
         }
       },
       scales: {

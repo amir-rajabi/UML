@@ -13,6 +13,8 @@
     <script src="{{ url_for('static', filename='node_modules/socket.io/client-dist/socket.io.js') }}"></script>
     <script src="{{ url_for('static', filename='node_modules/bootstrap/dist/js/bootstrap.bundle.js') }}"></script>
     <script src="{{ url_for('static', filename='node_modules/jquery/dist/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='node_modules/hammerjs/hammer.js') }}"></script>
+    <script src="{{ url_for('static', filename='node_modules/chartjs-plugin-zoom/dist/chartjs-plugin-zoom.min.js') }}"></script>
 
     <script type="module" src="{{ url_for('static', filename='a_js/dia.js') }}" ></script>
     <script type="module" src="{{ url_for('static', filename='a_js/navigate.js') }}"></script>
@@ -37,9 +39,8 @@
                     <div class="line"></div>
                     <div id="control-buttons">
                         <div id="cb-left">
-                            <div>selected model: <span id="cb-modelname"></span></div>
                             <div id="revert-ctr">
-                                <div class="form-check">
+                                <div class="form-check btn btn-lg">
                                     <input class="form-check-input" type="checkbox" value="" id="revert">
                                     <button type="button" id="revertlabel_withtooltip"class="btn btn-secondary tooltip-button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="
                                     If selected, the last run is discarded and the training progress made there is ignored.">
