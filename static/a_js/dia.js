@@ -27,8 +27,10 @@ var joined = false;
 var createHistory = true;
 
 var revert = document.getElementById('revert');
+var start = document.getElementById('start');
 var revertChecked = revert.checked;
 var lastIndexRun = revertIndexCalc(chartData.run);
+var revertedData = null;
 
 const dash = (ctx, value) => {
   if (revertChecked) {
@@ -76,7 +78,6 @@ function revertIndexCalc(runs, epochCount) {
 //--------------- set displaying content ---------------//
 dia2switch.addEventListener('click', function(){
   if (dia2switch.checked == true){
-    console.log('true');
     second = true;
     saveDataToSessionStorage();
     if (joined) {
@@ -92,7 +93,6 @@ dia2switch.addEventListener('click', function(){
     dia_join_ctr.style.display = 'block';
   }
   else if (dia2switch.checked == false){
-    console.log('false');
     second = false;
     joined = false;
     saveDataToSessionStorage();
@@ -170,6 +170,15 @@ const dia1 = new Chart(
         arbitraryLine: {
           runs: [],
         },
+        legend: {
+          labels: {
+            filter: function(label) {
+              if (label.text !== 'Reverted data') {
+                return true;
+              }
+            }
+          }
+        },
         zoom: {
           zoom: {
             wheel: {
@@ -227,6 +236,15 @@ const dia2 = new Chart(
       plugins: {
         arbitraryLine: {
           runs: [],
+        },
+        legend: {
+          labels: {
+            filter: function(label) {
+              if (label.text !== 'Reverted data') {
+                return true;
+              }
+            }
+          }
         },
         zoom: {
           zoom: {
@@ -296,6 +314,15 @@ const dia3 = new Chart(
         arbitraryLine: {
           runs: [],
         },
+        legend: {
+          labels: {
+            filter: function(label) {
+              if (label.text !== 'Reverted data') {
+                return true;
+              }
+            }
+          }
+        },
         zoom: {
           zoom: {
             wheel: {
@@ -364,8 +391,14 @@ socket.on('update_chart', function(data){
   }
 
   lastIndexRun = revertIndexCalc(epochs_per_runs, data.data.run.length);
-  epochs_per_runs.pop();
 
+  if (revertedData !== null && revertedData.epochs_per_runs.length == epochs_per_runs.length) {
+    let lastElement = revertedData.epochs_per_runs.length - 1;
+    epochs_per_runs[lastElement] = revertedData.epochs_per_runs[lastElement];
+    lastIndexRun = revertIndexCalc(epochs_per_runs, data.data.run.length + revertedData.epochs_per_runs[lastElement]);
+  } else {    
+    epochs_per_runs.pop();
+  }
   if (createHistory == true){
     createHistory = false;
     historyFrontend();
@@ -376,7 +409,6 @@ socket.on('update_chart', function(data){
     createAlert(1,'Found and restored old data. If you want to delete it <button style="height:inherit; padding: 0; border: none; text-decoration: underline" type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#resetModal">click here</button>')
   } else{first_alert = 1;}
 
-  revertChecked = revert.checked;
   updateChart(selected1, dia1);
   updateChart(selected2, dia2);
   updateChart(selected1, dia3, selected2);
@@ -430,6 +462,21 @@ revert.addEventListener("change", function(event) {
   updateChart(selected1, dia3, selected2);
 });
 
+start.addEventListener("click", function(event) {
+  revertedData = null;
+  dia1.data.datasets.splice(1,1);
+  dia2.data.datasets.splice(1,1);
+  dia3.data.datasets.splice(2,1);
+  dia3.data.datasets.splice(2,1);
+
+  if (revertChecked) {
+    revertedData = Object.assign({}, chartData);
+    revertedData['epochs_per_runs'] = epochs_per_runs.map((x) => x);
+  }
+
+  revertChecked = false;
+})
+
 function updateChart(selectedValue, dia, secondSelectedValue = -1){
   var selected;
   var secondSelected;
@@ -445,6 +492,27 @@ function updateChart(selectedValue, dia, secondSelectedValue = -1){
     dia.data.datasets[0].label = labels[0];
     if (dia == dia3) {
       dia.options.scales.y1.title.text = labels[0];
+      dia.data.datasets.splice(2,1);
+      dia.data.datasets.splice(2,1);
+    } else {
+      dia.data.datasets.splice(1,1);
+    }
+    if (revertedData !== null) {
+      dia.data.datasets.push({
+        label: 'Reverted data',
+        data: revertedData.d1,
+        tension: 0.4,
+        segment: {
+          borderDash: ctx => ctx.p0DataIndex > lastIndexRun ? [6,6] : [6,0],
+          borderColor: ctx => ctx.p0DataIndex > lastIndexRun ? 'white' : '#0b6ffd'
+        },
+      });
+      if (dia == dia3) {
+        dia.data.datasets[2]['yAxisID'] = 'y1';
+      }
+      if (selected.length < revertedData.d1.length) {
+        dia.data.labels = revertedData.d1.map((_, index) => `Epoch ${index + 1}`);
+      }
     }
     dia.update();
   } 
@@ -457,6 +525,27 @@ function updateChart(selectedValue, dia, secondSelectedValue = -1){
     dia.data.datasets[0].label = labels[1];
     if (dia == dia3) {
       dia.options.scales.y1.title.text = labels[1];
+      dia.data.datasets.splice(2,1);
+      dia.data.datasets.splice(2,1);
+    } else {
+      dia.data.datasets.splice(1,1);
+    }
+    if (revertedData !== null) {
+      dia.data.datasets.push({
+        label: 'Reverted data',
+        data: revertedData.d2,
+        tension: 0.4,
+        segment: {
+          borderDash: ctx => ctx.p0DataIndex > lastIndexRun ? [6,6] : [6,0],
+          borderColor: ctx => ctx.p0DataIndex > lastIndexRun ? 'white' : '#0b6ffd'
+        },
+      });
+      if (dia == dia3) {
+        dia.data.datasets[2]['yAxisID'] = 'y1';
+      }
+      if (selected.length < revertedData.d2.length) {
+        dia.data.labels = revertedData.d2.map((_, index) => `Epoch ${index + 1}`);
+      }
     }
     dia.update();
   } 
@@ -469,6 +558,27 @@ function updateChart(selectedValue, dia, secondSelectedValue = -1){
     dia.data.datasets[0].label = labels[2];
     if (dia == dia3) {
       dia.options.scales.y1.title.text = labels[2];
+      dia.data.datasets.splice(2,1);
+      dia.data.datasets.splice(2,1);
+    } else {
+      dia.data.datasets.splice(1,1);
+    }
+    if (revertedData !== null) {
+      dia.data.datasets.push({
+        label: 'Reverted data',
+        data: revertedData.d3,
+        tension: 0.4,
+        segment: {
+          borderDash: ctx => ctx.p0DataIndex > lastIndexRun ? [6,6] : [6,0],
+          borderColor: ctx => ctx.p0DataIndex > lastIndexRun ? 'white' : '#0b6ffd'
+        },
+      });
+      if (dia == dia3) {
+        dia.data.datasets[2]['yAxisID'] = 'y1';
+      }
+      if (selected.length < revertedData.d3.length) {
+        dia.data.labels = revertedData.d3.map((_, index) => `Epoch ${index + 1}`);
+      }
     }
     dia.update();
   } else if (selectedValue === '3') {
@@ -480,54 +590,111 @@ function updateChart(selectedValue, dia, secondSelectedValue = -1){
     dia.data.datasets[0].label = labels[3];
     if (dia == dia3) {
       dia.options.scales.y1.title.text = labels[3];
+      dia.data.datasets.splice(2,1);
+      dia.data.datasets.splice(2,1);
+    } else {
+      dia.data.datasets.splice(1,1);
+    }
+    if (revertedData !== null) {
+      dia.data.datasets.push({
+        label: 'Reverted data',
+        data: revertedData.d4,
+        tension: 0.4,
+        segment: {
+          borderDash: ctx => ctx.p0DataIndex > lastIndexRun ? [6,6] : [6,0],
+          borderColor: ctx => ctx.p0DataIndex > lastIndexRun ? 'white' : '#0b6ffd'
+        },
+      });
+      if (dia == dia3) {
+        dia.data.datasets[2]['yAxisID'] = 'y1';
+      }
+      if (selected.length < revertedData.d4.length) {
+        dia.data.labels = revertedData.d4.map((_, index) => `Epoch ${index + 1}`);
+      }
     }
     dia.update();
   }
   
   if (secondSelectedValue === '0') {
     secondSelected = chartData.d1;
-    dia.data.labels = secondSelected.map(function(_, index) {
-      return 'Epoch ' + (index + 1);
-    });
     dia.data.datasets[1].data = secondSelected;
     dia.data.datasets[1].label = labels[0];
     if (dia == dia3) {
       dia.options.scales.y2.title.text = labels[0];
     }
+    if (revertedData !== null) {
+      dia.data.datasets.push({
+        label: 'Reverted data',
+        data: revertedData.d1,
+        tension: 0.4,
+        segment: {
+          borderDash: ctx => ctx.p0DataIndex > lastIndexRun ? [6,6] : [6,0],
+          borderColor: ctx => ctx.p0DataIndex > lastIndexRun ? 'white' : '#bb2d3c'
+        },
+        yAxisID: 'y2'
+      });
+    }
     dia.update();
   } 
   else if (secondSelectedValue === '1') {
     secondSelected = chartData.d2;
-    dia.data.labels = secondSelected.map(function(_, index) {
-      return 'Epoch ' + (index + 1);
-    });
     dia.data.datasets[1].data = secondSelected;
     dia.data.datasets[1].label = labels[1];
     if (dia == dia3) {
       dia.options.scales.y2.title.text = labels[1];
     }
+    if (revertedData !== null) {
+      dia.data.datasets.push({
+        label: 'Reverted data',
+        data: revertedData.d2,
+        tension: 0.4,
+        segment: {
+          borderDash: ctx => ctx.p0DataIndex > lastIndexRun ? [6,6] : [6,0],
+          borderColor: ctx => ctx.p0DataIndex > lastIndexRun ? 'white' : '#bb2d3c'
+        },
+        yAxisID: 'y2'
+      });
+    }
     dia.update();
   } 
   else if (secondSelectedValue === '2') {
     secondSelected = chartData.d3;
-    dia.data.labels = secondSelected.map(function(_, index) {
-      return 'Epoch ' + (index + 1);
-    });
     dia.data.datasets[1].data = secondSelected;
     dia.data.datasets[1].label = labels[2];
     if (dia == dia3) {
       dia.options.scales.y2.title.text = labels[2];
     }
+    if (revertedData !== null) {
+      dia.data.datasets.push({
+        label: 'Reverted data',
+        data: revertedData.d3,
+        tension: 0.4,
+        segment: {
+          borderDash: ctx => ctx.p0DataIndex > lastIndexRun ? [6,6] : [6,0],
+          borderColor: ctx => ctx.p0DataIndex > lastIndexRun ? 'white' : '#bb2d3c'
+        },
+        yAxisID: 'y2'
+      });
+    }
     dia.update();
   } else if (secondSelectedValue === '3') {
     secondSelected = chartData.d4;
-    dia.data.labels = secondSelected.map(function(_, index) {
-      return 'Epoch ' + (index + 1);
-    });
     dia.data.datasets[1].data = secondSelected;
     dia.data.datasets[1].label = labels[3];
     if (dia == dia3) {
       dia.options.scales.y2.title.text = labels[3];
+    }
+    if (revertedData !== null) {
+      dia.data.datasets.push({
+        label: 'Reverted data',
+        data: revertedData.d4,
+        tension: 0.4,
+        segment: {
+          borderDash: ctx => ctx.p0DataIndex > lastIndexRun ? [6,6] : [6,0],
+          borderColor: ctx => ctx.p0DataIndex > lastIndexRun ? 'white' : '#bb2d3c'
+        },
+        yAxisID: 'y2'
+      });
     }
     dia.update();
   }
