@@ -6,6 +6,8 @@ from torchvision import transforms
 from ml_utils.model import ConvolutionalNeuralNetwork
 import os
 from ml_utils.print_overwrite import print
+import matplotlib.pyplot as plt
+from PIL import Image, ImageOps
 
 
 
@@ -43,12 +45,37 @@ def test_drawing(model_name,revert):
     # Crop the grayscale image to extract the region of interest
     roi_image = gray_image.crop((roi_top_left[0], roi_top_left[1], roi_top_left[0] + roi_width, roi_top_left[1] + roi_height))
 
+    padding_size = max(roi_width//4 , roi_height//4)  # Adjust the padding size as desired
+    padded_roi_image = ImageOps.expand(roi_image, padding_size, fill='black')
+
+    # Convert the PIL image to OpenCV format (numpy array)
+    roi_np_image = np.array(padded_roi_image)
+
+    # Apply dilation to thicken the lines
+    kernel_size = max(roi_width//2 , roi_height//2)//12  # Adjust the kernel size for desired thickness
+    kernel = np.ones((kernel_size, kernel_size), np.uint8)
+    dilated_image = cv2.dilate(roi_np_image, kernel, iterations=1)
+
+    # Convert the OpenCV image back to PIL format
+    dilated_roi_image = Image.fromarray(dilated_image)
+
     transform = transforms.Compose([
         transforms.Resize((28, 28)),
         transforms.ToTensor(),
         transforms.Normalize(mean=(0.1307,), std=(0.3081,))
     ])
-    image = transform(roi_image)
+    image = transform(dilated_roi_image)
+    # Convert the image tensor back to a NumPy array
+    np_image_2 = image.numpy()
+
+    # Reshape the NumPy array to a 28x28 shape
+    np_image_2 = np_image_2.reshape((28, 28))
+
+    # Display the image
+    plt.imshow(np_image_2, cmap='gray')
+    plt.axis('off')
+    plt.savefig('static/images/x-placeholder.png', bbox_inches='tight', pad_inches=0, dpi=38)
+
 
     # Führe die Vorhersage durch
     with torch.no_grad():
