@@ -5,18 +5,21 @@
     src: url('fonts/uml.ttf') format('truetype');
 }
 *{
-    -webkit-user-select: none; /* Safari */
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* IE 10+ */
+    -webkit-user-select: none !important; /* Safari */
+    -moz-user-select: none !important; /* Firefox */
+    -ms-user-select: none !important; /* IE 10+ */
     user-select: none;
     color: white;
-    font-size: 12px;
+    font-size: 13.5px;
     font-family: 'uml';
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* Internet Explorer und Microsoft Edge */
     overflow: -moz-scrollbars-none; /* Alte Versionen von Firefox */
     scrollbar-width: thin; /* Chrome, Safari, Opera */
     scrollbar-color: transparent transparent; /* Chrome, Safari, Opera (optional, um den Hintergrund transparent zu machen) */
+}
+:focus {
+    outline: none;
 }
 body{
     overflow: hidden;
