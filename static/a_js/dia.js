@@ -171,23 +171,27 @@ const dia1 = new Chart(
           runs: [],
         },
         zoom: {
+          pan: {
+            enabled: true,
+          },
           zoom: {
             wheel: {
               enabled: true,
               speed: 0.05,
-            },
-            pinch: {
-              enabled: true,
             },
             drag: {
               enabled: true,
               backgroundColor: '#272c36',
               borderWidth: '1',
               borderColor: '#ffffff',
+              modifierKey: 'shift'
             },
             mode: 'y',
-          }
-        }
+          },
+          limits: {
+            y: {min: 'original', max: 'original'},
+          },
+        },
       },
       scales: {
         y: {
@@ -197,7 +201,7 @@ const dia1 = new Chart(
         }
       }
     },
-    plugins: [arbitraryLine]
+    plugins: [arbitraryLine, ChartZoom],
   }
 );
 
@@ -229,6 +233,9 @@ const dia2 = new Chart(
           runs: [],
         },
         zoom: {
+          pan: {
+            enabled: true,
+          },
           zoom: {
             wheel: {
               enabled: true,
@@ -241,8 +248,12 @@ const dia2 = new Chart(
               backgroundColor: '#272c36',
               borderWidth: '1',
               borderColor: '#ffffff',
+              modifierKey: 'shift'
             },
             mode: 'y',
+          },
+          limits: {
+            y: {min: 'original', max: 'original'},
           }
         }
       },
@@ -297,6 +308,9 @@ const dia3 = new Chart(
           runs: [],
         },
         zoom: {
+          pan: {
+            enabled: true,
+          },
           zoom: {
             wheel: {
               enabled: true,
@@ -309,9 +323,13 @@ const dia3 = new Chart(
               backgroundColor: '#272c36',
               borderWidth: '1',
               borderColor: '#ffffff',
+              modifierKey: 'shift'
             },
             mode: 'y',
-          }
+          },
+          limits: {
+            y: {min: 'original', max: 'original'},
+          },
         }
       },
       scales: {
