@@ -10,18 +10,22 @@
                 <div class="card-body">
                     <table class="table" data-bs-theme="dark">
                         <tbody>
-                        <tr></tr>
+                        <tr>
+                            <td>Current model</td>
+                            <td><span id="current_selected_model">Default</span></td>
+                        </tr>
                         <tr>
                             <td>Accuracy</td>
-                            <td><span id="current-acc-model">99</span> %</td>
+                            <td><span id="current-acc-model">-</span> %</td>
                         </tr>
                         <tr>
                             <td>Total epochs trained</td>
-                            <td><span id="current-model-epochs">123</span></td>
+                            <td><span id="current-model-epochs">-</span></td>
                         </tr>
                         </tbody>
                     </table>   
-                    <div class="history-restore-ctr">
+                    <div id="current-model-buttons">
+                        <button type="button" class="btn btn-outline-light" id="create_empty_model_btn" data-bs-toggle="modal" data-bs-target="#create-empty-model-popup">Create empty model</button>                     
                         <button type="button" class="btn btn-success" id="save_current_model" data-bs-toggle="modal" data-bs-target="#save-current-model-popup">Save current model</button>
                     </div>                       
                 </div>
@@ -30,13 +34,12 @@
         <div class="line"></div>
         <div id="saved_models_ctr">
             <script>
-                function delete_model(index){
+                function delete_model_confirmed(index){
                     var modalElement = "reset_model_window_" + index;
                     var model_acc = "acc-item-ctr-" + index;
                     var model_name_ctr = "acc-saved-models-headtitle-" + index;
                     var model_name = document.getElementById(model_name_ctr).textContent;
 
-                    document.getElementById(modalElement).remove();
                     document.getElementById(model_acc).remove();
 
                     var xhr0 = new XMLHttpRequest();
@@ -50,11 +53,33 @@
                     xhr.setRequestHeader('Content-Type', 'application/json');
                     xhr.send(JSON.stringify({ savedModelsHTML: allModels }));
                 }
+                function delete_model(index, model_name){
+                    var model_name_ctr = document.getElementById('model_name_delete');
+                    var delete_model_confirmed = document.getElementById('delete_model_confirmed');
+                    model_name_ctr.textContent = model_name;
+                    delete_model_confirmed.setAttribute('onclick', 'delete_model_confirmed('+ index + ')')
+                }
+                function load_model(model_name){
+                    var model_name_ctr = document.getElementById('model_name_load');
+                    var load_model_confirmed = document.getElementById('load_model_confirmed');
+                    model_name_ctr.textContent = model_name;
+                    load_model_confirmed.setAttribute('onclick', 'load_model_confirmed("'+ model_name + '")')
+                }
+                
+                function load_model_confirmed (model_name){
+                    var name_current_model = document.getElementById('current_selected_model');
+                    current_selected_model.textContent = model_name;
+                    var xhr7 = new XMLHttpRequest();
+                    xhr7.open('POST', '/load_model', true);
+                    xhr7.setRequestHeader('Content-Type', 'application/json');
+                    xhr7.send(JSON.stringify(model_name));
+                }
             </script>
             <div class="model_ctr_headline">Saved models</div>
             <div id="saved_models_frontend">
-                <div class="accordion " id="acc_saved_models" data-bs-theme="dark"></div>
-                <div id="delete_model_modals"></div>
+                <div class="accordion " id="acc_saved_models" data-bs-theme="dark">
+    
+                </div>
             </div>
         </div>
     </div>
@@ -88,5 +113,66 @@
           <button type="button" class="btn btn-success" id="save-current-model" data-bs-dismiss="modal" disabled>Save model</button>
         </div>
       </div>
+    </div>      
+</div>
+
+<div class="modal fade" id="reset_model_window" tabindex="-1" aria-labelledby="reset_model_window_label" aria-hidden="true" data-bs-theme="dark">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h1 class="modal-title fs-5" id="reset_model_window_label">Are you sure you want to delete the model?</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <span style="color:#aeb5bd;">selected model: </span><span id="model_name_delete"></span>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal" id="delete_model_cancel">Cancel</button>
+            <button type="button" class="btn btn-danger" id="delete_model_confirmed" data-bs-dismiss="modal">Delete model</button>    
+        </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="load_model_window" tabindex="-1" aria-labelledby="load_model_window" aria-hidden="true" data-bs-theme="dark">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h1 class="modal-title fs-5" id="load_model_window-title">Are you sure you want to create an empty model?</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <span style="color:#aeb5bd;">selected model: </span><span id="model_name_load"></span> <br>
+            <div>If this model is loaded, all unsaved data of the current model will be irretrievably deleted. </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal" id="load_model_cancel">Cancel</button>
+            <button type="button" class="btn btn-warning" id="load_model_confirmed" data-bs-dismiss="modal">Load model</button>    
+        </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="create-empty-model-popup" tabindex="-1" aria-labelledby="create-empty-model-popup" aria-hidden="true" data-bs-theme="dark">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h1 class="modal-title fs-5" id="create-empty-model-popup-title">Are you sure you want to create a new model?</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            When a new empty model is created, an empty default model is created. All unsaved data is lost. Please make sure to first save the current model.
+            The saved models are retained.
+        </div>
+        <div class="modal-footer" style="display: block !important;">
+            If you want to save the current progress: 
+            <button type="button" style="color: #0b6ffd" data-bs-dismiss="modal" id="load_model_cancel" data-bs-toggle="modal" data-bs-target="#save-current-model-popup">click here</button>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal" id="load_model_cancel">Cancel</button>
+            
+            <button type="button" class="btn btn-warning" id="create_new_model_confirmed" data-bs-dismiss="modal">Create new model</button>    
+        </div>
+        </div>
     </div>
 </div>

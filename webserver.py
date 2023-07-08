@@ -230,12 +230,10 @@ def restore_saved_models_html():
     else:
         return jsonify("response")
 
+@app.route('/load_model', methods=['POST'])
 def load_model():
     global current_model
-    #semi-pseudocode
-    #might need adjustment
-    #request should be sometihng that is sent by JS frontend
-    current_model = request.name
+    current_model = request.json
 
     error =  verify_data(f"data/{current_model}_epoch_data.json")
     if error:
@@ -244,6 +242,8 @@ def load_model():
     else: 
         sendAlert(2, f"Successfully loaded {current_model}")
         update_data()
+        socketio.emit('update_chart', {'data':data})
+    return response
 
 @app.route('/save_model', methods=['POST'])
 def save_model():

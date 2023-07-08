@@ -313,6 +313,10 @@ thead th{
     display: flex;
     justify-content: end;
 }
+#current-model-buttons{
+    display: flex;
+    justify-content: space-between;
+}
 .history-restore-ctr button:first-child {
     margin-right: 2% !important;
 }

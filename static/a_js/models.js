@@ -7,7 +7,9 @@ var model_name = document.getElementById('model_name');
 var already_taken_alert = document.getElementById('already-taken-alert');
 var too_long_alert = document.getElementById('too-long-alert');
 var all_model_names = document.getElementsByClassName('saved-models-name');
-var delete_modals_ctr = document.getElementById("delete_model_modals");
+var delete_model_cancel = document.getElementById('delete_model_cancel');
+var load_model_cancel = document.getElementById('load_model_cancel');
+var create_new_model_confirmed = document.getElementById('create_new_model_confirmed');
 
 save_model.addEventListener('click', function(){
     var savedModelItems = document.querySelectorAll('.saved-model-item');
@@ -96,12 +98,16 @@ save_model.addEventListener('click', function(){
     deleteButton.id = 'delete-model-' + (savedModelsCount);
     deleteButton.textContent = 'Delete model';
     deleteButton.setAttribute('data-bs-toggle', 'modal');
-    deleteButton.setAttribute('data-bs-target', '#reset_model_window_' +savedModelsCount);
+    deleteButton.setAttribute('data-bs-target', '#reset_model_window');
+    deleteButton.setAttribute('onclick', 'delete_model(' + savedModelsCount + ',"' + model_name.value + '")');
     var loadButton = document.createElement('button');
     loadButton.type = 'button';
     loadButton.className = 'btn btn-primary';
     loadButton.id = 'load-model-' + (savedModelsCount);
     loadButton.textContent = 'Load model';
+    loadButton.setAttribute('data-bs-toggle', 'modal');
+    loadButton.setAttribute('data-bs-target', '#load_model_window');
+    loadButton.setAttribute('onclick', 'load_model("' + model_name.value + '")');
 
     restoreButtons.appendChild(deleteButton);
     restoreButtons.appendChild(loadButton);
@@ -125,8 +131,6 @@ save_model.addEventListener('click', function(){
     new_model_name: model_name.value
     };
     xhr.send(JSON.stringify(modelName));
-
-    createModalElement(savedModelsCount, model_name.value);
 
     var allModels = document.getElementById('saved_models_frontend').innerHTML;
     var xhr1 = new XMLHttpRequest();
@@ -169,6 +173,18 @@ model_name.addEventListener('keypress', function(event) {
     checkIfModelExists();
 });
 
+delete_model_cancel.addEventListener('click', function(){
+    delete_model_confirmed.onclick = null;
+});
+load_model_cancel.addEventListener('click', function(){
+    load_model_confirmed.onclick = null;
+});
+create_new_model_confirmed.addEventListener('click', function(){
+    var xhr7 = new XMLHttpRequest();
+    xhr7.open('POST', '/create_empty_model', true);
+    xhr7.setRequestHeader('Content-Type', 'application/json');
+    xhr7.send(1);
+});
 
 function checkIfModelExists() {
     var checkname = model_name.value;
@@ -189,65 +205,4 @@ function checkIfModelExists() {
         save_model.removeAttribute('disabled');
         already_taken_alert.style.display = 'none';
     };
-}
-
-var delete_modals_ctr = document.getElementById("delete_model_modals");
-
-function createModalElement(index, modelName) {
-    var modalElement = document.createElement("div");
-    modalElement.classList.add("modal", "fade");
-    modalElement.id = "reset_model_window_" + index;
-    modalElement.setAttribute("tabindex", "-1");
-    modalElement.setAttribute("aria-labelledby", "reset_model_window_label_" + index);
-    modalElement.setAttribute("aria-hidden", "true");
-    modalElement.setAttribute("data-bs-theme","dark");
-
-    var modalContent = document.createElement("div");
-    modalContent.classList.add("modal-dialog", "modal-content");
-
-    var modalHeader = document.createElement("div");
-    modalHeader.classList.add("modal-header");
-
-    var modalTitle = document.createElement("h1");
-    modalTitle.classList.add("modal-title", "fs-5");
-    modalTitle.id = "reset_model_window_label_" + index;
-    modalTitle.textContent = "Are you sure you want to delete your model?";
-
-    var closeButton = document.createElement("button");
-    closeButton.type = "button";
-    closeButton.classList.add("btn-close");
-    closeButton.setAttribute("data-bs-dismiss", "modal");
-    closeButton.setAttribute("aria-label", "Close");
-
-    var modalBody = document.createElement("div");
-    modalBody.classList.add("modal-body");
-    modalBody.textContent = "selected model: " + modelName;
-
-    var modalFooter = document.createElement("div");
-    modalFooter.classList.add("modal-footer");
-
-    var cancelButton = document.createElement("button");
-    cancelButton.type = "button";
-    cancelButton.classList.add("btn", "btn-outline-light");
-    cancelButton.setAttribute("data-bs-dismiss", "modal");
-    cancelButton.textContent = "Cancel";
-
-    var deleteButton = document.createElement("button");
-    deleteButton.type = "button";
-    deleteButton.classList.add("btn", "btn-danger");
-    deleteButton.id = "delete_model_confirmed_" + index;
-    deleteButton.setAttribute("data-bs-dismiss", "modal");
-    deleteButton.setAttribute("onclick", "delete_model(" + index + ")");
-    deleteButton.textContent = "Delete model";
-
-    modalHeader.appendChild(modalTitle);
-    modalHeader.appendChild(closeButton);
-    modalFooter.appendChild(cancelButton);
-    modalFooter.appendChild(deleteButton);
-    modalContent.appendChild(modalHeader);
-    modalContent.appendChild(modalBody);
-    modalContent.appendChild(modalFooter);
-    modalElement.appendChild(modalContent);
-
-    delete_modals_ctr.appendChild(modalElement);
 }
