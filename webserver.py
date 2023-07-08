@@ -233,8 +233,14 @@ def restore_saved_models_html():
 @app.route('/load_model', methods=['POST'])
 def load_model():
     global current_model
+    if current_model == "":
+        if os.path.exists(f"data/_model.pt"):
+            os.remove(f"data/_model.pt")
+        if os.path.exists(f"data/_model_new.pt"):
+            os.remove(f"data/_model_new.pt")
+        if os.path.exists(f"data/_epoch_data.json"):
+            os.remove(f"data/_epoch_data.json")
     current_model = request.json
-
     error =  verify_data(f"data/{current_model}_epoch_data.json")
     if error:
         sendAlert(3, "ERROR: please read logs")
@@ -275,6 +281,7 @@ def save_model():
 
 @app.route('/delete_model', methods=['POST'])
 def delete_model():
+    global current_model
     name = request.get_json()
     if os.path.exists(f"data/{name}_model.pt"):
         os.remove(f"data/{name}_model.pt")
@@ -285,8 +292,31 @@ def delete_model():
         os.remove(f"data/{name}_model_new.pt")
     if os.path.exists(f"data/{name}_epoch_data.json"):
         os.remove(f"data/{name}_epoch_data.json")
+    if name == current_model:
+        current_model = ""
+        update_data()
+        socketio.emit('update_chart', {'data': data})
+        socketio.emit('changed_model', {'data': [1]})
     return response
 
+@app.route('/get_model_name', methods=['GET'])
+def get_model_name():
+    return jsonify(current_model)
+
+@app.route('/create_empty_model', methods=['POST'])
+def create_empty_model():
+    global current_model
+    if os.path.exists(f"data/_model.pt"):
+            os.remove(f"data/_model.pt")
+    if os.path.exists(f"data/_model_new.pt"):
+        os.remove(f"data/_model_new.pt")
+    if os.path.exists(f"data/_epoch_data.json"):
+        os.remove(f"data/_epoch_data.json")
+    current_model = ""
+    update_data()
+    socketio.emit('update_chart', {'data': data})
+    socketio.emit('changed_model', {'data': [1]})
+    return response
 
 #----------------------------------------------------------------#
 # start server & websocket connection 

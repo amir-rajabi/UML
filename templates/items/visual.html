@@ -68,23 +68,8 @@
         </div>   
         
         <div id="progress-ctr">
-            <div id="status-ctr">
-                <div id="status-dot">
-                    <div id="server-dot-red">
-                        <button type="button" class="btn btn-secondary tooltip-button" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Disconnected from server.">
-                            <img class="server-dot" src="{{ url_for('static', filename='images/dot-red.svg') }}" alt="">
-                        </button>
-                    </div>
-                    <div id="server-dot-green">
-                        <button type="button" class="btn btn-secondary tooltip-button" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Connected to server.">
-                            <img class="server-dot" src="{{ url_for('static', filename='images/dot-green.svg') }}" alt="">   
-                        </button> 
-                    </div>
-                </div>                
-                <div id="status-txt"></div>
-            </div>
-            <div id="current-accuracy-ctr">
-                <span>current accuracy:</span><span id="current-accuracy"></span>%
+            <div id="status-ctr">                
+                <div id="current-accuracy-ctr"><span>current accuracy:</span><span id="current-accuracy"></span>%</div>
             </div>
         </div>
     </div>

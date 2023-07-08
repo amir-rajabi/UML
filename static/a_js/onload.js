@@ -1,5 +1,6 @@
 import {adjustments, chartData, updateAdjustments, socket, defaults, restoreAllAdjustments, storedData, statustxt} from './data.js';
 import {sendAdjustments} from './send.js';
+import {getModelName} from './models.js';
 
 window.adjustments_data = adjustments;
 window.defaults_data = defaults
@@ -96,5 +97,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error('Error parsing JSON:', error);
             }
         }
-    };      
+    }; 
+    getModelName();
 });

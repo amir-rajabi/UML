@@ -191,6 +191,7 @@ create_new_model_confirmed.addEventListener('click', function(){
 });
 
 socket.on('changed_model', function(data){
+    getModelName();
     accordion_history.innerHTML = '';
     historyFrontend();
 });
@@ -214,4 +215,21 @@ function checkIfModelExists() {
         save_model.removeAttribute('disabled');
         already_taken_alert.style.display = 'none';
     };
+}
+
+export function getModelName(){
+    var xhr7 = new XMLHttpRequest();
+    xhr7.open('GET', '/get_model_name', true);
+    xhr7.send();
+    xhr7.onload = function(){
+        if(xhr7.status === 200){
+            var response = JSON.parse(xhr7.responseText);
+            if (response == ""){
+                document.getElementById('current_selected_model').innerHTML = "Default";
+            }
+            else {
+                document.getElementById('current_selected_model').innerHTML = response;
+            }
+        }
+    }
 }

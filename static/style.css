@@ -387,19 +387,18 @@ thead th{
     display: none;
 }
 #progress-ctr{
+    width: 100%;
     margin-top: .5%;
-    display: flex;
-    justify-content: space-between;
 }
 #status-ctr{
     height: 50%;
     display: flex;
-    width: 33.3%;
+    width: 100%;
 }
 #status-dot{
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: end;
     margin-right: 1%;
 }
 .reset-dia-zoom-ctr{
@@ -410,8 +409,7 @@ thead th{
 }
 #current-accuracy-ctr{
     display: flex;
-    justify-content: end;
-    width: 33.3%;
+    width: 50%;
 }
 #current-accuracy{
     margin-left: 3%;

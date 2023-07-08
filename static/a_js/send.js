@@ -41,10 +41,10 @@ revert_confirmed.addEventListener('click', function(){
         revertlabel_withtooltip.style.display = 'none';
         revertlabel_notooltip.style.display = 'block';
         sessionStorage.setItem('UML_revert', 1);
-        start.removeAttribute('data-bs-toggle');
-        start.removeAttribute('data-bs-target');
     }
     revert.checked = false;
+    start.removeAttribute('data-bs-toggle');
+    start.removeAttribute('data-bs-target');
     block_button(revert, true);
     start.style.display = 'none';
     stop.style.display = 'block';

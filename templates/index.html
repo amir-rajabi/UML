@@ -55,6 +55,18 @@
 
                             </div>
                         </div>
+                        <div id="status-dot">
+                            <div id="server-dot-red">
+                                <button type="button" class="btn btn-secondary tooltip-button" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Disconnected from server.">
+                                    <img class="server-dot" src="{{ url_for('static', filename='images/dot-red.svg') }}" alt="">
+                                </button>
+                            </div>
+                            <div id="server-dot-green">
+                                <button type="button" class="btn btn-secondary tooltip-button" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Connected to server.">
+                                    <img class="server-dot" src="{{ url_for('static', filename='images/dot-green.svg') }}" alt="">   
+                                </button> 
+                            </div>
+                        </div>
                         <button type="button" class="btn btn-primary btn-lg" id="start">Start</button>
                         <button type="button" class="btn btn-warning btn-lg" id="stop">Stop</button>
                     </div>
