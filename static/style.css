@@ -264,6 +264,12 @@ input, label, select, button{
     width: 90%;
     height: 100%;
 }
+#blockCanvas{
+    width: 280px;
+    height: 280px;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.5);
+}
 #dia1-ctr, #dia2-ctr, #dia3-ctr{
     cursor: crosshair !important;
 }

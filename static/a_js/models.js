@@ -98,7 +98,7 @@ save_model.addEventListener('click', function(){
     restoreButtons.className = 'history-restore-ctr';
     var deleteButton = document.createElement('button');
     deleteButton.type = 'button';
-    deleteButton.className = 'btn btn-outline-danger';
+    deleteButton.className = 'btn btn-outline-danger block_item';
     deleteButton.id = 'delete-model-' + (savedModelsCount);
     deleteButton.textContent = 'Delete model';
     deleteButton.setAttribute('data-bs-toggle', 'modal');
@@ -106,7 +106,7 @@ save_model.addEventListener('click', function(){
     deleteButton.setAttribute('onclick', 'delete_model(' + savedModelsCount + ',"' + model_name.value + '")');
     var loadButton = document.createElement('button');
     loadButton.type = 'button';
-    loadButton.className = 'btn btn-primary';
+    loadButton.className = 'btn btn-primary block_item';
     loadButton.id = 'load-model-' + (savedModelsCount);
     loadButton.textContent = 'Load model';
     loadButton.setAttribute('data-bs-toggle', 'modal');

@@ -141,7 +141,7 @@ export function createHistoryItem(accuracy, learning_rate, momentum, dropout_rat
   // plotButton.innerText = 'Highlight in diagrams';
   var restoreButton = document.createElement('button');
   restoreButton.type = 'button';
-  restoreButton.className = 'btn btn-primary history-restore';
+  restoreButton.className = 'btn btn-primary history-restore block_item';
   restoreButton.id = 'history-restore-' + (historyCounter + 1);
   restoreButton.innerText = 'Restore this values';
   // buttonDiv.appendChild(plotButton);
