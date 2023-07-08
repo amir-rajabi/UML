@@ -1,8 +1,9 @@
-import {chartData} from './data.js';
+import {chartData, socket} from './data.js';
+import {historyFrontend} from './history.js'
 window.chartData = chartData;
+window.socket = socket;
 
 var save_model = document.getElementById('save-current-model');
-var new_model_name = document.getElementById('new-model-name');
 var model_name = document.getElementById('model_name');
 var already_taken_alert = document.getElementById('already-taken-alert');
 var too_long_alert = document.getElementById('too-long-alert');
@@ -10,6 +11,9 @@ var all_model_names = document.getElementsByClassName('saved-models-name');
 var delete_model_cancel = document.getElementById('delete_model_cancel');
 var load_model_cancel = document.getElementById('load_model_cancel');
 var create_new_model_confirmed = document.getElementById('create_new_model_confirmed');
+var load_model_confirmed = document.getElementById('load_model_confirmed');
+var accordion_history = document.getElementById('accordion_history');
+
 
 save_model.addEventListener('click', function(){
     var savedModelItems = document.querySelectorAll('.saved-model-item');
@@ -184,6 +188,11 @@ create_new_model_confirmed.addEventListener('click', function(){
     xhr7.open('POST', '/create_empty_model', true);
     xhr7.setRequestHeader('Content-Type', 'application/json');
     xhr7.send(1);
+});
+
+socket.on('changed_model', function(data){
+    accordion_history.innerHTML = '';
+    historyFrontend();
 });
 
 function checkIfModelExists() {

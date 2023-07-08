@@ -4,6 +4,14 @@
     font-family: 'uml';
     src: url('fonts/uml.ttf') format('truetype');
 }
+@font-face {
+    font-family: 'uml_bold';
+    src: url('fonts/bold.ttf') format('truetype');
+}
+@font-face {
+    font-family:'uml_italic';
+    src: url('fonts/italic.ttf') format('truetype');
+}
 *{
     -webkit-user-select: none !important; /* Safari */
     -moz-user-select: none !important; /* Firefox */
@@ -11,7 +19,7 @@
     user-select: none;
     color: white;
     font-size: 13.5px;
-    font-family: 'uml';
+    font-family: 'uml', sans-serif;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* Internet Explorer und Microsoft Edge */
     overflow: -moz-scrollbars-none; /* Alte Versionen von Firefox */
@@ -409,6 +417,13 @@ thead th{
     margin-left: 3%;
 }
 
+.placeholder_txt{
+    position: absolute;
+    font-family: 'UML_italic', sans-serif;
+    color: #aeb5bd;
+    width: 90%;
+    text-align: center;
+}
 /*------- models-tab -------*/
 .model_ctr_headline{
     font-size: 15px;

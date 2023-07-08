@@ -127,7 +127,7 @@ def sendingAdjustments():
     response = adj;
     return jsonify({'response': response})
 
-    #--------------------------history adjustments --------------------#
+#--------------------------history adjustments --------------------#
 @app.route('/get_adjustments_data', methods=['GET'])
 def get_adjustments_data():
     file_path = os.path.join("data", f"{current_model}_epoch_data.json")
@@ -243,6 +243,7 @@ def load_model():
         sendAlert(2, f"Successfully loaded {current_model}")
         update_data()
         socketio.emit('update_chart', {'data':data})
+        socketio.emit('changed_model', {'data': [1]})
     return response
 
 @app.route('/save_model', methods=['POST'])
