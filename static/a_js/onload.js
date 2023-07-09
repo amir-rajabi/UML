@@ -13,6 +13,7 @@ var revert = document.getElementById('revert');
 
 var block = document.getElementsByClassName('block_item');
 var blockCanvas = document.getElementById('blockCanvas');
+var predict_drawing = document.getElementById('predict_drawing');
 
 var error = false;
 var first_run_flag = 1;
@@ -36,6 +37,7 @@ socket.on('connect', function() {
         block[i].disabled = false;
         block[i].style.cursor = 'pointer';
         blockCanvas.style.display = 'none';
+        predict_drawing.cursor = 'pointer';
     }
 
     start.removeAttribute('disabled','');
@@ -52,6 +54,8 @@ socket.on('disconnect', function() {
     for (var i = 0; i < block.length; i++) {
         block[i].disabled = true;
         block[i].style.cursor = 'not-allowed';
+        predict_drawing.disabled = true;
+        predict_drawing.cursor = 'not-allowed';
         blockCanvas.style.display = 'block';
     }
 

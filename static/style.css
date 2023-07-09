@@ -165,6 +165,7 @@ input, label, select, button{
 }
 #revert-ctr{
     display: flex;
+    padding-left: 3%;
 }
 #revertlabel_notooltip{
     display: none;
@@ -442,3 +443,5 @@ thead th{
     margin-left: 1%;
     margin-right: 1%;
 }
+
+/*------- help-center -------*/
