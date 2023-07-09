@@ -428,8 +428,11 @@ const dia3 = new Chart(
 //--------------- updater ---------------//
 var first_alert = 0;
 var currentAccuracy = document.getElementById('current-accuracy');
+var progressbar = document.querySelector('.progress-bar');
 var currentAccuracyModel = document.getElementById('current-acc-model');
 var currentModelEpochs = document.getElementById('current-model-epochs');
+var numEpochs = document.getElementById('sliderValue4');
+
 
 socket.on('update_chart', function(data){
   chartData.d1 = data.data.d1;
@@ -472,6 +475,9 @@ socket.on('update_chart', function(data){
   currentAccuracy.textContent = chartData.d1[chartData.d1.length-1];  
   currentAccuracyModel.textContent = chartData.d1[chartData.d1.length-1];
   currentModelEpochs.textContent = chartData.d1.length;
+  alert(numEpochs.textContent);
+  
+  progressbar.style.width = chartData.d1.length + "%";
 });
 
 //--------------- reset reverted data  ---------------//
