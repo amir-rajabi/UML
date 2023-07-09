@@ -328,7 +328,7 @@ def create_empty_model():
 @socketio.on('connect')
 def handle_connect():
     init_print(sendAlert)
-
+    remove_unnecessary()
     error =  verify_data(f"data/{current_model}_epoch_data.json")
     if error:
         sendAlert(3, "ERROR: please read logs")
@@ -339,10 +339,15 @@ def handle_connect():
         block_revert()
         socketio.emit('update_chart', {'data': data})
 
+def remove_unnecessary():
+    if os.path.exists('static/images/output.png'):
+        print('LOG: removed unnecessary data')
+        os.remove('static/images/output.png')
 
 @socketio.on('disconnect')
 def handle_disconnect():
     stop_training()
+    remove_unnecessary()
     print('Client disconnected')
 
 if __name__ == '__main__':
