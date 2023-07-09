@@ -224,6 +224,9 @@ select option {
 .adjust-input{
     margin-top: 2%;
 }
+select option {
+    color: black;
+}
 /*------- adjust-slider -------*/
 
 .adjust-slider{
@@ -449,3 +452,56 @@ thead th{
 }
 
 /*------- help-center -------*/
+.nav-tabs{
+    margin-left: 2.5%;
+    margin-right: 2.5%;
+}
+.tab-pane{
+    height: 80vh;
+    width: 100%;
+}
+.tab-pane-inner{
+    height: 100%;
+    width: 100%;
+    display: flex !important;
+    justify-content: space-between;
+    align-items: center;
+}
+.arrow-left, .arrow-right{
+    height: 30px;
+    width: auto;
+}
+.arrow-button{
+    opacity: .5;
+    background-color: none;
+    transition: opacity .3s ease;
+}
+.arrow-button:hover{
+    opacity: 1;
+    transition: opacity .3s ease;
+}
+.tab-pane-content{
+    height: 95%;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.tab-pane-headline{
+    border-top: 1px solid #495057;
+    font-size: 20px;
+    padding-top: 1%;
+    margin-top: 1%;
+    margin-bottom: 1%;
+}
+.tab-pane-img{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.tab-pane-text{
+    text-align: justify;
+}
+.img-fluid{
+    max-height: 55vh !important;
+}
