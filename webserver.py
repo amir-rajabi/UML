@@ -196,12 +196,22 @@ def predict_drawing():
     new_img = Image.new('RGB', img.size, 'black')
     new_img.paste(img, (0, 0), img)
     new_img.save('static/img.jpg', 'jpeg')
-    prediction = test_drawing(current_model,config_revert)
+    prediction, confidence = test_drawing(current_model,config_revert)
     if prediction == -1:
         sendAlert(3, "ERROR: model not found")
         return response
 
-    return jsonify({'prediction': int(prediction)})
+    return jsonify({'prediction': int(prediction), 'confidence': float(confidence)})
+
+@app.route('/get_image', methods=['GET'])
+def get_image():
+    image_path = 'static/images/output.png'
+
+    with open(image_path, 'rb') as image_file:
+        encoded_image = base64.b64encode(image_file.read()).decode('utf-8')
+
+    response = {'image': encoded_image}
+    return jsonify(response)
 
     #---------------------- ROUTE SAVE LOAD ----------------#
  

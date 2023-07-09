@@ -294,10 +294,23 @@ select option {
     justify-content: space-evenly;
     display: block;
 }
+#output_img{
+    position: absolute;
+}
+#predicted_no, #confidence, #succ_conf_alert{
+    font-size: 20px;
+}
 #succ_pred_alert{
+    height: 30%;
     display: flex;
     justify-content: center;
     margin-top: 1%;
+}
+#succ_conf_alert{
+    display: flex;
+    justify-content: center;
+    margin-top: 1%;
+    height: 30%;
 }
 #visual-upper-ctr{
     position: relative;
@@ -355,7 +368,7 @@ thead th{
     margin-bottom: 5%;
 }
 #prediction-ctr{
-    margin-top: 2%;
+    margin-top: 8%;
     display: flex;
 }
 #prediction-txt{

@@ -43,6 +43,12 @@
                                     <span id="predicted_no">&nbsp;</span>
                                 </div>
                             </div>
+                            <div class="alert" id="prediction-txt" role="alert">
+                                <span> Confidence: </span>
+                                <div class="alert text-bg-dark alert-light " role="alert" id="succ_conf_alert">
+                                    <span id="confidence">&nbsp;</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -51,9 +57,8 @@
                     <div id="output-img-ctr">
                         <div></div>
                         <div id="output-img-placeholder">
-                            <button type="button" class="btn btn-secondary tooltip-button" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="This is the image being sent to be evaluated.">
-                                <img src="{{ url_for('static', filename='images/x-placeholder.png') }}" alt="">
-                            </button>
+                            <img id="output_img">                           
+                            <img src="{{ url_for('static', filename='images/x-placeholder.png') }}" alt="">
                         </div>
                     </div>
                 </div>

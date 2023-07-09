@@ -56,8 +56,17 @@ def test_drawing(model_name,revert):
     kernel = np.ones((kernel_size, kernel_size), np.uint8)
     dilated_image = cv2.dilate(roi_np_image, kernel, iterations=1)
 
-    # Convert the OpenCV image back to PIL format
+
     dilated_roi_image = Image.fromarray(dilated_image)
+    
+    #FOR OUTPUT
+    output_img = dilated_roi_image
+    transform_for_output = transforms.Compose([
+        transforms.Resize((140, 140)),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=(0.1307,), std=(0.3081,))
+    ])
+    for_output = transform_for_output(output_img)
 
     transform = transforms.Compose([
         transforms.Resize((28, 28)),
@@ -65,23 +74,27 @@ def test_drawing(model_name,revert):
         transforms.Normalize(mean=(0.1307,), std=(0.3081,))
     ])
     image = transform(dilated_roi_image)
-    # Convert the image tensor back to a NumPy array
-    np_image_2 = image.numpy()
 
-    # Reshape the NumPy array to a 28x28 shape
+
+    np_image_2 = image.numpy()
     np_image_2 = np_image_2.reshape((28, 28))
 
-    # Display the image
-    plt.imshow(np_image_2, cmap='gray')
-    plt.axis('off')
-    plt.savefig('static/images/x-placeholder.png', bbox_inches='tight', pad_inches=0, dpi=38)
 
+    output_img = for_output.numpy()
+    output_img = output_img.reshape((140, 140))
+    output_img = (output_img - np.min(output_img)) / (np.max(output_img) - np.min(output_img))  # Normalisieren der Werte auf den Bereich 0-1
+    output_img = (output_img * 255).astype(np.uint8)  # Skalieren der Werte auf den Bereich 0-255
+
+    pil_image = Image.fromarray(output_img)
+    pil_image.save('static/images/output.png')
 
     # Führe die Vorhersage durch
     with torch.no_grad():
-        prediction = model(image.unsqueeze(0))  # Unsqueeze, um eine Batch-Dimension hinzuzufügen
+        prediction = model(image.unsqueeze(0))
+        probabilities = torch.softmax(prediction, dim=1)
         predicted_class = torch.argmax(prediction, dim=1).item()
+        confidence = probabilities[0, predicted_class].item()
 
     os.remove('static/img.jpg')
 
-    return str(predicted_class)
+    return str(predicted_class), str(confidence)
