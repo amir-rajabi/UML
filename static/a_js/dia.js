@@ -160,6 +160,15 @@ const dia1 = new Chart(
           },
           borderColor: '#0b6ffd',
           backgroundColor: 'rgba(11, 80, 179, 0.8)',
+        },
+        {
+          label: 'Reverted data',
+          data: [],
+          tension: 0.4,
+          segment: {
+            borderDash: ctx => ctx.p0DataIndex > lastIndexRun ? [6,6] : [6,0],
+            borderColor: ctx => ctx.p0DataIndex > lastIndexRun ? 'white' : '#0b6ffd'
+          },
         }
       ]
     },
@@ -231,6 +240,15 @@ const dia2 = new Chart(
           },
           borderColor: '#0b6ffd',
           backgroundColor: 'rgba(11, 80, 179, 0.8)'
+        },
+        {
+          label: 'Reverted data',
+          data: [],
+          tension: 0.4,
+          segment: {
+            borderDash: ctx => ctx.p0DataIndex > lastIndexRun ? [6,6] : [6,0],
+            borderColor: ctx => ctx.p0DataIndex > lastIndexRun ? 'white' : '#0b6ffd'
+          },
         }
       ]
     },
@@ -314,6 +332,26 @@ const dia3 = new Chart(
           },
           borderColor: '#bb2d3c',
           backgroundColor: 'rgba(179, 18, 34, 0.8)',
+          yAxisID: 'y2'
+        },
+        {
+          label: 'Reverted data',
+          data: [],
+          tension: 0.4,
+          segment: {
+            borderDash: ctx => ctx.p0DataIndex > lastIndexRun ? [6,6] : [6,0],
+            borderColor: ctx => ctx.p0DataIndex > lastIndexRun ? 'white' : '#bb2d3c'
+          },
+          yAxisID: 'y1'
+        },
+        {
+          label: 'Reverted data',
+          data: [],
+          tension: 0.4,
+          segment: {
+            borderDash: ctx => ctx.p0DataIndex > lastIndexRun ? [6,6] : [6,0],
+            borderColor: ctx => ctx.p0DataIndex > lastIndexRun ? 'white' : '#bb2d3c'
+          },
           yAxisID: 'y2'
         }
       ]
@@ -436,6 +474,17 @@ socket.on('update_chart', function(data){
   currentModelEpochs.textContent = chartData.d1.length;
 });
 
+//--------------- reset reverted data  ---------------//
+
+export function resetRevertedData() {
+  revertedData = null;
+  dia1.data.datasets[1].data = [];
+  dia2.data.datasets[1].data = [];
+  dia3.data.datasets[2].data = [];
+  dia3.data.datasets[3].data = [];
+}
+
+
 //--------------- progressbar ---------------//
 
 /*
@@ -482,10 +531,10 @@ revert.addEventListener("change", function(event) {
 
 start.addEventListener("click", function(event) {
   revertedData = null;
-  dia1.data.datasets.splice(1,1);
-  dia2.data.datasets.splice(1,1);
-  dia3.data.datasets.splice(2,1);
-  dia3.data.datasets.splice(2,1);
+  dia1.data.datasets[1].data = [];
+  dia2.data.datasets[1].data = [];
+  dia3.data.datasets[2].data = [];
+  dia3.data.datasets[3].data = [];
 
   if (revertChecked) {
     revertedData = Object.assign({}, chartData);
@@ -508,26 +557,15 @@ function updateChart(selectedValue, dia, secondSelectedValue = -1){
     });
     dia.data.datasets[0].data = selected;
     dia.data.datasets[0].label = labels[0];
+    let i;
     if (dia == dia3) {
       dia.options.scales.y1.title.text = labels[0];
-      dia.data.datasets.splice(2,1);
-      dia.data.datasets.splice(2,1);
+      i = 2;
     } else {
-      dia.data.datasets.splice(1,1);
+      i = 1;
     }
     if (revertedData !== null) {
-      dia.data.datasets.push({
-        label: 'Reverted data',
-        data: revertedData.d1,
-        tension: 0.4,
-        segment: {
-          borderDash: ctx => ctx.p0DataIndex > lastIndexRun ? [6,6] : [6,0],
-          borderColor: ctx => ctx.p0DataIndex > lastIndexRun ? 'white' : '#0b6ffd'
-        },
-      });
-      if (dia == dia3) {
-        dia.data.datasets[2]['yAxisID'] = 'y1';
-      }
+      dia.data.datasets[i].data = revertedData.d1;
       if (selected.length < revertedData.d1.length) {
         dia.data.labels = revertedData.d1.map((_, index) => `Epoch ${index + 1}`);
       }
@@ -541,26 +579,15 @@ function updateChart(selectedValue, dia, secondSelectedValue = -1){
     });
     dia.data.datasets[0].data = selected;
     dia.data.datasets[0].label = labels[1];
+    let i;
     if (dia == dia3) {
       dia.options.scales.y1.title.text = labels[1];
-      dia.data.datasets.splice(2,1);
-      dia.data.datasets.splice(2,1);
+      i = 2;
     } else {
-      dia.data.datasets.splice(1,1);
+      i = 1;
     }
     if (revertedData !== null) {
-      dia.data.datasets.push({
-        label: 'Reverted data',
-        data: revertedData.d2,
-        tension: 0.4,
-        segment: {
-          borderDash: ctx => ctx.p0DataIndex > lastIndexRun ? [6,6] : [6,0],
-          borderColor: ctx => ctx.p0DataIndex > lastIndexRun ? 'white' : '#0b6ffd'
-        },
-      });
-      if (dia == dia3) {
-        dia.data.datasets[2]['yAxisID'] = 'y1';
-      }
+      dia.data.datasets[i].data = revertedData.d2;
       if (selected.length < revertedData.d2.length) {
         dia.data.labels = revertedData.d2.map((_, index) => `Epoch ${index + 1}`);
       }
@@ -574,26 +601,15 @@ function updateChart(selectedValue, dia, secondSelectedValue = -1){
     });
     dia.data.datasets[0].data = selected;
     dia.data.datasets[0].label = labels[2];
+    let i;
     if (dia == dia3) {
       dia.options.scales.y1.title.text = labels[2];
-      dia.data.datasets.splice(2,1);
-      dia.data.datasets.splice(2,1);
+      i = 2;
     } else {
-      dia.data.datasets.splice(1,1);
+      i = 1;
     }
     if (revertedData !== null) {
-      dia.data.datasets.push({
-        label: 'Reverted data',
-        data: revertedData.d3,
-        tension: 0.4,
-        segment: {
-          borderDash: ctx => ctx.p0DataIndex > lastIndexRun ? [6,6] : [6,0],
-          borderColor: ctx => ctx.p0DataIndex > lastIndexRun ? 'white' : '#0b6ffd'
-        },
-      });
-      if (dia == dia3) {
-        dia.data.datasets[2]['yAxisID'] = 'y1';
-      }
+      dia.data.datasets[i].data = revertedData.d3;
       if (selected.length < revertedData.d3.length) {
         dia.data.labels = revertedData.d3.map((_, index) => `Epoch ${index + 1}`);
       }
@@ -606,26 +622,15 @@ function updateChart(selectedValue, dia, secondSelectedValue = -1){
     });
     dia.data.datasets[0].data = selected;
     dia.data.datasets[0].label = labels[3];
+    let i;
     if (dia == dia3) {
       dia.options.scales.y1.title.text = labels[3];
-      dia.data.datasets.splice(2,1);
-      dia.data.datasets.splice(2,1);
+      i = 2;
     } else {
-      dia.data.datasets.splice(1,1);
+      i = 1;
     }
     if (revertedData !== null) {
-      dia.data.datasets.push({
-        label: 'Reverted data',
-        data: revertedData.d4,
-        tension: 0.4,
-        segment: {
-          borderDash: ctx => ctx.p0DataIndex > lastIndexRun ? [6,6] : [6,0],
-          borderColor: ctx => ctx.p0DataIndex > lastIndexRun ? 'white' : '#0b6ffd'
-        },
-      });
-      if (dia == dia3) {
-        dia.data.datasets[2]['yAxisID'] = 'y1';
-      }
+      dia.data.datasets[i].data = revertedData.d4;
       if (selected.length < revertedData.d4.length) {
         dia.data.labels = revertedData.d4.map((_, index) => `Epoch ${index + 1}`);
       }
@@ -637,20 +642,9 @@ function updateChart(selectedValue, dia, secondSelectedValue = -1){
     secondSelected = chartData.d1;
     dia.data.datasets[1].data = secondSelected;
     dia.data.datasets[1].label = labels[0];
-    if (dia == dia3) {
-      dia.options.scales.y2.title.text = labels[0];
-    }
+    dia.options.scales.y2.title.text = labels[0];
     if (revertedData !== null) {
-      dia.data.datasets.push({
-        label: 'Reverted data',
-        data: revertedData.d1,
-        tension: 0.4,
-        segment: {
-          borderDash: ctx => ctx.p0DataIndex > lastIndexRun ? [6,6] : [6,0],
-          borderColor: ctx => ctx.p0DataIndex > lastIndexRun ? 'white' : '#bb2d3c'
-        },
-        yAxisID: 'y2'
-      });
+      dia.data.datasets[3].data = revertedData.d1;
     }
     dia.update();
   } 
@@ -658,20 +652,9 @@ function updateChart(selectedValue, dia, secondSelectedValue = -1){
     secondSelected = chartData.d2;
     dia.data.datasets[1].data = secondSelected;
     dia.data.datasets[1].label = labels[1];
-    if (dia == dia3) {
-      dia.options.scales.y2.title.text = labels[1];
-    }
+    dia.options.scales.y2.title.text = labels[1];
     if (revertedData !== null) {
-      dia.data.datasets.push({
-        label: 'Reverted data',
-        data: revertedData.d2,
-        tension: 0.4,
-        segment: {
-          borderDash: ctx => ctx.p0DataIndex > lastIndexRun ? [6,6] : [6,0],
-          borderColor: ctx => ctx.p0DataIndex > lastIndexRun ? 'white' : '#bb2d3c'
-        },
-        yAxisID: 'y2'
-      });
+      dia.data.datasets[3].data = revertedData.d2;
     }
     dia.update();
   } 
@@ -679,40 +662,18 @@ function updateChart(selectedValue, dia, secondSelectedValue = -1){
     secondSelected = chartData.d3;
     dia.data.datasets[1].data = secondSelected;
     dia.data.datasets[1].label = labels[2];
-    if (dia == dia3) {
-      dia.options.scales.y2.title.text = labels[2];
-    }
+    dia.options.scales.y2.title.text = labels[2];
     if (revertedData !== null) {
-      dia.data.datasets.push({
-        label: 'Reverted data',
-        data: revertedData.d3,
-        tension: 0.4,
-        segment: {
-          borderDash: ctx => ctx.p0DataIndex > lastIndexRun ? [6,6] : [6,0],
-          borderColor: ctx => ctx.p0DataIndex > lastIndexRun ? 'white' : '#bb2d3c'
-        },
-        yAxisID: 'y2'
-      });
+      dia.data.datasets[3].data = revertedData.d3;
     }
     dia.update();
   } else if (secondSelectedValue === '3') {
     secondSelected = chartData.d4;
     dia.data.datasets[1].data = secondSelected;
     dia.data.datasets[1].label = labels[3];
-    if (dia == dia3) {
-      dia.options.scales.y2.title.text = labels[3];
-    }
+    dia.options.scales.y2.title.text = labels[3];
     if (revertedData !== null) {
-      dia.data.datasets.push({
-        label: 'Reverted data',
-        data: revertedData.d4,
-        tension: 0.4,
-        segment: {
-          borderDash: ctx => ctx.p0DataIndex > lastIndexRun ? [6,6] : [6,0],
-          borderColor: ctx => ctx.p0DataIndex > lastIndexRun ? 'white' : '#bb2d3c'
-        },
-        yAxisID: 'y2'
-      });
+      dia.data.datasets[3].data = revertedData.d4;
     }
     dia.update();
   }

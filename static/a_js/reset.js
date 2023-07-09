@@ -1,5 +1,6 @@
 import {updateAdjustments, defaults, restoreAllAdjustments} from './data.js';
 import {sendAdjustments, block_button} from './send.js';
+import {resetRevertedData} from './dia.js';
 import {createAlert} from './alerts.js';
 
 window.defaults_data = defaults;
@@ -23,6 +24,7 @@ reset.addEventListener('click', function(){
         xhr.send(1);
         block_button(revert, true)
         accordion_history.innerHTML = '';
+        resetRevertedData();
         createAlert(2, 'All settings have been reset and the history has been deleted.')
     }
     else if (reset_settings.checked){
@@ -38,6 +40,7 @@ reset.addEventListener('click', function(){
         xhr.send(1);
         block_button(revert, true)
         accordion_history.innerHTML = '';
+        resetRevertedData();
         createAlert(2, 'The history has been deleted.');
     }
     else {
