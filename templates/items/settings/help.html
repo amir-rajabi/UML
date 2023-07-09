@@ -1,12 +1,137 @@
 <div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true" data-bs-theme="dark">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl">
       <div class="modal-content modal-xl">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="helpModalLabel">HELP-CENTER</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          ...
+      
+          <!-- DEFINE TAB TITLES HERE -->
+          <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active help-link" id="1-tab" data-bs-toggle="tab" data-bs-target="#1-tab-pane" type="button" role="tab" aria-controls="1-tab-pane" aria-selected="true">1</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link help-link" id="2-tab" data-bs-toggle="tab" data-bs-target="#2-tab-pane" type="button" role="tab" aria-controls="2-tab-pane" aria-selected="false">2</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link help-link" id="3-tab" data-bs-toggle="tab" data-bs-target="#3-tab-pane" type="button" role="tab" aria-controls="3-tab-pane" aria-selected="false">3</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link help-link" id="4-tab" data-bs-toggle="tab" data-bs-target="#4-tab-pane" type="button" role="tab" aria-controls="4-tab-pane" aria-selected="false">4</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link help-link" id="5-tab" data-bs-toggle="tab" data-bs-target="#5-tab-pane" type="button" role="tab" aria-controls="5-tab-pane" aria-selected="false">5</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link help-link" id="6-tab" data-bs-toggle="tab" data-bs-target="#6-tab-pane" type="button" role="tab" aria-controls="6-tab-pane" aria-selected="false">6</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link help-link" id="7-tab" data-bs-toggle="tab" data-bs-target="#7-tab-pane" type="button" role="tab" aria-controls="7-tab-pane" aria-selected="false">7</button>
+            </li>
+          </ul>
+
+
+          <div class="tab-content" id="myTabContent">
+          <!-- HELPCENTER CONTENT HERE -->
+
+            <!-- 1 -->
+            <div class="tab-pane fade show active help-pane" id="1-tab-pane" role="tabpanel" aria-labelledby="1-tab" tabindex="0">
+              <div class="tab-pane-inner">
+                <div style="visibility: hidden;"> <button class="arrow-button"><img class="arrow-left" src="../../../static/images/arrow-left.png" alt="arrow-left"></button></div>
+                <div class="tab-pane-content">
+                  <div class="tab-pane-img"><img class="img-fluid" src="../../../static/images/help/1.png" alt=""></div>
+                  <div class="tab-pane-headline">1HEADLINE HERE</div>
+                  <div class="tab-pane-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente libero soluta laborum provident animi consequatur, reiciendis iusto non! Consequuntur excepturi veritatis ex molestias facilis laborum ad laboriosam mollitia totam! Aspernatur.</div>
+                </div>
+                <div> <button class="arrow-button" id="1to2"><img class="arrow-right" src="../../../static/images/arrow-right.png" alt="arrow-left"></button></div>
+              </div>
+            </div>
+
+
+ 
+            <!-- 2 -->
+            <div class="tab-pane fade help-pane" id="2-tab-pane" role="tabpanel" aria-labelledby="2-tab" tabindex="0">
+              <div class="tab-pane-inner">
+                <div> <button class="arrow-button" id="2to1"><img class="arrow-left" src="../../../static/images/arrow-left.png" alt="arrow-left"></button></div>
+                <div class="tab-pane-content">
+                  <div class="tab-pane-img"><img class="img-fluid" src="../../../static/images/help/2.png" alt=""></div>
+                  <div class="tab-pane-headline">2HEADLINE HERE</div>
+                  <div class="tab-pane-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente libero soluta laborum provident animi consequatur, reiciendis iusto non! Consequuntur excepturi veritatis ex molestias facilis laborum ad laboriosam mollitia totam! Aspernatur.</div>
+                </div>
+                <div> <button class="arrow-button" id="2to3"><img class="arrow-right" src="../../../static/images/arrow-right.png" alt="arrow-left"></button></div>
+              </div>
+            </div>
+
+
+            <!-- 3 -->
+            <div class="tab-pane fade help-pane" id="3-tab-pane" role="tabpanel" aria-labelledby="3-tab" tabindex="0">
+              <div class="tab-pane-inner">
+                <div> <button class="arrow-button" id="3to2"><img class="arrow-left" src="../../../static/images/arrow-left.png" alt="arrow-left"></button></div>
+                <div class="tab-pane-content">
+                  <div class="tab-pane-img"><img class="img-fluid" src="../../../static/images/help/3.png" alt=""></div>
+                  <div class="tab-pane-headline">3HEADLINE HERE</div>
+                  <div class="tab-pane-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente libero soluta laborum provident animi consequatur, reiciendis iusto non! Consequuntur excepturi veritatis ex molestias facilis laborum ad laboriosam mollitia totam! Aspernatur.</div>
+                </div>
+                <div> <button class="arrow-button" id="3to4"><img class="arrow-right" src="../../../static/images/arrow-right.png" alt="arrow-left"></button></div>
+              </div>
+            </div>
+
+            <!-- 4 -->
+            <div class="tab-pane fade help-pane" id="4-tab-pane" role="tabpanel" aria-labelledby="4-tab" tabindex="0">
+              <div class="tab-pane-inner">
+                <div> <button class="arrow-button" id="4to3"><img class="arrow-left" src="../../../static/images/arrow-left.png" alt="arrow-left"></button></div>
+                <div class="tab-pane-content">
+                  <div class="tab-pane-img"><img class="img-fluid" src="../../../static/images/help/4.png" alt=""></div>
+                  <div class="tab-pane-headline">4HEADLINE HERE</div>
+                  <div class="tab-pane-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente libero soluta laborum provident animi consequatur, reiciendis iusto non! Consequuntur excepturi veritatis ex molestias facilis laborum ad laboriosam mollitia totam! Aspernatur.</div>
+                </div>
+                <div> <button class="arrow-button" id="4to5"><img class="arrow-right" src="../../../static/images/arrow-right.png" alt="arrow-left"></button></div>
+              </div>
+            </div>
+
+            <!-- 5 -->
+            <div class="tab-pane fade help-pane" id="5-tab-pane" role="tabpanel" aria-labelledby="5-tab" tabindex="0">
+              <div class="tab-pane-inner">
+                <div> <button class="arrow-button" id="5to4"><img class="arrow-left" src="../../../static/images/arrow-left.png" alt="arrow-left"></button></div>
+                <div class="tab-pane-content">
+                  <div class="tab-pane-img"><img class="img-fluid" src="../../../static/images/help/5.png" alt=""></div>
+                  <div class="tab-pane-headline">5HEADLINE HERE</div>
+                  <div class="tab-pane-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente libero soluta laborum provident animi consequatur, reiciendis iusto non! Consequuntur excepturi veritatis ex molestias facilis laborum ad laboriosam mollitia totam! Aspernatur.</div>
+                </div>
+                <div> <button class="arrow-button" id="5to6"><img class="arrow-right" src="../../../static/images/arrow-right.png" alt="arrow-left"></button></div>
+              </div>
+            </div>
+
+            <!-- 6 -->
+            <div class="tab-pane fade help-pane" id="6-tab-pane" role="tabpanel" aria-labelledby="6-tab" tabindex="0">
+              <div class="tab-pane-inner">
+                <div> <button class="arrow-button" id="6to5"><img class="arrow-left" src="../../../static/images/arrow-left.png" alt="arrow-left"></button></div>
+                <div class="tab-pane-content">
+                  <div class="tab-pane-img"><img class="img-fluid" src="../../../static/images/help/6.png" alt=""></div>
+                  <div class="tab-pane-headline">6HEADLINE HERE</div>
+                  <div class="tab-pane-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente libero soluta laborum provident animi consequatur, reiciendis iusto non! Consequuntur excepturi veritatis ex molestias facilis laborum ad laboriosam mollitia totam! Aspernatur.</div>
+                </div>
+                <div> <button class="arrow-button" id="6to7"><img class="arrow-right" src="../../../static/images/arrow-right.png" alt="arrow-left"></button></div>
+              </div>
+            </div>
+
+            <!-- 7 -->
+            <div class="tab-pane fade help-pane" id="7-tab-pane" role="tabpanel" aria-labelledby="7-tab" tabindex="0">
+              <div class="tab-pane-inner">
+                <div> <button class="arrow-button" id="7to6"><img class="arrow-left" src="../../../static/images/arrow-left.png" alt="arrow-left"></button></div>
+                <div class="tab-pane-content">
+                  <div class="tab-pane-img"><img class="img-fluid" src="../../../static/images/help/7.png" alt=""></div>
+                  <div class="tab-pane-headline">7HEADLINE HERE</div>
+                  <div class="tab-pane-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente libero soluta laborum provident animi consequatur, reiciendis iusto non! Consequuntur excepturi veritatis ex molestias facilis laborum ad laboriosam mollitia totam! Aspernatur.</div>
+                </div>
+                <div style="visibility: hidden;"> <button class="arrow-button"><img class="arrow-right" src="../../../static/images/arrow-right.png" alt="arrow-left"></button></div>
+              </div>
+            </div>
+          
+          
+          </div>
         </div>
       </div>
     </div>

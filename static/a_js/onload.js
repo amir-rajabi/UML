@@ -1,15 +1,19 @@
-import {adjustments, chartData, updateAdjustments, socket, defaults, restoreAllAdjustments, storedData, statustxt} from './data.js';
+import {adjustments, chartData, updateAdjustments, socket, defaults, restoreAllAdjustments, storedData} from './data.js';
 import {sendAdjustments} from './send.js';
+import {getModelName} from './models.js';
 
 window.adjustments_data = adjustments;
 window.defaults_data = defaults
 window.chartData = chartData;
-window.statustxt = statustxt;
 var stop = document.getElementById('stop');
 var start = document.getElementById('start');
 var redDot = document.getElementById('server-dot-red');
 var greenDot = document.getElementById('server-dot-green');
 var revert = document.getElementById('revert');
+
+var block = document.getElementsByClassName('block_item');
+var blockCanvas = document.getElementById('blockCanvas');
+var predict_drawing = document.getElementById('predict_drawing');
 
 var error = false;
 var first_run_flag = 1;
@@ -28,7 +32,14 @@ socket.on('connect', function() {
     }
     greenDot.style.display = 'flex';
     redDot.style.display = 'none';
-    statustxt.textContent = "READY FOR TRAINING"
+
+    for (var i = 0; i < block.length; i++) {
+        block[i].disabled = false;
+        block[i].style.cursor = 'pointer';
+        blockCanvas.style.display = 'none';
+        predict_drawing.cursor = 'pointer';
+    }
+
     start.removeAttribute('disabled','');
     startRestoring();
 });
@@ -39,6 +50,15 @@ socket.on('disconnect', function() {
     start.setAttribute('disabled','');
     greenDot.style.display = 'none';
     redDot.style.display = 'flex';
+
+    for (var i = 0; i < block.length; i++) {
+        block[i].disabled = true;
+        block[i].style.cursor = 'not-allowed';
+        predict_drawing.disabled = true;
+        predict_drawing.cursor = 'not-allowed';
+        blockCanvas.style.display = 'block';
+    }
+
     sessionStorage.removeItem('UML_DATA_PIEQ4');
 });
 
@@ -96,5 +116,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error('Error parsing JSON:', error);
             }
         }
-    };      
+    }; 
+    getModelName();
 });

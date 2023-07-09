@@ -27,6 +27,7 @@
     <script type="module" src="{{ url_for('static', filename='a_js/tooltip.js') }}"></script>
     <script type="module" src="{{ url_for('static', filename='a_js/models.js') }}"></script>
     <script type="module" src="{{ url_for('static', filename='a_js/history.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='a_js/help.js') }}"></script>
 </head>
 <body>
     <div id="root">
@@ -53,6 +54,18 @@
                                     </label>
                                 </div>
 
+                            </div>
+                        </div>
+                        <div id="status-dot">
+                            <div id="server-dot-red">
+                                <button type="button" class="btn btn-secondary tooltip-button" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Disconnected from server.">
+                                    <img class="server-dot" src="{{ url_for('static', filename='images/dot-red.svg') }}" alt="">
+                                </button>
+                            </div>
+                            <div id="server-dot-green">
+                                <button type="button" class="btn btn-secondary tooltip-button" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Connected to server.">
+                                    <img class="server-dot" src="{{ url_for('static', filename='images/dot-green.svg') }}" alt="">   
+                                </button> 
                             </div>
                         </div>
                         <button type="button" class="btn btn-primary btn-lg" id="start">Start</button>
@@ -87,7 +100,7 @@
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                You have ticked the box that you want to discard the last run? This means that the training progress of your last will be ignored, the data will be removed and the model is reversed to the previous state.  
+                You have ticked the box that you want to discard the last run. This means that the training progress of your last run will be ignored, the data will be removed and the model is reversed to the previous state.  
                 <br><br>
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" value="" id="dsa_revert">
