@@ -1,5 +1,6 @@
 import {adjustments, chartData, socket, adjustmentsData} from './data.js';
 import { getAdjustmentsData, createHistoryItem } from './history.js';
+import { startProgress, stopProgress } from './progressbar.js';
 window.adjustments = adjustments;
 window.adjData = adjustmentsData;
 
@@ -18,6 +19,7 @@ var dsa_revert = document.getElementById('dsa_revert');
 var revert_confirmed = document.getElementById('revert_confirmed');
 var revertlabel_withtooltip = document.getElementById('revertlabel_withtooltip');
 var revertlabel_notooltip = document.getElementById('revertlabel_notooltip');
+var progressbar = document.getElementById('progress-bar');
 
 revert.addEventListener('change', function(){
     var dsa_revert_flag = sessionStorage.getItem('UML_revert');
@@ -52,6 +54,7 @@ revert_confirmed.addEventListener('click', function(){
     xhr.open('POST', '/start', true);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send(true);
+    startProgress();
 });
 
 start.addEventListener('click', function(){
@@ -67,6 +70,7 @@ start.addEventListener('click', function(){
             xhr.open('POST', '/start', true);
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.send(true);
+            startProgress();
         }
     } else{
         revert.checked = false;
@@ -77,6 +81,7 @@ start.addEventListener('click', function(){
         xhr.open('POST', '/start', true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(false);
+        startProgress();
     }
 });
 
@@ -88,6 +93,7 @@ stop.addEventListener('click', function(){
     xhr.open('POST', '/stop', true);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send(1);
+    stopProgress();
 });
 
 socket.on('training_finished', function(data){
@@ -107,6 +113,8 @@ socket.on('training_finished', function(data){
             } else {
                 revert.disabled = false;
             }
+            progressbar.classList.remove("progress-bar-striped", "progress-bar-animated");
+            progressbar.textContent = '100%';
         }
     };
     xhr.send(1);

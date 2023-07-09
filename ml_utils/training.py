@@ -50,6 +50,7 @@ def training(name, chart_data, socketio, dictionary, model: Module,
             optimizer: Optimizer,
             cuda: bool, n_epochs: int,
             batch_size: int, loss_nr):
+    bcounter = 0
     global_epoch=len(chart_data["d1"])
     run_index = get_run_num(f"data/{name}_epoch_data.json")
     train_loader, test_loader = get_data_loaders(batch_size=batch_size)
@@ -60,6 +61,12 @@ def training(name, chart_data, socketio, dictionary, model: Module,
             data, target = batch
             train_step(model=model, optimizer=optimizer, cuda=cuda, data=data,
                        target=target, loss_nr=loss_nr)
+            if bcounter % 5 == 0:
+                socketio.emit('batch', {'data': [1]})
+                bcounter += 1
+            else: 
+                bcounter += 1
+
             if stop_flag:
                 break
         else:

@@ -398,6 +398,9 @@ thead th{
 }
 
 /*------- progressbar -------*/
+#progress-bar-ctr{
+    width: 100%;
+}
 #visual-lower{
     height: 100% !important;
     margin-bottom: .5%;
