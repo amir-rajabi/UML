@@ -36,6 +36,20 @@
         <div id="main">           
             {% include 'items/sidebar.html' %}
             <div class="column" id="settings-ctr">
+                <div id="status-dot">
+                    <div id="server-dot-red">
+                        <button type="button" class="btn btn-secondary tooltip-button">
+                            <img class="server-dot" src="{{ url_for('static', filename='images/dot-red.svg') }}" alt="">
+                            Offline
+                        </button>
+                    </div>
+                    <div id="server-dot-green">
+                        <button type="button" class="btn btn-secondary tooltip-button">
+                            <img class="server-dot" src="{{ url_for('static', filename='images/dot-green.svg') }}" alt="">   
+                            Online
+                        </button> 
+                    </div>
+                </div>
                 <div id="control-buttons-ctr">
                     <div class="line"></div>
                     <div id="control-buttons">
@@ -54,18 +68,6 @@
                                     </label>
                                 </div>
 
-                            </div>
-                        </div>
-                        <div id="status-dot">
-                            <div id="server-dot-red">
-                                <button type="button" class="btn btn-secondary tooltip-button" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Disconnected from server.">
-                                    <img class="server-dot" src="{{ url_for('static', filename='images/dot-red.svg') }}" alt="">
-                                </button>
-                            </div>
-                            <div id="server-dot-green">
-                                <button type="button" class="btn btn-secondary tooltip-button" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Connected to server.">
-                                    <img class="server-dot" src="{{ url_for('static', filename='images/dot-green.svg') }}" alt="">   
-                                </button> 
                             </div>
                         </div>
                         <button type="button" class="btn btn-primary btn-lg" id="start">Start</button>

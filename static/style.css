@@ -423,8 +423,13 @@ thead th{
     width: 100%;
 }
 #status-dot{
+    right: 0;
+    top: 0;
+    z-index: 998;
+    position: absolute;
+    padding-right: 5%;
+    padding-top: 2%;
     display: flex;
-    justify-content: center;
     align-items: end;
     margin-right: 1%;
 }
