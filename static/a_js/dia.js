@@ -475,7 +475,7 @@ socket.on('update_chart', function(data){
   currentAccuracy.textContent = chartData.d1[chartData.d1.length-1];  
   currentAccuracyModel.textContent = chartData.d1[chartData.d1.length-1];
   currentModelEpochs.textContent = chartData.d1.length;
-  alert(numEpochs.textContent);
+  //alert(numEpochs.textContent);
   
   progressbar.style.width = chartData.d1.length + "%";
 });
