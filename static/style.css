@@ -408,7 +408,8 @@ thead th{
     margin-right: 2%;
 }
 .progress{
-    height: 30% !important;
+    height: 35% !important;
+    visibility: hidden;
 }
 .server-dot{
     height: 10px;
@@ -456,6 +457,12 @@ thead th{
     color: #aeb5bd;
     width: 90%;
     text-align: center;
+}
+#drawing2ndcolumn{
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    height: 58.5%;
 }
 /*------- models-tab -------*/
 .model_ctr_headline{

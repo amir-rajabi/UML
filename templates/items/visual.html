@@ -26,8 +26,8 @@
         <div class="visual-ctr" id="drawing_tab">
             <div id="drawing-ctr">
                 <div>
-                    <div class="alert text-bg-dark" role="alert">
-                        <span> Draw a number (0-9) in the following box: </span>
+                    <div class="alert text-bg-dark" role="alert" style="padding:1%; text-align: center;">
+                        <span> Draw a number (0-9) in the box:</span>
                     </div>
                     <div id="drawing1stcolumn">
                         <div id="blockCanvas" class="block_item"></div>
@@ -53,12 +53,12 @@
                     </div>
                 </div>
                 <div id="drawing2ndcolumn">
-                    <div class="alert" role="alert">&nbsp;</div>
+                    <div class="alert text-bg-dark" style="margin-left: 16%; padding:1%; text-align: center;" role="alert">adjusted image</div>
                     <div id="output-img-ctr">
                         <div></div>
                         <div id="output-img-placeholder">
                             <img id="output_img">                           
-                            <img src="{{ url_for('static', filename='images/x-placeholder.png') }}" alt="">
+                            <img style="cursor: not-allowed;" src="{{ url_for('static', filename='images/x-placeholder.png') }}" alt="">
                         </div>
                     </div>
                 </div>
@@ -69,7 +69,7 @@
 
 <div id="visual-lower-ctr">
     <div id="visual-lower">
-        <div class="progress" role="progressbar" aria-label="progress" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress" id="progress" role="progressbar" aria-label="progress" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
             <div class="progress-bar" id="progress-bar"></div>
         </div>
 

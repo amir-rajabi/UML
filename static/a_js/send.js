@@ -114,7 +114,9 @@ socket.on('training_finished', function(data){
                 revert.disabled = false;
             }
             progressbar.classList.remove("progress-bar-striped", "progress-bar-animated");
-            progressbar.textContent = '100%';
+            if (progressbar.style.width == '100%'){
+                progressbar.textContent = '100%';
+            }
         }
     };
     xhr.send(1);
