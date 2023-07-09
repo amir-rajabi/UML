@@ -80,13 +80,11 @@ def training(name, chart_data, socketio, dictionary, model: Module,
 
             #should likely not pop up, delete this in production
             if str(test_loss) == "nan":
-                test_loss = 1
-                print("WARNING: BIG WARNING BIG WARNING BIG WARNING")
-                print("WARNING: BIG WARNING BIG WARNING BIG WARNING")
+                test_loss = 5
+                print("Overflow detected in testing loss")
             if str(train_loss) == "nan":
-                train_loss = 1
-                print("WARNING: BIG WARNING BIG WARNING BIG WARNING")
-                print("WARNING: BIG WARNING BIG WARNING BIG WARNING")
+                train_loss = 5
+                print("Overflow detected in training loss")
 
             chart_data['d1'].append(test_accuracy)
             chart_data['d2'].append(test_loss)

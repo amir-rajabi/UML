@@ -11,10 +11,10 @@ from PIL import Image, ImageOps
 
 
 
-def test_drawing(model_name,revert):
+def test_drawing(model_name):
     # Lade das trainierte Modell
     model = ConvolutionalNeuralNetwork(dropout_rate=0)  # Passe den dropout_rate-Wert entsprechend an
-    if not revert and os.path.exists(f'data/{model_name}_model_new.pt'):
+    if os.path.exists(f'data/{model_name}_model_new.pt'):
         model.load_state_dict(torch.load(f'data/{model_name}_model_new.pt'))
     elif os.path.exists(f'data/{model_name}_model.pt'):
         model.load_state_dict(torch.load(f'data/{model_name}_model.pt'))

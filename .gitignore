@@ -13,6 +13,7 @@ model_new.pt
 *model_new.pt
 saved_models.json
 index_models.json
+output.png
 
 epoch_data_backup.json
 legacy_json_write.py

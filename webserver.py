@@ -20,8 +20,6 @@ from ml_utils.evaluate import stop_eval
 app = Flask(__name__)
 socketio = SocketIO(app)
 
-config_revert = False
-data_corrupted = False
 
 #will be used for saving and loading models
 current_model = ""
@@ -85,7 +83,6 @@ def check_revert(revert):
         else:
             sendAlert(4,"Nothing to revert")
             print("LOG: nothing to revert")
-        config_revert = False
         print("LOG: TRAINING OLD REVERTED MODEL")
         return
     elif os.path.exists(f"data/{current_model}_model_new.pt"):
@@ -196,7 +193,7 @@ def predict_drawing():
     new_img = Image.new('RGB', img.size, 'black')
     new_img.paste(img, (0, 0), img)
     new_img.save('static/img.jpg', 'jpeg')
-    prediction, confidence = test_drawing(current_model,config_revert)
+    prediction, confidence = test_drawing(current_model)
     if prediction == -1:
         sendAlert(3, "ERROR: model not found")
         return response
@@ -264,19 +261,16 @@ def load_model():
 
 @app.route('/save_model', methods=['POST'])
 def save_model():
-    if config_revert:
-        #copy model.pt
-        model = f"{current_model}_model.pt"
-    else: 
-        #copy new_model.pt
+    if os.path.exists(f"data/{current_model}_model_new.pt"):
         model = f"{current_model}_model_new.pt"
-
-    print("LOG: model to save: " + model)
-    #throw error
-    if not os.path.exists(f"data/{model}"):
+    elif os.path.exists(f"data/{current_model}_model.pt"):
+        model = f"{current_model}_model.pt"
+    else:
         sendAlert(3,"Model to store was not found")
         print(f"ERROR:{model} doesn't exists")
         return response
+
+    print("LOG: model to save: " + model)
 
     #the current model ist not set to the new
     #nameing space, it only saves without loading
