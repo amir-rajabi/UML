@@ -1,5 +1,6 @@
 import {chartData, socket} from './data.js';
 import {historyFrontend} from './history.js'
+import {resetRevertedData} from './dia.js';
 window.chartData = chartData;
 window.socket = socket;
 
@@ -182,6 +183,10 @@ delete_model_cancel.addEventListener('click', function(){
 });
 load_model_cancel.addEventListener('click', function(){
     load_model_confirmed.onclick = null;
+});
+
+load_model_confirmed.addEventListener('click', function(){
+    resetRevertedData();
 });
 create_new_model_confirmed.addEventListener('click', function(){
     var xhr7 = new XMLHttpRequest();
