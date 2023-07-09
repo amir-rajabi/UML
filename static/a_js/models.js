@@ -107,7 +107,7 @@ save_model.addEventListener('click', function(){
     deleteButton.setAttribute('onclick', 'delete_model(' + savedModelsCount + ',"' + model_name.value + '")');
     var loadButton = document.createElement('button');
     loadButton.type = 'button';
-    loadButton.className = 'btn btn-primary block_item';
+    loadButton.className = 'btn btn-primary block_item run_block';
     loadButton.id = 'load-model-' + (savedModelsCount);
     loadButton.textContent = 'Load model';
     loadButton.setAttribute('data-bs-toggle', 'modal');

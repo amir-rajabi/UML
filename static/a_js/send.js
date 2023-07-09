@@ -20,6 +20,7 @@ var revert_confirmed = document.getElementById('revert_confirmed');
 var revertlabel_withtooltip = document.getElementById('revertlabel_withtooltip');
 var revertlabel_notooltip = document.getElementById('revertlabel_notooltip');
 var progressbar = document.getElementById('progress-bar');
+var run_block = document.getElementsByClassName('run_block');
 
 revert.addEventListener('change', function(){
     var dsa_revert_flag = sessionStorage.getItem('UML_revert');
@@ -55,6 +56,7 @@ revert_confirmed.addEventListener('click', function(){
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send(true);
     startProgress();
+    block_while_running();
 });
 
 start.addEventListener('click', function(){
@@ -71,6 +73,7 @@ start.addEventListener('click', function(){
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.send(true);
             startProgress();
+            block_while_running();
         }
     } else{
         revert.checked = false;
@@ -82,6 +85,7 @@ start.addEventListener('click', function(){
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(false);
         startProgress();
+        block_while_running();
     }
 });
 
@@ -117,6 +121,7 @@ socket.on('training_finished', function(data){
             if (progressbar.style.width == '100%'){
                 progressbar.textContent = '100%';
             }
+            unblock_after_running();
         }
     };
     xhr.send(1);
@@ -163,5 +168,16 @@ export function block_button(button, block) {
         if (button.disabled){
             button.removeAttribute('disabled');
         }
+    }
+}
+
+function block_while_running(){
+    for (var i = 0; i <run_block.length; i++) {
+        run_block[i].setAttribute('disabled', '');
+    }
+}
+function unblock_after_running(){
+    for (var i = 0; i <run_block.length; i++) {
+        run_block[i].removeAttribute('disabled');
     }
 }
