@@ -1,7 +1,7 @@
 from contextlib import redirect_stdout
 import numpy as np
 import torch, os, sys
-from ml_utils.model import ConvolutionalNeuralNetwork
+from model import ConvolutionalNeuralNetwork
 
 '''
     lets you print the weights of a model
@@ -23,8 +23,8 @@ if __name__ == "__main__":
     try:
         model_path = sys.argv[1]
     except:
-        print("WARNING path set to default data/_mode.pt")
-        model_path = "data/_model.pt"
+        print("WARNING path set to default data/_model.pt")
+        model_path = "../data/_model.pt"
 
     model = ConvolutionalNeuralNetwork(0)
 
