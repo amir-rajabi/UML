@@ -487,6 +487,8 @@ thead th{
 .tab-pane{
     height: 80vh;
     width: 100%;
+    overflow: hidden;
+    margin: 0;
 }
 .tab-pane-inner{
     height: 100%;
@@ -528,7 +530,9 @@ thead th{
     align-items: center;
 }
 .tab-pane-text{
-    text-align: justify;
+    display: inline-block;
+    vertical-align: top; 
+    padding-bottom: 40%;
 }
 .img-fluid{
     max-height: 55vh !important;
