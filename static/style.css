@@ -534,6 +534,9 @@ thead th{
     vertical-align: top; 
     padding-bottom: 40%;
 }
+.red-text{
+    color: orange;
+}
 .img-fluid{
     max-height: 55vh !important;
 }

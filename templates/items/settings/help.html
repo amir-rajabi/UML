@@ -10,25 +10,25 @@
           <!-- DEFINE TAB TITLES HERE -->
           <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item" role="presentation">
-              <button class="nav-link active help-link" id="1-tab" data-bs-toggle="tab" data-bs-target="#1-tab-pane" type="button" role="tab" aria-controls="1-tab-pane" aria-selected="true">1</button>
+              <button class="nav-link active help-link" id="1-tab" data-bs-toggle="tab" data-bs-target="#1-tab-pane" type="button" role="tab" aria-controls="1-tab-pane" aria-selected="true">The Software</button>
             </li>
             <li class="nav-item" role="presentation">
-              <button class="nav-link help-link" id="2-tab" data-bs-toggle="tab" data-bs-target="#2-tab-pane" type="button" role="tab" aria-controls="2-tab-pane" aria-selected="false">2</button>
+              <button class="nav-link help-link" id="2-tab" data-bs-toggle="tab" data-bs-target="#2-tab-pane" type="button" role="tab" aria-controls="2-tab-pane" aria-selected="false">Start</button>
             </li>
             <li class="nav-item" role="presentation">
-              <button class="nav-link help-link" id="3-tab" data-bs-toggle="tab" data-bs-target="#3-tab-pane" type="button" role="tab" aria-controls="3-tab-pane" aria-selected="false">3</button>
+              <button class="nav-link help-link" id="3-tab" data-bs-toggle="tab" data-bs-target="#3-tab-pane" type="button" role="tab" aria-controls="3-tab-pane" aria-selected="false">Adjustments</button>
             </li>
             <li class="nav-item" role="presentation">
-              <button class="nav-link help-link" id="4-tab" data-bs-toggle="tab" data-bs-target="#4-tab-pane" type="button" role="tab" aria-controls="4-tab-pane" aria-selected="false">4</button>
+              <button class="nav-link help-link" id="4-tab" data-bs-toggle="tab" data-bs-target="#4-tab-pane" type="button" role="tab" aria-controls="4-tab-pane" aria-selected="false">Diagram</button>
             </li>
             <li class="nav-item" role="presentation">
-              <button class="nav-link help-link" id="5-tab" data-bs-toggle="tab" data-bs-target="#5-tab-pane" type="button" role="tab" aria-controls="5-tab-pane" aria-selected="false">5</button>
+              <button class="nav-link help-link" id="5-tab" data-bs-toggle="tab" data-bs-target="#5-tab-pane" type="button" role="tab" aria-controls="5-tab-pane" aria-selected="false">History</button>
             </li>
             <li class="nav-item" role="presentation">
-              <button class="nav-link help-link" id="6-tab" data-bs-toggle="tab" data-bs-target="#6-tab-pane" type="button" role="tab" aria-controls="6-tab-pane" aria-selected="false">6</button>
+              <button class="nav-link help-link" id="6-tab" data-bs-toggle="tab" data-bs-target="#6-tab-pane" type="button" role="tab" aria-controls="6-tab-pane" aria-selected="false">Models</button>
             </li>
             <li class="nav-item" role="presentation">
-              <button class="nav-link help-link" id="7-tab" data-bs-toggle="tab" data-bs-target="#7-tab-pane" type="button" role="tab" aria-controls="7-tab-pane" aria-selected="false">7</button>
+              <button class="nav-link help-link" id="7-tab" data-bs-toggle="tab" data-bs-target="#7-tab-pane" type="button" role="tab" aria-controls="7-tab-pane" aria-selected="false">Testing</button>
             </li>
           </ul>
 
@@ -43,7 +43,7 @@
                 <div class="tab-pane-content">
                   <div class="tab-pane-img"><img class="img-fluid" src="../../../static/images/help/1.jpeg" alt=""></div>
                   <div class="tab-pane-headline">The Software</div>
-                  <div class="tab-pane-text">The purpose of this software is to train a neural network for number recognition. This is accomplished by utilizing a specific neural network provided by the software and training it on a widely recognized dataset known as the MNIST dataset.</div>
+                  <div class="tab-pane-text">The purpose of this software is to train a neural network for number recognition. This is accomplished by utilizing a specific neural network provided by the software and training it on a widely recognized dataset known as the MNIST dataset, consisting of around 70.000 images of handdrawn numbers. During each training epoch the neural network goes through the entire data set, through smaller batches, trying to learn connections between the images and the number it represents.</div>
                 </div>
                 <div> <button class="arrow-button" id="1to2"><img class="arrow-right" src="../../../static/images/arrow-right.png" alt="arrow-left"></button></div>
               </div>
@@ -58,7 +58,7 @@
                 <div class="tab-pane-content">
                   <div class="tab-pane-img"><img class="img-fluid" src="../../../static/images/help/2.gif" alt=""></div>
                   <div class="tab-pane-headline">Start</div>
-                  <div class="tab-pane-text">When you are ready to start the training you can press the start button.</div>
+		  <div class="tab-pane-text">When you are ready to start the training you can press the start button. This will take in account all the adjustments you have made beforehand and start going through each epoch, while giving you feedback on the progress through the bar seen right of the start button.<div class="red-text">Note that an epoch can last up to 40 seconds.</div></div>
                 </div>
                 <div> <button class="arrow-button" id="2to3"><img class="arrow-right" src="../../../static/images/arrow-right.png" alt="arrow-left"></button></div>
               </div>
@@ -85,7 +85,7 @@
                 <div class="tab-pane-content">
                   <div class="tab-pane-img"><img class="img-fluid" src="../../../static/images/help/4.gif" alt=""></div>
                   <div class="tab-pane-headline">Diagram</div>
-                  <div class="tab-pane-text">The Diagram tab provides options for customizing the content and presentation of the diagrams on the left.</div>
+                  <div class="tab-pane-text">The Diagram tab provides options for customizing the content and presentation of the diagrams on the left. You have the option of looking into the loss and the accuracy for the testing set and training set. While accuracy describes how well the model can predict the labels of a data set, loss measures how offset the predictions were from the actual labels. There is also a difference between training and test set, so that one can measure the performance of the neural network on images that the it has not seen before.</div>
                 </div>
                 <div> <button class="arrow-button" id="4to5"><img class="arrow-right" src="../../../static/images/arrow-right.png" alt="arrow-left"></button></div>
               </div>
@@ -98,7 +98,7 @@
                 <div class="tab-pane-content">
                   <div class="tab-pane-img"><img class="img-fluid" src="../../../static/images/help/5.gif" alt=""></div>
                   <div class="tab-pane-headline">History</div>
-                  <div class="tab-pane-text">The History tab provides a detailed overview of the training progress. Within this tab,you can track the values used for each run and gain deeper insights into the training process.</div>
+                  <div class="tab-pane-text">The History tab provides a detailed overview of the training progress. Within this tab,you can track the values used for each run and gain deeper insights into the training process. </div>
                 </div>
                 <div> <button class="arrow-button" id="5to6"><img class="arrow-right" src="../../../static/images/arrow-right.png" alt="arrow-left"></button></div>
               </div>
