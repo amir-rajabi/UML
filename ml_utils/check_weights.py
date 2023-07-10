@@ -31,7 +31,7 @@ if __name__ == "__main__":
     if os.path.exists(model_path):
         model.load_state_dict(torch.load(model_path))
     else:
-        raise Exception("model does not exist")
+        raise Exception(f"{model_path} does not exist")
 
     torch.set_printoptions(profile="full")
     with open(path, 'w') as f:
