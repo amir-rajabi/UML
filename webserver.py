@@ -195,7 +195,7 @@ def predict_drawing():
     new_img.save('static/img.jpg', 'jpeg')
     prediction, confidence = test_drawing(current_model)
     if prediction == -1:
-        sendAlert(3, "ERROR: model not found")
+        sendAlert(3, "ERROR: there's likely no model trained, try train the neural network before testing")
         return response
 
     return jsonify({'prediction': int(prediction), 'confidence': float(confidence)})
@@ -341,8 +341,12 @@ def handle_connect():
 
 def remove_unnecessary():
     if os.path.exists('static/images/output.png'):
-        print('LOG: removed unnecessary data')
+        print('LOG: removed output.png')
         os.remove('static/images/output.png')
+    if os.path.exists('static/img.jpg'):
+        print('LOG: removed img.jpg')
+        os.remove('static/img.jpg')
+
 
 @socketio.on('disconnect')
 def handle_disconnect():
