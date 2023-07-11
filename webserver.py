@@ -289,7 +289,7 @@ def delete_model():
     name = request.get_json()
     if os.path.exists(f"data/{name}_model.pt"):
         os.remove(f"data/{name}_model.pt")
-    if os.path.exists(f"data/{name}_model_new.pt"):
+    elif os.path.exists(f"data/{name}_model_new.pt"):
         os.remove(f"data/{name}_model_new.pt")
     else:
         print("ERROR: model to be deleted does not exist")
