@@ -68,7 +68,7 @@ const arbitraryLine = {
 }
 
 function revertIndexCalc(runs, epochCount) {
-  if (epochCount > 0) {
+  if (epochCount >= 0) {
     let lastElement = runs.slice(-1);
     let lastRunStart = epochCount - lastElement;
     return (lastRunStart - 2);
@@ -340,7 +340,7 @@ const dia3 = new Chart(
           tension: 0.4,
           segment: {
             borderDash: ctx => ctx.p0DataIndex > lastIndexRun ? [6,6] : [6,0],
-            borderColor: ctx => ctx.p0DataIndex > lastIndexRun ? 'white' : '#bb2d3c'
+            borderColor: ctx => ctx.p0DataIndex > lastIndexRun ? 'white' : '#0b6ffd'
           },
           yAxisID: 'y1'
         },
@@ -450,7 +450,7 @@ socket.on('update_chart', function(data){
 
   lastIndexRun = revertIndexCalc(epochs_per_runs, data.data.run.length);
 
-  if (revertedData !== null && revertedData.epochs_per_runs.length == epochs_per_runs.length) {
+  if (revertedData !== null && revertedData.epochs_per_runs.length == epochs_per_runs.length && revertedData.epochs_per_runs.length != 0) {
     let lastElement = revertedData.epochs_per_runs.length - 1;
     epochs_per_runs[lastElement] = revertedData.epochs_per_runs[lastElement];
     lastIndexRun = revertIndexCalc(epochs_per_runs, data.data.run.length + revertedData.epochs_per_runs[lastElement]);
