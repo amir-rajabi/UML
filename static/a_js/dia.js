@@ -53,16 +53,18 @@ const arbitraryLine = {
 
       // run line
       ctx.strokeStyle = 'lightgray';
-      ctx.strokeRect(x.getPixelForValue(runCount), top, 0, height);
+      ctx.strokeRect(x.getPixelForValue(runCount), top + 5, 0, height - 20);
       ctx.strokeWidth = 1;
       ctx.restore(); 
 
-      // run number
-      // ctx.font = '12px Arial';
-      // ctx.textAlign = 'center';
-      // ctx.fillStyle = 'white';
-      // - 0 falls central
-      // ctx.fillText("Run " + (i+1), x.getPixelForValue(runCount) - 22, top + 12);
+      if (chartData.run.length < 25) {
+        // run number
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = 'white';
+        // - 22 falls links
+        ctx.fillText("Run " + (i+1), x.getPixelForValue(runCount) - 0, top);
+      }
     }
   }
 }
