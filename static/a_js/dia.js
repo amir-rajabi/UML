@@ -58,12 +58,22 @@ const arbitraryLine = {
       ctx.restore(); 
 
       if (chartData.run.length < 25) {
-        // run number
-        ctx.font = '12px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillStyle = 'white';
-        // - 22 falls links
-        ctx.fillText("Run " + (i+1), x.getPixelForValue(runCount) - 0, top);
+        if (revertedData != null && revertedData.run.length < 25) {
+          // run number
+          ctx.font = '12px Arial';
+          ctx.textAlign = 'center';
+          ctx.fillStyle = 'white';
+          // - 22 falls links
+          ctx.fillText("Run " + (i+1), x.getPixelForValue(runCount) - 0, top);
+        }
+        else if (revertedData == null) {
+          // run number
+          ctx.font = '12px Arial';
+          ctx.textAlign = 'center';
+          ctx.fillStyle = 'white';
+          // - 22 falls links
+          ctx.fillText("Run " + (i+1), x.getPixelForValue(runCount) - 0, top);
+        }
       }
     }
   }
