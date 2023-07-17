@@ -96,8 +96,13 @@
         <div class="modal-body">
             <div class="input-group mb-3">
                 <span class="input-group-text" id="new-model-name">>></span>
-                <input id="model_name" type="text" class="form-control" placeholder="Type in a name for the model" aria-label="modelname" aria-describedby="basic-addon1" style="cursor: text;" maxlength="10">
-              </div>
+                <input id="model_name" type="text" class="form-control" placeholder="Type in a name for the model" aria-label="modelname" aria-describedby="basic-addon1" style="cursor: text;" maxlength="20">
+              <script>
+                $('#save-current-model-popup').on('shown.bs.modal', function () {
+                    $('#model_name').trigger('focus')
+                })
+              </script>
+            </div>
         </div>
         <div id="too-long-alert" style="padding-right: var(--bs-modal-padding); padding-left: var(--bs-modal-padding); display:none;">
             <div class="alert alert-warning" role="alert">

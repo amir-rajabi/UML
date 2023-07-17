@@ -1,0 +1,148 @@
+<div class="modal fade" id="glossaryModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true" data-bs-theme="dark" style="overflow: scroll;">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content modal-xl">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="helpModalLabel">GLOSSARY</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="input-group mb-3" style="padding-bottom: 2%; width: 50%;">
+                <span class="input-group-text">#</span>
+                <input id="searchInput" type="text" onkeyup="searchTable()" class="form-control" placeholder="Search for a word." aria-describedby="basic-addon2" style="cursor: text;">
+              <script>
+                $('#glossaryModal').on('shown.bs.modal', function () {
+                    $('#searchInput').trigger('focus')
+                })
+              </script>
+            </div>
+            <table class="table" style="padding-top: 1%; border-top: .5px solid #4a5058;">
+                <thead>
+                  <tr>
+                    <th scope="col">term</th>
+                    <th scope="col">description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Accuracy</td>
+                    <td>A metric that measures the percentage of correctly predicted samples out of the total samples in a dataset.</td>
+                  </tr>
+                  <tr>
+                    <td>Batch Size</td>
+                    <td>The number of samples in each batch. It is a hyperparameter that can influence the training process. Larger batch sizes generally lead to more stable updates but require more memory.</td>
+                  </tr>
+                  <tr>
+                    <td>Batches</td>
+                    <td>The dataset is divided into smaller subsets, called batches, to make it more computationally efficient during training.</td>
+                  </tr>
+                  <tr>
+                    <td>Confidence</td>
+                    <td>The level of certainty or probability associated with a model's prediction for a particular input.</td>
+                  </tr>
+                  <tr>
+                    <td>Cross Entropy</td>
+                    <td>A specific type of loss function commonly used for classification problems. It measures the dissimilarity between the predicted probability distribution and the actual one-hot encoded target distribution.</td>
+                  </tr>
+                  <tr>
+                    <td>Dropout Rate</td>
+                    <td>A regularization technique in Machine Learning used to prevent overfitting. It randomly drops a certain percentage of neurons during training, forcing the model to be more robust and not overly reliant on specific neurons.</td>
+                  </tr>
+                  <tr>
+                    <td>Epochs</td>
+                    <td>The number of times the entire dataset is passed through the Machine Learning model during training.</td>
+                  </tr>
+                  <tr>
+                    <td>Learning Rate</td>
+                    <td>A hyperparameter in Machine Learning algorithms that controls the step size at which the model updates its parameters during training. A higher learning rate can make the model converge faster, but it may overshoot the optimal solution. A lower learning rate can lead to a more accurate solution but may slow down the training process.</td>
+                  </tr>
+                  <tr>
+                    <td>L1 Loss</td>
+                    <td>Also known as the Mean Absolute Error (MAE), it is a loss function that computes the absolute differences between predicted and target values. L1 Loss is less sensitive to outliers compared to other loss functions.</td>
+                  </tr>
+                  <tr>
+                    <td>Loss</td>
+                    <td>The value computed by the loss function, representing the difference between the predicted output and the actual target.</td>
+                  </tr>
+                  <tr>
+                    <td>Loss Function</td>
+                    <td>A mathematical function that measures the difference between the predicted output and the actual target during training. The goal is to minimize the loss to improve the model's performance.</td>
+                  </tr>
+                  <tr>
+                    <td>MNIST</td>
+                    <td>A popular dataset in Machine Learning used for handwritten digit recognition tasks, containing images of digits from 0 to 9.</td>
+                  </tr>
+                  <tr>
+                    <td>Model</td>
+                    <td>The mathematical representation of the Machine Learning algorithm that learns patterns from the data to make predictions.</td>
+                  </tr>
+                  <tr>
+                    <td>Momentum</td>
+                    <td>A technique used to accelerate the optimization process during training by giving the model's parameters a "memory" of their previous updates. This helps the model to overcome potential local minima in the loss landscape.</td>
+                  </tr>
+                  <tr>
+                    <td>Multilabel Soft Margin Loss</td>
+                    <td>A loss function used for multilabel classification tasks where each sample can belong to multiple classes. It encourages correct class predictions while allowing some margin of error.</td>
+                  </tr>
+                  <tr>
+                    <td>Multi Margin Loss</td>
+                    <td>A loss function used for multiclass classification tasks that aims to maximize the margin between different class scores.</td>
+                  </tr>
+                  <tr>
+                    <td>Poisson NLL Loss</td>
+                    <td>A loss function used when dealing with count data and modeled using a Poisson distribution. It measures the difference between the predicted and actual counts.</td>
+                  </tr>
+                  <tr>
+                    <td>Prediction</td>
+                    <td>The output generated by the trained model when given an input (e.g., class labels, values).</td>
+                  </tr>
+                  <tr>
+                    <td>Smooth L1 Loss</td>
+                    <td>A loss function used in regression tasks. It is a combination of L1 and L2 losses, providing a smoother gradient around zero to prevent large updates for outliers.</td>
+                  </tr>
+                  <tr>
+                    <td>Soft Margin Loss</td>
+                    <td>A loss function used in Support Vector Machines (SVMs) to maximize the margin between classes while allowing some misclassifications.</td>
+                  </tr>
+                  <tr>
+                    <td>Tensor</td>
+                    <td>A mathematical representation of a multi-dimensional array used in Machine Learning, especially in deep learning frameworks.</td>
+                  </tr>
+                  <tr>
+                    <td>Test Set</td>
+                    <td>A subset of the dataset used to evaluate the model's performance after training. It contains data that the model has not seen during training.</td>
+                  </tr>
+                  <tr>
+                    <td>Torch</td>
+                    <td>Short for PyTorch, it is an open-source deep learning library extensively used in Machine Learning research and applications.</td>
+                  </tr>
+                  <tr>
+                    <td>Train Set</td>
+                    <td>The subset of the dataset used to train the Machine Learning model.</td>
+                  </tr>
+                </tbody>
+              </table>
+        </div>
+      </div>
+    </div>
+</div>
+
+<script>
+function searchTable() {
+  var searchValue = document.getElementById('searchInput').value.toLowerCase();
+  var rows = document.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+  
+  for (var i = 0; i < rows.length; i++) {
+    var vocabularyCell = rows[i].getElementsByTagName('td')[0];
+    
+    if (vocabularyCell) {
+      var vocabularyText = vocabularyCell.textContent.toLowerCase();
+      if (vocabularyText.indexOf(searchValue) > -1) {
+        rows[i].style.display = '';
+      } else {
+        rows[i].style.display = 'none';
+      }
+    }
+  }
+}
+
+</script>
