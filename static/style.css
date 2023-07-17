@@ -413,6 +413,7 @@ thead th{
 }
 .server-dot{
     height: 10px;
+    padding-bottom: 3%;
 }
 #server-dot-green{
     display: none;

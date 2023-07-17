@@ -117,5 +117,18 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     }; 
+
+    const clickEvent = new MouseEvent('click', {
+        view: window,
+        bubbles: true,
+        cancelable: true
+    });
+    var first = sessionStorage.getItem('help');
+    if (first){
+    } else{
+        document.getElementById('help-button').dispatchEvent(clickEvent);
+        sessionStorage.setItem('help', first_run_flag);
+    }
+
     getModelName();
 });
