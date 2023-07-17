@@ -195,7 +195,7 @@ def predict_drawing():
     new_img.save('static/img.jpg', 'jpeg')
     prediction, confidence = test_drawing(current_model)
     if prediction == -1:
-        sendAlert(3, "ERROR: model not found")
+        sendAlert(3, "ERROR: there's likely no model trained, try train the neural network before testing")
         return response
 
     return jsonify({'prediction': int(prediction), 'confidence': float(confidence)})
@@ -289,11 +289,11 @@ def delete_model():
     name = request.get_json()
     if os.path.exists(f"data/{name}_model.pt"):
         os.remove(f"data/{name}_model.pt")
+    elif os.path.exists(f"data/{name}_model_new.pt"):
+        os.remove(f"data/{name}_model_new.pt")
     else:
         print("ERROR: model to be deleted does not exist")
         sendAlert(3, "ERROR: Model to be deleted does not exist")
-    if os.path.exists(f"data/{name}_model_new.pt"):
-        os.remove(f"data/{name}_model_new.pt")
     if os.path.exists(f"data/{name}_epoch_data.json"):
         os.remove(f"data/{name}_epoch_data.json")
     if name == current_model:
@@ -341,8 +341,12 @@ def handle_connect():
 
 def remove_unnecessary():
     if os.path.exists('static/images/output.png'):
-        print('LOG: removed unnecessary data')
+        print('LOG: removed output.png')
         os.remove('static/images/output.png')
+    if os.path.exists('static/img.jpg'):
+        print('LOG: removed img.jpg')
+        os.remove('static/img.jpg')
+
 
 @socketio.on('disconnect')
 def handle_disconnect():

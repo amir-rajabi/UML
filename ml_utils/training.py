@@ -85,13 +85,24 @@ def training(name, chart_data, socketio, dictionary, model: Module,
             if not epoch:
                 print(f"LOG: time for one epoch: {time.time()-start_timer}")
 
-            #should likely not pop up, delete this in production
             if str(test_loss) == "nan":
-                test_loss = 5
-                print("Overflow detected in testing loss")
+                test_loss = 10
+                print("LOG: Overflow detected in testing loss")
             if str(train_loss) == "nan":
-                train_loss = 5
-                print("Overflow detected in training loss")
+                train_loss = 10
+                print("LOG: Overflow detected in training loss")
+
+            if int(test_accuracy) < 10:
+                is_nan = torch.stack([torch.isnan(p).any() for p in model.parameters()]).any()
+                if is_nan:
+                    print("ERROR: overflow detected in model weights")
+                    sendAlert(3,
+                              "Overflow detected in neural network, training was stopped", socketio)
+                    sendAlert(3,
+                              "try again with different parameters or revert the run", socketio)
+                    break
+                    
+
 
             chart_data['d1'].append(test_accuracy)
             chart_data['d2'].append(test_loss)
@@ -170,3 +181,11 @@ def start_training(name, data, socketio, params):
 def stop_training():
     global stop_flag 
     stop_flag = True
+
+#style 1-normal; 2-success; 3-danger; 4-warning
+def sendAlert(style, content, socketio):
+    data = {
+        'style': style,
+        'content': content
+    }
+    socketio.emit('sendAlert', {'data':data})   
