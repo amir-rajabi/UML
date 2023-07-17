@@ -41,9 +41,7 @@
         <div class="adjust-input-ctr">
             <div class="input-txt" id="adjust-a3">
                 <div class="adjust-txt">Dropout rate</div>
-                <button type="button" class="btn btn-secondary tooltip-button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="
-                The dropout rate reduces overfitting (the model is too specific to the training data) by dropping out certain pixel.
-		        The dropout rate is set through a probability between 0.0 and 1.0 with which a given pixel is dropped out.">
+                <button type="button" class="btn btn-secondary tooltip-button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="The neural network has two hard coded dropout layers, one at the first layer and one in the middle. Both layers take the number you set it to which will be a proability between 0 and 1 that describes, the likelyhood of the dropout layer turning the pixel it gets into a zero. This can help the neural network to train without adjusting too much to the training data.">
                 <img class="adjust-qm" src="{{ url_for('static', filename='images/qm.svg') }}">
                 </button>
             </div>
@@ -55,8 +53,7 @@
         <div class="adjust-input-ctr">
             <div class="input-txt" id="adjust-a2">
                 <div class="adjust-txt">Loss function</div>
-                <button type="button" class="btn btn-secondary tooltip-button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="
-                The loss function measures the distance between the prediction of the neural network compared to the correct answer.">
+                <button type="button" class="btn btn-secondary tooltip-button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="With the loss function you can set the way the neural network will measure how close it's predictions are to the actual labels of the images it trains on. Generally cross entropy is a recommended loss function for this type of neural network. For more details about how  the other functions work consider some researching.">
                 <img class="adjust-qm" src="{{ url_for('static', filename='images/qm.svg') }}">
                 </button>
             </div>
@@ -89,7 +86,7 @@
             <div class="input-txt" id="adjust-a5">
                 <div class="adjust-txt">Batch size</div>
                 <button type="button" class="btn btn-secondary tooltip-button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="
-                The batch size determines how large each step in the training and testing should be.">
+                The batch size determines how large each step in the training and testing should be. Meaning that it is inversly proportional to the number of batches that will be run per epoch.">
                 <img class="adjust-qm" src="{{ url_for('static', filename='images/qm.svg') }}">
                 </button>
 

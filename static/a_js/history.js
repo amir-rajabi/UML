@@ -122,7 +122,7 @@ export function createHistoryItem(accuracy, learning_rate, momentum, dropout_rat
   tableRow3.innerHTML = '<td>Dropout rate</td><td>' + dropout_rate + '</td>';
   tableRow4.innerHTML = '<td>Loss function</td><td>' + loss_function + '</td>';
   tableRow5.innerHTML = '<td>Batch size</td><td>' + batch_size + '</td>';
-  tableRow6.innerHTML = '<td>Epochs runned</td><td>' + epochs + '</td>';
+  tableRow6.innerHTML = '<td>Number of finished epochs</td><td>' + epochs + '</td>';
   tbody.appendChild(tableRow1);
   tbody.appendChild(tableRow2);
   tbody.appendChild(tableRow3);
@@ -143,7 +143,7 @@ export function createHistoryItem(accuracy, learning_rate, momentum, dropout_rat
   restoreButton.type = 'button';
   restoreButton.className = 'btn btn-primary history-restore block_item';
   restoreButton.id = 'history-restore-' + (historyCounter + 1);
-  restoreButton.innerText = 'Restore this values';
+  restoreButton.innerText = 'Restore values';
   // buttonDiv.appendChild(plotButton);
   buttonDiv.appendChild(restoreButton);
   bodyDiv.appendChild(buttonDiv);
