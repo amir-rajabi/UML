@@ -11,19 +11,23 @@ export function startProgress(){
     progressbar.classList.add("progress-bar-striped", "progress-bar-animated");
     progressbar.style.width = '0%';
     pg_width = 0;
-    var ep = document.getElementById('customRange4').value; // get epochs
-    var bs = document.getElementById('customRange5').value; // get batch_size
-    var totalBatches = Math.ceil(60000 / bs) * ep;
-
-    batch = 100 / Math.ceil(totalBatches / 5);
 };
 
 export function stopProgress(){
     
 };
 
-socket.on('batch', function(data){
-    pg_width += batch;
+socket.on('percent', function(data){
+    pg_width = data["percent"];
+    if(pg_width > 99){
+	pg_width = '99';
+    }
     progressbar.style.width = pg_width + '%';
     progressbar.textContent = Math.floor(pg_width) + '%'
+});
+
+
+socket.on('training_finished', function(data){
+    progressbar.style.width = '100%';
+    progressbar.textContent = '100%';
 });

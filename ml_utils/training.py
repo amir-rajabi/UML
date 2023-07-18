@@ -16,18 +16,13 @@ from ml_utils.evaluate import accuracy, init_eval_flag
 from ml_utils.model import ConvolutionalNeuralNetwork
 from ml_utils.json_write import write_json, get_run_num 
 from ml_utils.print_overwrite import print
-
-#cross_entroyp - soft_margin_loss good
-#l1_loss weird
-#smooth_l1_loss decent
-#poisson_nll_loss decent
+from ml_utils.progressbar import init_pb, update_pb_epoch, send_pb
 
 start_timer = 0
+stop_flag = False
 
 loss_func = [F.cross_entropy, F.multi_margin_loss, F.multilabel_soft_margin_loss,
         F.soft_margin_loss, F.l1_loss, F.smooth_l1_loss, F.poisson_nll_loss]
-stop_flag = False
-
 
 def train_step(model: Module, optimizer: Optimizer, data: Tensor,
                target: Tensor, cuda: bool, loss_nr):
@@ -39,7 +34,6 @@ def train_step(model: Module, optimizer: Optimizer, data: Tensor,
     if loss_nr > 1:
         target = F.one_hot(target, 10)
 
-    #currently uses loss_function intput into the function
     loss = loss_func[loss_nr](prediction, target)
     loss.backward()
     optimizer.step()
@@ -50,41 +44,54 @@ def training(name, chart_data, socketio, dictionary, model: Module,
             optimizer: Optimizer,
             cuda: bool, n_epochs: int,
             batch_size: int, loss_nr):
-    bcounter = 0
+
+    #for progressbar
+    batches = math.ceil(60000/batch_size)
+    init_pb(socketio, batch_size, n_epochs)
+
     global_epoch=len(chart_data["d1"])
     run_index = get_run_num(f"data/{name}_epoch_data.json")
     train_loader, test_loader = get_data_loaders(batch_size=batch_size)
     if cuda:
         model.cuda()
     for epoch in range(n_epochs):
+        update_pb_epoch(epoch)
+        bcounter = 0
         for batch in train_loader:
             data, target = batch
             train_step(model=model, optimizer=optimizer, cuda=cuda, data=data,
                        target=target, loss_nr=loss_nr)
-            if bcounter % 5 == 0:
-                socketio.emit('batch', {'data': [1]})
-                bcounter += 1
-            else: 
-                bcounter += 1
+            if bcounter % 10 == 0:
+                #see progressbar module
+                send_pb(batches, bcounter/batches)
+            bcounter += 1
 
             if stop_flag:
                 break
         else:
-            #this else statement makes it so
-            #that if an interrupt is send this block will not
-            #go through. If however the loop finishes without
-            #the interrupt, then it will execute
-            #this means that on interrupt the current epoch is
-            #aborted
+            #gets triggered if inner loop clean finishes
+            #doesn't get triggered if inner loop breaks
+
+            #send_pb updates pb but flat without fraction calc
+
+            send_pb(-1, 0.46)
             test_loss, test_accuracy = accuracy(loss_nr, model, test_loader, cuda)
-            train_loss, train_accuracy = accuracy(loss_nr, model, train_loader, cuda)
 
             if stop_flag:
                 break
+            send_pb(-1, 0.53)
 
+            train_loss,train_accuracy = accuracy(loss_nr, model, train_loader, cuda)
+
+            send_pb(-1,1)
+            if stop_flag:
+                break
+
+            #triggered on first epoch to check time through logs
             if not epoch:
                 print(f"LOG: time for one epoch: {time.time()-start_timer}")
 
+            #detecting overflow of loss
             if str(test_loss) == "nan":
                 test_loss = 10
                 print("LOG: Overflow detected in testing loss")
@@ -92,6 +99,8 @@ def training(name, chart_data, socketio, dictionary, model: Module,
                 train_loss = 10
                 print("LOG: Overflow detected in training loss")
 
+            #if model overflows the accuracy will be 9.8
+            #checking for overflow if that is the case
             if int(test_accuracy) < 10:
                 is_nan = torch.stack([torch.isnan(p).any() for p in model.parameters()]).any()
                 if is_nan:
@@ -101,8 +110,6 @@ def training(name, chart_data, socketio, dictionary, model: Module,
                     sendAlert(3,
                               "try again with different parameters or revert the run", socketio)
                     break
-                    
-
 
             chart_data['d1'].append(test_accuracy)
             chart_data['d2'].append(test_loss)
@@ -119,10 +126,11 @@ def training(name, chart_data, socketio, dictionary, model: Module,
             dictionary["run"]=str(run_index)
             write_json(dictionary,path=f"data/{name}_epoch_data.json")
             curr_glob_epoch = len(chart_data["d1"])
+
             print(f'LOG: epoch={curr_glob_epoch}/{global_epoch+n_epochs}, train accuracy={train_accuracy}, train loss={train_loss}')
             print(f'LOG: epoch={curr_glob_epoch}/{global_epoch+n_epochs}, test accuracy={test_accuracy}, test loss={test_loss}')
+
             torch.save(model.state_dict(), f'data/{name}_model_new.pt')
-            print("LOG: model written")
             continue
         break
     if cuda:
@@ -183,6 +191,7 @@ def stop_training():
     stop_flag = True
 
 #style 1-normal; 2-success; 3-danger; 4-warning
+#could import from webserver because of cyclic dependency
 def sendAlert(style, content, socketio):
     data = {
         'style': style,

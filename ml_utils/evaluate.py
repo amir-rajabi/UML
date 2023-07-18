@@ -5,6 +5,7 @@ from numpy import ndarray
 from torch.autograd import Variable
 from torch.nn import Module
 from torch.utils.data import DataLoader
+from ml_utils.progressbar import send_pb
 
 stop_flag_eval = False
 
@@ -14,9 +15,15 @@ loss_func = [F.cross_entropy, F.multi_margin_loss, F.multilabel_soft_margin_loss
 def accuracy(loss_nr, model: Module, loader: DataLoader, cuda: bool) -> (float, float):
     model.eval()
     losses = []
+    bcounter = 0
     correct = 0
+    batches = len(loader)
     with torch.no_grad():
         for data, target in loader:
+            if bcounter % 10 == 0:
+                #see progressbar module
+                send_pb(batches, bcounter/batches)
+            bcounter += 1
             global stop_flag_eval
             if stop_flag_eval:
                 stop_flag_eval = False
