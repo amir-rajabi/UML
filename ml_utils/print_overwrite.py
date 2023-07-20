@@ -5,7 +5,7 @@ conf_show_logs = 0
 
 '''this should never pop up'''
 def default_error(code, message):
-    builtins.print(f"code={code}: you should not be seeing this [{message}]")
+    builtins.print(f"code={code}: you should not be seeing this [f{message}]")
     return
 
 error_function=default_error
@@ -15,6 +15,10 @@ instead of checking every print for file
 the conf_show_logs variable is initialized
 at the start, defining if logs will be show
 throughout the entire instance of the program
+
+this with the error_func could've been used to
+always send alerts to frontend on warning on
+error, but isn't
 '''
 def init_print(error_func):
     global error_function
