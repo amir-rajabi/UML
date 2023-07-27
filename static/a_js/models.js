@@ -1,3 +1,11 @@
+/*
+authors:        Eren Kocadag, Benedikt Schmitz, Feliks Vdovichenko, Lucie Prokopy, Leiss Abdal Al, Johannes Ehrich
+institution:    Freie Universität Berlin
+institute:      Institut für Informatik
+module:         SWP - Usable Machine Learning 
+year:           2023
+*/
+
 import {chartData, socket} from './data.js';
 import {historyFrontend} from './history.js'
 import {resetRevertedData} from './dia.js';
@@ -236,5 +244,35 @@ export function getModelName(){
                 document.getElementById('current_selected_model').innerHTML = response;
             }
         }
+    }
+}
+
+export function updateModelInfo(accuracy, epochs) {
+    const currentSelectedModel = document.getElementById('current_selected_model');
+    const currentModelText = currentSelectedModel.textContent.trim();
+
+    if (currentModelText !== 'Default') {
+        const savedModelsNames = document.querySelectorAll('.saved-models-name');
+        var lastChar = null;
+
+        savedModelsNames.forEach(savedModel => {
+            if (savedModel.textContent.trim() === currentModelText) {
+                const modelId = savedModel.id;
+                lastChar = modelId.slice(-1);
+            }
+        });
+
+        if (lastChar) {
+            const modelAccElement = document.getElementById('model-acc-' + lastChar);
+            const modelEpochsElement = document.getElementById('model-epochs-' + lastChar);
+
+            modelAccElement.textContent = accuracy;
+            modelEpochsElement.textContent = epochs;
+        }
+        var allModels = document.getElementById('saved_models_frontend').innerHTML;
+        var xhr1 = new XMLHttpRequest();
+        xhr1.open('POST', '/saved_models_html', true);
+        xhr1.setRequestHeader('Content-Type', 'application/json');
+        xhr1.send(JSON.stringify({ savedModelsHTML: allModels }));
     }
 }

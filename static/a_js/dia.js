@@ -1,6 +1,15 @@
+/*
+authors:        Eren Kocadag, Benedikt Schmitz, Feliks Vdovichenko, Lucie Prokopy, Leiss Abdal Al, Johannes Ehrich
+institution:    Freie Universität Berlin
+institute:      Institut für Informatik
+module:         SWP - Usable Machine Learning 
+year:           2023
+*/
+
 import {chartData, socket, storedData, epochs_per_runs} from './data.js';
 import {createAlert} from './alerts.js';
 import {historyFrontend} from './history.js';
+import {updateModelInfo} from './models.js';
 
 window.chartData = chartData;
 window.epr = epochs_per_runs;
@@ -486,6 +495,7 @@ socket.on('update_chart', function(data){
   currentAccuracy.textContent = chartData.d1[chartData.d1.length-1];  
   currentAccuracyModel.textContent = chartData.d1[chartData.d1.length-1];
   currentModelEpochs.textContent = chartData.d1.length;
+  updateModelInfo(chartData.d1[chartData.d1.length-1], chartData.d1.length);
   //alert(numEpochs.textContent);
 });
 

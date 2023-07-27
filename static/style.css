@@ -1,3 +1,11 @@
+/*
+authors:        Eren Kocadag, Benedikt Schmitz, Feliks Vdovichenko, Lucie Prokopy, Leiss Abdal Al, Johannes Ehrich
+institution:    Freie Universität Berlin
+institute:      Institut für Informatik
+module:         SWP - Usable Machine Learning 
+year:           2023
+*/
+
 /*-------  -------*/
 
 @font-face {
@@ -418,6 +426,10 @@ thead th{
 #server-dot-green{
     display: none;
 }
+#server-dot-green button, #server-dot-red button{
+    cursor: default !important;
+    --bs-btn-active-bg: none !important;
+}
 #progress-ctr{
     width: 100%;
     margin-top: .5%;
@@ -541,3 +553,4 @@ thead th{
 .img-fluid{
     max-height: 55vh !important;
 }
+

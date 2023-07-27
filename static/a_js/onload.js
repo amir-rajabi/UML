@@ -1,3 +1,11 @@
+/*
+authors:        Eren Kocadag, Benedikt Schmitz, Feliks Vdovichenko, Lucie Prokopy, Leiss Abdal Al, Johannes Ehrich
+institution:    Freie Universität Berlin
+institute:      Institut für Informatik
+module:         SWP - Usable Machine Learning 
+year:           2023
+*/
+
 import {adjustments, chartData, updateAdjustments, socket, defaults, restoreAllAdjustments, storedData} from './data.js';
 import {sendAdjustments} from './send.js';
 import {getModelName} from './models.js';
