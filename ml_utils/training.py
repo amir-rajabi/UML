@@ -31,7 +31,7 @@ loss_func = [F.cross_entropy, F.multi_margin_loss, F.multilabel_soft_margin_loss
         F.soft_margin_loss, F.l1_loss, F.smooth_l1_loss, F.poisson_nll_loss]
 
 def train_step(model: Module, optimizer: Optimizer, data: Tensor,
-               target: Tensor, cuda: bool, loss_nr):
+               target: Tensor, cuda: bool, loss_nr, false_detected_samples):
     model.train()
     if cuda:
         data, target = data.cuda(), target.cuda()
@@ -44,6 +44,11 @@ def train_step(model: Module, optimizer: Optimizer, data: Tensor,
     loss.backward()
     optimizer.step()
     optimizer.zero_grad()
+
+    # Identify false detected samples and save them
+    predicted_labels = prediction.argmax(dim=1)
+    false_detections = data[predicted_labels != target]
+    false_detected_samples.extend(false_detections)
 
 
 def training(name, chart_data, socketio, dictionary, model: Module,
@@ -58,6 +63,9 @@ def training(name, chart_data, socketio, dictionary, model: Module,
     global_epoch=len(chart_data["d1"])
     run_index = get_run_num(f"data/{name}_epoch_data.json")
     train_loader, test_loader = get_data_loaders(batch_size=batch_size)
+
+    false_detected_samples = []
+
     if cuda:
         model.cuda()
     for epoch in range(n_epochs):
@@ -66,7 +74,7 @@ def training(name, chart_data, socketio, dictionary, model: Module,
         for batch in train_loader:
             data, target = batch
             train_step(model=model, optimizer=optimizer, cuda=cuda, data=data,
-                       target=target, loss_nr=loss_nr)
+                       target=target, loss_nr=loss_nr, false_detected_samples=false_detected_samples)
             if bcounter % 10 == 0:
                 #see progressbar module
                 send_pb(batches, bcounter/batches)
