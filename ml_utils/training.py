@@ -3,7 +3,8 @@
 # institute:     Institut für Informatik
 # module:        SWP - Usable Machine Learning
 # year:          2023
-
+import base64
+import json
 import numpy as np
 from torch import manual_seed, Tensor
 from torch.cuda import empty_cache
@@ -20,7 +21,7 @@ from flask_socketio import SocketIO
 from ml_utils.data import get_data_loaders
 from ml_utils.evaluate import accuracy, init_eval_flag
 from ml_utils.model import ConvolutionalNeuralNetwork
-from ml_utils.json_write import write_json, get_run_num 
+from ml_utils.json_write import write_json, get_run_num, dictionary
 from ml_utils.print_overwrite import print
 from ml_utils.progressbar import init_pb, update_pb_epoch, send_pb
 
@@ -29,6 +30,16 @@ stop_flag = False
 
 loss_func = [F.cross_entropy, F.multi_margin_loss, F.multilabel_soft_margin_loss,
         F.soft_margin_loss, F.l1_loss, F.smooth_l1_loss, F.poisson_nll_loss]
+
+
+def tensor_to_list(tensor):
+    return tensor.cpu().numpy().tolist()
+
+def print_json_file(file_path):
+    with open(file_path, 'r') as f:
+        data = json.load(f)
+    print("JSON file contents:")
+    print(json.dumps(data, indent=4))
 
 def train_step(model: Module, optimizer: Optimizer, data: Tensor,
                target: Tensor, cuda: bool, loss_nr, false_detected_samples):
@@ -50,11 +61,22 @@ def train_step(model: Module, optimizer: Optimizer, data: Tensor,
     false_detections = data[predicted_labels != target]
     false_detected_samples.extend(false_detections)
 
+    false_detected_images = []
+    for false_detection in false_detections:
+        img_byte_array = false_detection.squeeze(0).mul(255).clamp(0, 255).byte().cpu().numpy()
+        img_base64 = base64.b64encode(img_byte_array).decode("utf-8")
+        false_detected_images.append(img_base64)
+    dictionary["false_detected_samples"] = false_detected_images
+
+
+
+
+
 
 def training(name, chart_data, socketio, dictionary, model: Module,
             optimizer: Optimizer,
             cuda: bool, n_epochs: int,
-            batch_size: int, loss_nr):
+            batch_size: int, loss_nr, false_detected_samples):
 
     #for progressbar
     batches = math.ceil(60000/batch_size)
@@ -138,11 +160,13 @@ def training(name, chart_data, socketio, dictionary, model: Module,
             dictionary["train_loss"] = str(train_loss)
             dictionary["train_accuracy"] = str(train_accuracy)
             dictionary["run"]=str(run_index)
+            dictionary["false_detected_samples"] = false_detected_samples
             write_json(dictionary,path=f"data/{name}_epoch_data.json")
             curr_glob_epoch = len(chart_data["d1"])
 
             print(f'LOG: epoch={curr_glob_epoch}/{global_epoch+n_epochs}, train accuracy={train_accuracy}, train loss={train_loss}')
             print(f'LOG: epoch={curr_glob_epoch}/{global_epoch+n_epochs}, test accuracy={test_accuracy}, test loss={test_loss}')
+            print_json_file(f"data/{name}_epoch_data.json")
 
             torch.save(model.state_dict(), f'data/{name}_model_new.pt')
             continue
@@ -176,7 +200,8 @@ def start_training(name, data, socketio, params):
     model = init_model(name,model)
     opt = SGD(model.parameters(), lr=float(params["learning_rate"]), 
               momentum=float(params["momentum"]))
-    
+    false_detected_samples = []
+
     global stop_flag
     stop_flag = False
     init_eval_flag()
@@ -196,7 +221,9 @@ def start_training(name, data, socketio, params):
         cuda=cuda,
         n_epochs=int(params["epochs"]),
         batch_size=int(params["batch_size"]),
-        loss_nr=int(params["loss_function"])
+        loss_nr=int(params["loss_function"]),
+        false_detected_samples = false_detected_samples  # Pass the list as an argument
+
     )
 
 #is called by frontend when interrupt ist set
