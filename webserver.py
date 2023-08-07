@@ -6,7 +6,7 @@
 
 #---------------------- IMPORT ----------------------#
 
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_from_directory
 from flask_socketio import SocketIO
 from PIL import Image
 import base64, io, os, sys, time, threading, json, webbrowser, shutil
@@ -108,6 +108,9 @@ def sendAlert(style, content):
     socketio.emit('sendAlert', {'data':data})   
 
 #---------------------- APP ROUTES FLASK ----------------------#
+
+
+
 
 @app.route('/')
 def index():

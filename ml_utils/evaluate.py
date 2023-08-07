@@ -30,7 +30,9 @@ def accuracy(loss_nr, model: Module, loader: DataLoader, cuda: bool) -> (float, 
     batches = len(loader)
 
     # Create a directory to save the false detected images
-    output_dir = "false_detected_images"
+    #output_dir = "false_detected_images"
+    output_dir = "static/false_detected_images"
+
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
