@@ -6,7 +6,7 @@
 
 #---------------------- IMPORT ----------------------#
 
-from flask import Flask, render_template, request, jsonify, send_from_directory
+from flask import Flask, render_template, request, jsonify, send_from_directory, url_for
 from flask_socketio import SocketIO
 from PIL import Image
 import base64, io, os, sys, time, threading, json, webbrowser, shutil
@@ -169,6 +169,24 @@ def start():
     start_training_dict(adj)
     return response
 
+@app.route('/fdi')
+def visualize_false_detected_images():
+    image_folder = 'false_detected_images'
+    image_list = [image for image in os.listdir(os.path.join(app.static_folder, image_folder)) if image.endswith('.png')]
+
+    try:
+        for filename in os.listdir(os.path.join(app.static_folder, image_folder)):
+            if filename.endswith('.png'):
+                image_list.append(filename)
+    except FileNotFoundError:
+        # Handle the case where the "false_detected_images" folder is not found.
+        # You can provide a default list of images or an error message in this case.
+        error_message = "The 'false_detected_images' folder was not found."
+        return render_template('error.html', error_message=error_message)
+
+    return render_template('fdi.html', image_list=image_list)
+
+
 @app.route('/stop', methods=['POST'])  
 def stop():
     print("LOG: STOP PRESSED")
@@ -208,6 +226,17 @@ def predict_drawing():
         return response
 
     return jsonify({'prediction': int(prediction), 'confidence': float(confidence)})
+
+@app.route('/delete_image', methods=['POST'])
+def delete_image():
+    image_folder = 'false_detected_images'
+    image_name = request.json.get('image')
+    image_path = os.path.join(app.static_folder, image_folder, image_name)
+    if os.path.exists(image_path):
+        os.remove(image_path)
+        return jsonify(message=f"Image '{image_name}' deleted successfully.")
+    else:
+        return jsonify(error="Image not found or already deleted.", status=404)
 
 @app.route('/get_image', methods=['GET'])
 def get_image():

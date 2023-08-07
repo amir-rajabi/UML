@@ -6,6 +6,8 @@
 
 # evaluate.py
 
+# evaluate.py
+
 import os
 import numpy as np
 import torch
@@ -15,12 +17,16 @@ from torch.autograd import Variable
 from torch.nn import Module
 from torch.utils.data import DataLoader
 from ml_utils.progressbar import send_pb
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 
 stop_flag_eval = False
 
 loss_func = [F.cross_entropy, F.multi_margin_loss, F.multilabel_soft_margin_loss,
              F.soft_margin_loss, F.l1_loss, F.smooth_l1_loss, F.poisson_nll_loss]
+
+# evaluate.py
+
+# ... (previous code)
 
 def accuracy(loss_nr, model: Module, loader: DataLoader, cuda: bool) -> (float, float):
     model.eval()
@@ -30,11 +36,13 @@ def accuracy(loss_nr, model: Module, loader: DataLoader, cuda: bool) -> (float, 
     batches = len(loader)
 
     # Create a directory to save the false detected images
-    #output_dir = "false_detected_images"
     output_dir = "static/false_detected_images"
 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
+
+    # Set the image size for the saved images
+    image_size = (224, 224)
 
     with torch.no_grad():
         for data, target in loader:
@@ -65,11 +73,24 @@ def accuracy(loss_nr, model: Module, loader: DataLoader, cuda: bool) -> (float, 
                     image = Image.fromarray(image)
                     label = target[i].item()
                     prediction = pred[i].item()
+
+                    # Resize the image
+                    image = image.resize(image_size)
+
+                    # Add label and prediction as comments
+                    draw = ImageDraw.Draw(image)
+                    font = ImageFont.load_default()
+                    fill_color = 255  # Use 255 as the fill color (white text)
+                    comment = f"Index: {i}, Label: {label}, Prediction: {prediction}"
+
+                    draw.text((10, 10), comment, fill=fill_color, font=font)
+
                     image_name = f"{output_dir}/{label}_as_{prediction}_{i}.png"
                     image.save(image_name)
 
     eval_loss = float(np.nanmean(losses))
     return eval_loss, 100. * correct / len(loader.dataset)
+
 
 
 
