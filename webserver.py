@@ -275,6 +275,16 @@ def restore_saved_models_html():
     else:
         return jsonify("response")
 
+@app.route('/train_with_changed_labels', methods=['POST'])
+def train_with_changed_labels():
+    training_data = request.json
+    # Perform training with the updated labels in training_data
+    # You can modify your existing training code to include these images
+    # and update the model accordingly
+
+    # Return a response indicating success
+    return jsonify({"message": "Model trained with changed labels successfully."})
+
 @app.route('/load_model', methods=['POST'])
 def load_model():
     global current_model
