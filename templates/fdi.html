@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <!-- ... -->
+</head>
+<body>
+    <div>
+        <img id="image-display" src="" alt="Image">
+    </div>
+    <div>
+        <button id="prev-btn">Previous</button>
+        <button id="next-btn">Next</button>
+        <form id="delete-image-form" action="/delete_image" method="post">
+         <input type="hidden" name="image" value="">
+         <button type="submit" id="delete-btn">Delete</button>
+        </form>
+
+    </div>
+
+    <!-- Add input field and submit button for label change -->
+    <div>
+       <input type="number" id="label-input" min="0" max="9" placeholder="Enter label (0-9)">
+        <button id="change-label-btn">Change Label</button>
+        <button id="submit-labels-btn">Submit Labels and Train Model</button>
+    </div>
+
+    <div id="image-list" style="display: none;">
+    {% for image in image_list %}
+    <img src="{{ url_for('static', filename='false_detected_images/' + image) }}" alt="False Detected Image">
+    {% endfor %}
+</div>
+
+<script>
+    // Existing code...
+
+    let images = [
+        {% for image in image_list %}
+        "{{ url_for('static', filename='false_detected_images/' + image) }}",
+        {% endfor %}
+    ];
+
+    let currentIndex = 0;
+    const imageDisplay = document.getElementById("image-display");
+    const prevBtn = document.getElementById("prev-btn");
+    const nextBtn = document.getElementById("next-btn");
+
+    function displayImage(index) {
+        imageDisplay.src = images[index];
+    }
+
+    prevBtn.addEventListener("click", () => {
+        currentIndex = (currentIndex - 1 + images.length) % images.length;
+        displayImage(currentIndex);
+    });
+
+    nextBtn.addEventListener("click", () => {
+        currentIndex = (currentIndex + 1) % images.length;
+        displayImage(currentIndex);
+    });
+
+    // Display the first image on initial load
+    displayImage(currentIndex);
+
+    const deleteBtn = document.getElementById("delete-btn");
+    const deleteImageForm = document.getElementById("delete-image-form");
+
+    // Function to send the delete request
+    function sendDeleteRequest() {
+        const imageName = images[currentIndex].split('/').pop();
+        const data = { "image": imageName };
+
+        fetch("/delete_image", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            images.splice(currentIndex, 1);
+            if (images.length === 0) {
+                currentIndex = 0;
+            } else if (currentIndex >= images.length) {
+                currentIndex = images.length - 1;
+            }
+
+            window.location.reload();
+        })
+        .catch(error => {
+            console.error("Error deleting image:", error);
+        });
+    }
+
+    // Attach the deleteImage function to the "Delete" button click event
+    deleteBtn.addEventListener("click", sendDeleteRequest);
+
+    // Add event listener for changing the image label
+    const changeLabelBtn = document.getElementById("change-label-btn");
+    const labelInput = document.getElementById("label-input");
+
+    changeLabelBtn.addEventListener("click", () => {
+        const newLabel = parseInt(labelInput.value);
+        if (isNaN(newLabel) || newLabel < 0 || newLabel > 9) {
+            alert("Please enter a valid label between 0 and 9.");
+            return;
+        }
+        images[currentIndex].label = newLabel; // Update the label in the images array
+        alert("Label updated successfully.");
+    });
+
+    // Add event listener for submitting labels and training
+    const submitLabelsBtn = document.getElementById("submit-labels-btn");
+
+    submitLabelsBtn.addEventListener("click", () => {
+        // Filter images with changed labels
+        const changedImages = images.filter(image => image.hasOwnProperty("label"));
+
+        // Prepare data for training
+        const trainingData = changedImages.map(image => ({
+            image_path: image.src,
+            label: image.label
+        }));
+
+        // Send the data to the backend for training
+        fetch("/train_with_changed_labels", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(trainingData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message); // Display success message
+        })
+        .catch(error => {
+            console.error("Error training model:", error);
+        });
+    });
+</script>
+
+</body>
+</html>
+
