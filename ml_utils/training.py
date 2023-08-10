@@ -81,7 +81,7 @@ def training(name, chart_data, socketio, dictionary, model: Module,
             # send_pb updates pb but flat without fraction calc
 
             send_pb(-1, 0.46)
-            test_loss, test_accuracy = accuracy(loss_nr, model, test_loader, cuda)
+            test_loss, test_accuracy = accuracy(loss_nr, model, test_loader, cuda, test_loader=test_loader)
 
             if stop_flag:
                 break

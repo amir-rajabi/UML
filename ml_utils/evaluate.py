@@ -1,13 +1,3 @@
-# authors:       Eren Kocadag, Benedikt Schmitz, Feliks Vdovichenko, Lucie Prokopy, Leiss Abdal Al, Johannes Ehrich
-# institution:   Freie Universität Berlin
-# institute:     Institut für Informatik
-# module:        SWP - Usable Machine Learning
-# year:          2023
-
-# evaluate.py
-
-# evaluate.py
-
 import os
 import numpy as np
 import torch
@@ -24,11 +14,9 @@ stop_flag_eval = False
 loss_func = [F.cross_entropy, F.multi_margin_loss, F.multilabel_soft_margin_loss,
              F.soft_margin_loss, F.l1_loss, F.smooth_l1_loss, F.poisson_nll_loss]
 
-# evaluate.py
 
-# ... (previous code)
 
-def accuracy(loss_nr, model: Module, loader: DataLoader, cuda: bool) -> (float, float):
+def accuracy(loss_nr, model: Module, loader: DataLoader, cuda: bool,test_loader: DataLoader = None) -> (float, float):
     model.eval()
     losses = []
     bcounter = 0
@@ -45,7 +33,7 @@ def accuracy(loss_nr, model: Module, loader: DataLoader, cuda: bool) -> (float, 
     image_size = (224, 224)
 
     with torch.no_grad():
-        for data, target in loader:
+        for i, (data, target) in enumerate(loader):
             if bcounter % 10 == 0:
                 # see progressbar module
                 send_pb(batches, bcounter / batches)
@@ -66,32 +54,31 @@ def accuracy(loss_nr, model: Module, loader: DataLoader, cuda: bool) -> (float, 
             correct += pred.eq(target.data.view_as(pred)).cpu().sum().item()
 
             # Save false detected images
-            for i in range(len(target)):
-                if pred[i] != target[i]:
-                    image = data[i].cpu().numpy().squeeze()
-                    image = (image * 255).astype(np.uint8)
-                    image = Image.fromarray(image)
-                    label = target[i].item()
-                    prediction = pred[i].item()
+            if test_loader is not None and loader == test_loader:
+                for j in range(len(target)):
+                    if pred[j] != target[j]:
+                        image = data[j].cpu().numpy().squeeze()
+                        image = (image * 255).astype(np.uint8)
+                        image = Image.fromarray(image)
+                        label = target[j].item()
+                        prediction = pred[j].item()
 
-                    # Resize the image
-                    image = image.resize(image_size)
+                        # Resize the image
+                        image = image.resize(image_size)
 
-                    # Add label and prediction as comments
-                    draw = ImageDraw.Draw(image)
-                    font = ImageFont.load_default()
-                    fill_color = 255  # Use 255 as the fill color (white text)
-                    comment = f"Index: {i}, Label: {label}, Prediction: {prediction}"
+                        # Add label and prediction as comments
+                        draw = ImageDraw.Draw(image)
+                        font = ImageFont.load_default()
+                        fill_color = 255  # Use 255 as the fill color (white text)
+                        comment = f"Index: {j}, Label: {label}, Prediction: {prediction}"
 
-                    draw.text((10, 10), comment, fill=fill_color, font=font)
+                        draw.text((10, 10), comment, fill=fill_color, font=font)
 
-                    image_name = f"{output_dir}/{label}_as_{prediction}_{i}.png"
-                    image.save(image_name)
+                        image_name = f"{output_dir}/{label}_{j}th_{label}predicted{prediction}.png"
+                        image.save(image_name)
 
     eval_loss = float(np.nanmean(losses))
     return eval_loss, 100. * correct / len(loader.dataset)
-
-
 
 
 def accuracy_per_class(model: Module, loader: DataLoader, cuda: bool) \
@@ -124,4 +111,3 @@ def init_eval_flag():
 def stop_eval():
     global stop_flag_eval
     stop_flag_eval = True
-
