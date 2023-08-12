@@ -8,15 +8,21 @@ from torch.nn import Module
 from torch.utils.data import DataLoader
 from ml_utils.progressbar import send_pb
 from PIL import Image, ImageDraw, ImageFont
+from flask_sqlalchemy import SQLAlchemy
+
 
 stop_flag_eval = False
-
 loss_func = [F.cross_entropy, F.multi_margin_loss, F.multilabel_soft_margin_loss,
              F.soft_margin_loss, F.l1_loss, F.smooth_l1_loss, F.poisson_nll_loss]
+
+# Global dictionary to store false detected images
+false_detected_dict = {i: {} for i in range(10)}
 
 
 
 def accuracy(loss_nr, model: Module, loader: DataLoader, cuda: bool,test_loader: DataLoader = None) -> (float, float):
+    global false_detected_dict  # Access the global variable
+
     model.eval()
     losses = []
     bcounter = 0
@@ -63,7 +69,17 @@ def accuracy(loss_nr, model: Module, loader: DataLoader, cuda: bool,test_loader:
                         label = target[j].item()
                         prediction = pred[j].item()
 
+                        # Store information in the dictionary
+                        image_info = {
+                            'path': output_dir,  # Replace with actual image path
+                            'label': label,
+                            'prediction': prediction
+                        }
+                        if j not in false_detected_dict[label] :
+                            false_detected_dict[label][j] = image_info
+
                         # Resize the image
+                        image_size = (224, 224)
                         image = image.resize(image_size)
 
                         # Add label and prediction as comments
@@ -74,9 +90,14 @@ def accuracy(loss_nr, model: Module, loader: DataLoader, cuda: bool,test_loader:
 
                         draw.text((10, 10), comment, fill=fill_color, font=font)
 
-                        image_name = f"{output_dir}/{label}_{j}th_{label}predicted{prediction}.png"
-                        image.save(image_name)
+                        image_name = f"false_detected_images/{label}_{j}th_{label}predicted{prediction}.png"
+                        image_path = f"static/{image_name}"
+                        image_info['path'] = image_path
+                        image.save(image_path)
 
+    # Calculate the total number of images saved in false_detected_dict
+    total_images = sum(len(images) for images in false_detected_dict.values())
+    print(f"Total number of images saved: {total_images}")
     eval_loss = float(np.nanmean(losses))
     return eval_loss, 100. * correct / len(loader.dataset)
 
