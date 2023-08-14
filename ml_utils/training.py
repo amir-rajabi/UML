@@ -19,6 +19,7 @@ from flask_socketio import SocketIO
 
 from ml_utils.data import get_data_loaders
 from ml_utils.evaluate import accuracy, init_eval_flag
+from ml_utils.false_detected_images import save_false_detected_images
 from ml_utils.model import ConvolutionalNeuralNetwork
 from ml_utils.json_write import write_json, get_run_num
 from ml_utils.print_overwrite import print
@@ -81,7 +82,7 @@ def training(name, chart_data, socketio, dictionary, model: Module,
             # send_pb updates pb but flat without fraction calc
 
             send_pb(-1, 0.46)
-            test_loss, test_accuracy = accuracy(loss_nr, model, test_loader, cuda, test_loader=test_loader)
+            test_loss, test_accuracy = accuracy(loss_nr, model, test_loader, cuda)
 
             if stop_flag:
                 break
@@ -141,6 +142,9 @@ def training(name, chart_data, socketio, dictionary, model: Module,
             torch.save(model.state_dict(), f'data/{name}_model_new.pt')
             continue
         break
+
+    save_false_detected_images(loss_nr, model, test_loader, cuda, test_loader=test_loader)
+
     if cuda:
         empty_cache()
     if stop_flag:
@@ -208,4 +212,5 @@ def sendAlert(style, content, socketio):
         'content': content
     }
     socketio.emit('sendAlert', {'data': data})
+
 

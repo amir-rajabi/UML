@@ -27,8 +27,7 @@ from ml_utils.database import db, db_Image, save_image_to_database
 app = Flask(__name__)
 socketio = SocketIO(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydatabase.db'  # Change the URI as needed#
-db.init_app(app)
+
 
 # will be used for saving and loading models
 current_model = ""
