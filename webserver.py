@@ -6,7 +6,7 @@
 
 # ---------------------- IMPORT ----------------------#
 
-from flask import Flask, render_template, request, jsonify, send_from_directory, url_for
+from flask import Flask, render_template, request, jsonify, send_from_directory, url_for, session
 from flask_socketio import SocketIO
 from PIL import Image
 import base64, io, os, sys, time, threading, json, webbrowser, shutil
@@ -20,8 +20,9 @@ from ml_utils.training import stop_training
 from ml_utils.testing import test_drawing
 from ml_utils.print_overwrite import print, init_print
 from ml_utils.evaluate import stop_eval, false_detected_dict
-from ml_utils.database import db, db_Image, save_image_to_database
-
+from ml_utils.model import ConvolutionalNeuralNetwork
+from ml_utils.data import get_data_loaders
+from ml_utils.false_detected_images import save_false_detected_images
 # ---------------------- VARIABLES ----------------------#
 
 app = Flask(__name__)
@@ -61,14 +62,6 @@ def block_revert():
     if os.path.exists(f"data/{current_model}_model_new.pt"):
         socketio.emit('revert_allowed', True)
 
-# Function to save the contents of false_detected_dict to the database
-def save_false_detected_images_to_db():
-    for label, images in false_detected_dict.items():
-        for index, image_info in images.items():
-            path = image_info['path']
-            label = image_info['label']
-            prediction = image_info['prediction']
-            save_image_to_database(path, label, prediction)
 
 
 # loads chart
@@ -124,13 +117,76 @@ def sendAlert(style, content):
     socketio.emit('sendAlert', {'data': data})
 
 
+
+def tensor_to_image_base64(tensor_image):
+    # Convert tensor to PIL Image
+    img = transforms.ToPILImage()(tensor_image)
+
+    # Convert PIL Image to bytes
+    buffer = io.BytesIO()
+    img.save(buffer, format="PNG")
+    img_bytes = buffer.getvalue()
+
+    # Convert bytes to base64 encoded string
+    base64_encoded = base64.b64encode(img_bytes).decode('utf-8')
+    return f"data:image/png;base64,{base64_encoded}"
+
+#not developed yet
+@app.route('/change_label', methods=['POST'])
+def change_label():
+    new_label = request.form.get('new_label')
+    if new_label and new_label.isdigit() and 0 <= int(new_label) <= 9:
+        # Update the false_detection's actual_label with the new_label
+        false_detections[session['current_index']]['actual_label'] = int(new_label)
+    return redirect(url_for('visualize_false_detected_images'))
+
+#not developed yet
+def change_label_in_dataset(dataset, false_detections, new_label):
+
+    for detection in false_detections:
+        image_idx = detection['index']
+        dataset[image_idx][1] = new_label  # Assuming the second element in the dataset tuple is the label
+
+def process_images():
+    model = ConvolutionalNeuralNetwork(adj['dropout_rate'])
+    #model = init_model(current_model, model)
+
+    _, test_loader = get_data_loaders(adj['batch_size'])
+    false_detections = save_false_detected_images(
+        adj['loss_function'], model, test_loader, cuda=False
+    )
+    return false_detections
+
+
+@app.route('/fdi', methods=['GET', 'POST'])
+def visualize_false_detected_images():
+
+    false_detections = process_images()
+
+    if not false_detections:
+        # Handle empty list case
+        return "No false detections found!"
+
+    if 'current_index' not in session:
+        session['current_index'] = 0
+
+    if request.method == 'POST':
+        if 'next' in request.form:
+            session['current_index'] += 1
+        elif 'previous' in request.form:
+            session['current_index'] -= 1
+
+        # Bounds check
+        session['current_index'] = max(0, min(session['current_index'], len(false_detections) - 1))
+
+    current_detection = false_detections[session['current_index']]
+    current_detection['image'] = tensor_to_image_base64(current_detection['image'])
+
+    return render_template('fdi.html', detection=current_detection, total_images=len(false_detections))
+
+
 # ---------------------- APP ROUTES FLASK ----------------------#
 # Route to save false detected images to the database
-@app.route('/save_false_detected_to_db', methods=['POST'])
-def save_false_detected_to_db():
-    save_false_detected_images_to_db()
-    return jsonify(message="False detected images saved to database.")
-
 
 @app.route('/')
 def index():
@@ -195,8 +251,7 @@ def start():
     start_training_dict(adj)
     return response
 
-
-@app.route('/fdi')
+""""@app.route('/fdi')
 def visualize_false_detected_images():
     image_folder = 'false_detected_images'
     image_list = [image for image in os.listdir(os.path.join(app.static_folder, image_folder)) if
@@ -213,7 +268,7 @@ def visualize_false_detected_images():
         return render_template('error.html', error_message=error_message)
 
     return render_template('fdi.html', image_list=image_list)
-
+"""
 
 @app.route('/stop', methods=['POST'])
 def stop():

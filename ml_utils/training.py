@@ -64,8 +64,7 @@ def training(name, chart_data, socketio, dictionary, model: Module,
     for epoch in range(n_epochs):
         update_pb_epoch(epoch)
         bcounter = 0
-        for batch in train_loader:
-            data, target = batch
+        for index, data, target in train_loader:
             train_step(model=model, optimizer=optimizer, cuda=cuda, data=data,
                        target=target, loss_nr=loss_nr)
             if bcounter % 10 == 0:
@@ -143,7 +142,7 @@ def training(name, chart_data, socketio, dictionary, model: Module,
             continue
         break
 
-    save_false_detected_images(loss_nr, model, test_loader, cuda, test_loader=test_loader)
+    save_false_detected_images(loss_nr, model, test_loader, cuda)
 
     if cuda:
         empty_cache()

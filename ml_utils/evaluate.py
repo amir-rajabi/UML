@@ -39,7 +39,7 @@ def accuracy(loss_nr, model: Module, loader: DataLoader, cuda: bool,test_loader:
     image_size = (224, 224)
 
     with torch.no_grad():
-        for i, (data, target) in enumerate(loader):
+        for index, data, target in loader:
             if bcounter % 10 == 0:
                 # see progressbar module
                 send_pb(batches, bcounter / batches)
@@ -86,7 +86,7 @@ def accuracy(loss_nr, model: Module, loader: DataLoader, cuda: bool,test_loader:
                         draw = ImageDraw.Draw(image)
                         font = ImageFont.load_default()
                         fill_color = 255  # Use 255 as the fill color (white text)
-                        comment = f"Index: {j}, Label: {label}, Prediction: {prediction}"
+                        comment = f"Index: {index}, Label: {label}, Prediction: {prediction}"
 
                         draw.text((10, 10), comment, fill=fill_color, font=font)
 
@@ -95,9 +95,6 @@ def accuracy(loss_nr, model: Module, loader: DataLoader, cuda: bool,test_loader:
                         image_info['path'] = image_path
                         image.save(image_path)
 
-    # Calculate the total number of images saved in false_detected_dict
-    total_images = sum(len(images) for images in false_detected_dict.values())
-    print(f"Total number of images saved: {total_images}")
     eval_loss = float(np.nanmean(losses))
     return eval_loss, 100. * correct / len(loader.dataset)
 
