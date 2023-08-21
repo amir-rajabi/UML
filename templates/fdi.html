@@ -10,10 +10,12 @@
 
     <!-- Displaying the image -->
     <img src="{{ detection['image'] }}" alt="False Detected Image">
+    <p>Image-Index {{ session['current_index'] + 1 }} of {{ total_images }}</p>
+
 
     <!-- Displaying labels -->
-    <p>Actual Label: {{ detection['actual_label'] }}</p>
-    <p>Predicted Label: {{ detection['predicted_label'] }}</p>
+    <p>Label: {{ detection['actual_label'] }}</p>
+    <p>Predicttion: {{ detection['predicted_label'] }}</p>
 
     <!-- Navigation buttons -->
     <form action="/fdi" method="post">
@@ -23,12 +25,11 @@
 
     <!-- Input for new label and submit button -->
     <form action="/change_label" method="post">
-        <label for="new_label">Change Label (0-9): </label>
+        <label for="new_label">New Label hier (0 to 9): </label>
         <input type="text" id="new_label" name="new_label" pattern="[0-9]{1}" title="Enter a number between 0 to 9">
         <input type="submit" value="Change Label">
     </form>
 
-    <p>Viewing image {{ session['current_index'] + 1 }} of {{ total_images }}</p>
 
 </body>
 </html>
