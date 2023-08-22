@@ -6,29 +6,28 @@
 
 # ---------------------- IMPORT ----------------------#
 
-from flask import Flask, render_template, request, jsonify, send_from_directory, url_for, session
+from flask import Flask, render_template, request, jsonify, url_for, session
 from flask_socketio import SocketIO
 from PIL import Image
-import base64, io, os, sys, time, threading, json, webbrowser, shutil
-from multiprocessing import Process
-
-# for start_training method
+import base64, io, os, threading, json, webbrowser, shutil
+ # for start_training method
 from ml_utils.training import start_training as train
 from ml_utils.json_write import clear_file as clear
 from ml_utils.json_write import revert_history, verify_data, empty_missing_file
 from ml_utils.training import stop_training
 from ml_utils.testing import test_drawing
 from ml_utils.print_overwrite import print, init_print
-from ml_utils.evaluate import stop_eval, false_detected_dict
-from ml_utils.model import ConvolutionalNeuralNetwork
-from ml_utils.data import get_data_loaders
-from ml_utils.false_detected_images import save_false_detected_images
+from ml_utils.evaluate import stop_eval
+import sys
+sys.path.append('/Users/kian/zusatztaufgabe-usable-ml')
+from common import false_detected_dict
+from torchvision import transforms
+
 # ---------------------- VARIABLES ----------------------#
 
 app = Flask(__name__)
 socketio = SocketIO(app)
-
-
+app.secret_key = '3456'  # for using session
 
 # will be used for saving and loading models
 current_model = ""
@@ -117,7 +116,6 @@ def sendAlert(style, content):
     socketio.emit('sendAlert', {'data': data})
 
 
-
 def tensor_to_image_base64(tensor_image):
     # Convert tensor to PIL Image
     img = transforms.ToPILImage()(tensor_image)
@@ -131,13 +129,16 @@ def tensor_to_image_base64(tensor_image):
     base64_encoded = base64.b64encode(img_bytes).decode('utf-8')
     return f"data:image/png;base64,{base64_encoded}"
 
+
+
+
 #not developed yet
 @app.route('/change_label', methods=['POST'])
 def change_label():
     new_label = request.form.get('new_label')
     if new_label and new_label.isdigit() and 0 <= int(new_label) <= 9:
         # Update the false_detection's actual_label with the new_label
-        false_detections[session['current_index']]['actual_label'] = int(new_label)
+        false_detected_dict[session['current_index']]['actual_label'] = int(new_label)
     return redirect(url_for('visualize_false_detected_images'))
 
 #not developed yet
@@ -147,23 +148,40 @@ def change_label_in_dataset(dataset, false_detections, new_label):
         image_idx = detection['index']
         dataset[image_idx][1] = new_label  # Assuming the second element in the dataset tuple is the label
 
-def process_images():
-    model = ConvolutionalNeuralNetwork(adj['dropout_rate'])
-    #model = init_model(current_model, model)
-
-    _, test_loader = get_data_loaders(adj['batch_size'])
-    false_detections = save_false_detected_images(
-        adj['loss_function'], model, test_loader, cuda=False
-    )
-    return false_detections
-
 
 @app.route('/fdi', methods=['GET', 'POST'])
 def visualize_false_detected_images():
+    #from common import false_detected_dict
+    keys_list = list(false_detected_dict.keys())
+    if not keys_list:
+        # Handle empty list case
+        return "No false detections found!"
 
-    false_detections = process_images()
+    if 'current_index' not in session:
+        session['current_index'] = 0
 
-    if not false_detections:
+    if request.method == 'POST':
+        if 'next' in request.form and session['current_index'] < len(keys_list) - 1:
+            session['current_index'] += 1
+        elif 'previous' in request.form and session['current_index'] > 0:
+            session['current_index'] -= 1
+
+    current_key = keys_list[session['current_index']]
+    current_detection = false_detected_dict[current_key]
+
+    if 'image_tensor' not in current_detection:
+        return "Error: image_tensor key not found for the current detection."
+    print(current_detection)
+    current_detection['image'] = tensor_to_image_base64(current_detection['image_tensor'])
+    return render_template('fdi.html', detection=current_detection, total_images=len(keys_list))
+
+
+""""@app.route('/fdi', methods=['GET', 'POST'])
+def visualize_false_detected_images():
+    from common import false_detected_dict
+
+
+    if not false_detected_dict:
         # Handle empty list case
         return "No false detections found!"
 
@@ -182,7 +200,7 @@ def visualize_false_detected_images():
     current_detection = false_detections[session['current_index']]
     current_detection['image'] = tensor_to_image_base64(current_detection['image'])
 
-    return render_template('fdi.html', detection=current_detection, total_images=len(false_detections))
+    return render_template('fdi.html', detection=current_detection, total_images=len(false_detections))"""
 
 
 # ---------------------- APP ROUTES FLASK ----------------------#

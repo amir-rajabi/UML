@@ -8,14 +8,10 @@ import numpy as np
 from torch import manual_seed, Tensor
 from torch.cuda import empty_cache
 from torch.nn import Module, functional as F
-import torch.nn as nn
 import torch
 from torch.optim import Optimizer, SGD
 
-import time, random, os, math
-
-from flask import Flask, render_template, request, jsonify
-from flask_socketio import SocketIO
+import time, os, math
 
 from ml_utils.data import get_data_loaders
 from ml_utils.evaluate import accuracy, init_eval_flag
@@ -24,7 +20,6 @@ from ml_utils.model import ConvolutionalNeuralNetwork
 from ml_utils.json_write import write_json, get_run_num
 from ml_utils.print_overwrite import print
 from ml_utils.progressbar import init_pb, update_pb_epoch, send_pb
-
 start_timer = 0
 stop_flag = False
 
@@ -81,7 +76,7 @@ def training(name, chart_data, socketio, dictionary, model: Module,
             # send_pb updates pb but flat without fraction calc
 
             send_pb(-1, 0.46)
-            test_loss, test_accuracy = accuracy(loss_nr, model, test_loader, cuda)
+            test_loss, test_accuracy = accuracy(loss_nr, model, test_loader, cuda, )
 
             if stop_flag:
                 break
@@ -142,7 +137,7 @@ def training(name, chart_data, socketio, dictionary, model: Module,
             continue
         break
 
-    save_false_detected_images(loss_nr, model, test_loader, cuda)
+    save_false_detected_images(loss_nr, model, test_loader, cuda,test_loader=test_loader)
 
     if cuda:
         empty_cache()

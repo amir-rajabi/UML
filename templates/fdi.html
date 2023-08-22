@@ -12,15 +12,18 @@
     <img src="{{ detection['image'] }}" alt="False Detected Image">
     <p>Image-Index {{ session['current_index'] + 1 }} of {{ total_images }}</p>
 
-
     <!-- Displaying labels -->
-    <p>Label: {{ detection['actual_label'] }}</p>
-    <p>Predicttion: {{ detection['predicted_label'] }}</p>
+    <p>Label: {{ detection['label'] }}</p>
+    <p>Prediction: {{ detection['prediction'] }}</p>
 
     <!-- Navigation buttons -->
     <form action="/fdi" method="post">
-        <input type="submit" name="previous" value="Previous">
-        <input type="submit" name="next" value="Next">
+        {% if session['current_index'] > 0 %}
+            <input type="submit" name="previous" value="Previous">
+        {% endif %}
+        {% if session['current_index'] < total_images - 1 %}
+            <input type="submit" name="next" value="Next">
+        {% endif %}
     </form>
 
     <!-- Input for new label and submit button -->
@@ -29,7 +32,33 @@
         <input type="text" id="new_label" name="new_label" pattern="[0-9]{1}" title="Enter a number between 0 to 9">
         <input type="submit" value="Change Label">
     </form>
+    <a href="http://127.0.0.1:5001/" class="button">Go to First Page</a>
 
 
 </body>
 </html>
+
+
+<style>
+    .button {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+        outline: none;
+        color: #fff;
+        background-color: #0F1116;
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 9px #999;
+    }
+
+    .button:hover {background-color: #3e8e41}
+    .button:active {
+        background-color: #3e8e41;
+        box-shadow: 0 5px #666;
+        transform: translateY(4px);
+    }
+</style>

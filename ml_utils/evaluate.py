@@ -8,7 +8,6 @@ from torch.nn import Module
 from torch.utils.data import DataLoader
 from ml_utils.progressbar import send_pb
 from PIL import Image, ImageDraw, ImageFont
-from flask_sqlalchemy import SQLAlchemy
 
 
 stop_flag_eval = False
@@ -20,7 +19,7 @@ false_detected_dict = {i: {} for i in range(10)}
 
 
 
-def accuracy(loss_nr, model: Module, loader: DataLoader, cuda: bool,test_loader: DataLoader = None) -> (float, float):
+def accuracy(loss_nr, model: Module, loader: DataLoader, cuda: bool) -> (float, float):
     global false_detected_dict  # Access the global variable
 
     model.eval()
@@ -29,17 +28,10 @@ def accuracy(loss_nr, model: Module, loader: DataLoader, cuda: bool,test_loader:
     correct = 0
     batches = len(loader)
 
-    # Create a directory to save the false detected images
-    output_dir = "static/false_detected_images"
-
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-
-    # Set the image size for the saved images
-    image_size = (224, 224)
-
     with torch.no_grad():
-        for index, data, target in loader:
+        for index, img, target in loader:
+            data = img
+            target = target
             if bcounter % 10 == 0:
                 # see progressbar module
                 send_pb(batches, bcounter / batches)
@@ -58,42 +50,6 @@ def accuracy(loss_nr, model: Module, loader: DataLoader, cuda: bool,test_loader:
             losses.append(loss_func[loss_nr](output, target_input).item())
             pred = output.data.max(1, keepdim=True)[1]
             correct += pred.eq(target.data.view_as(pred)).cpu().sum().item()
-
-            # Save false detected images
-            if test_loader is not None and loader == test_loader:
-                for j in range(len(target)):
-                    if pred[j] != target[j]:
-                        image = data[j].cpu().numpy().squeeze()
-                        image = (image * 255).astype(np.uint8)
-                        image = Image.fromarray(image)
-                        label = target[j].item()
-                        prediction = pred[j].item()
-
-                        # Store information in the dictionary
-                        image_info = {
-                            'path': output_dir,  # Replace with actual image path
-                            'label': label,
-                            'prediction': prediction
-                        }
-                        if j not in false_detected_dict[label] :
-                            false_detected_dict[label][j] = image_info
-
-                        # Resize the image
-                        image_size = (224, 224)
-                        image = image.resize(image_size)
-
-                        # Add label and prediction as comments
-                        draw = ImageDraw.Draw(image)
-                        font = ImageFont.load_default()
-                        fill_color = 255  # Use 255 as the fill color (white text)
-                        comment = f"Index: {index}, Label: {label}, Prediction: {prediction}"
-
-                        draw.text((10, 10), comment, fill=fill_color, font=font)
-
-                        image_name = f"false_detected_images/{label}_{j}th_{label}predicted{prediction}.png"
-                        image_path = f"static/{image_name}"
-                        image_info['path'] = image_path
-                        image.save(image_path)
 
     eval_loss = float(np.nanmean(losses))
     return eval_loss, 100. * correct / len(loader.dataset)
