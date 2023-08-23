@@ -137,7 +137,7 @@ def training(name, chart_data, socketio, dictionary, model: Module,
             continue
         break
 
-    save_false_detected_images(loss_nr, model, test_loader, cuda,test_loader=test_loader)
+    #save_false_detected_images(loss_nr, model, test_loader, cuda,test_loader=test_loader)
 
     if cuda:
         empty_cache()

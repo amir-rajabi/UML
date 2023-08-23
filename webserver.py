@@ -18,6 +18,7 @@ from ml_utils.training import stop_training
 from ml_utils.testing import test_drawing
 from ml_utils.print_overwrite import print, init_print
 from ml_utils.evaluate import stop_eval
+from ml_utils.false_detected import start_false_detected as start_false
 import sys
 sys.path.append('/Users/kian/zusatztaufgabe-usable-ml')
 from common import false_detected_dict
@@ -26,7 +27,7 @@ from torchvision import transforms
 # ---------------------- VARIABLES ----------------------#
 
 app = Flask(__name__)
-socketio = SocketIO(app)
+socketio = SocketIO(app,async_mode='threading')
 app.secret_key = '3456'  # for using session
 
 # will be used for saving and loading models
@@ -84,6 +85,12 @@ def start_training_dict(params):
     worker_process = threading.Thread(target=train, args=[current_model, data,
                                                           socketio, params.copy()])
     worker_process.start()
+
+    false_detected_process = threading.Thread(target=start_false, args=[current_model, data,
+                                                          socketio, params.copy()])
+    false_detected_process.start()
+
+
     return
 
 
@@ -176,33 +183,6 @@ def visualize_false_detected_images():
     return render_template('fdi.html', detection=current_detection, total_images=len(keys_list))
 
 
-""""@app.route('/fdi', methods=['GET', 'POST'])
-def visualize_false_detected_images():
-    from common import false_detected_dict
-
-
-    if not false_detected_dict:
-        # Handle empty list case
-        return "No false detections found!"
-
-    if 'current_index' not in session:
-        session['current_index'] = 0
-
-    if request.method == 'POST':
-        if 'next' in request.form:
-            session['current_index'] += 1
-        elif 'previous' in request.form:
-            session['current_index'] -= 1
-
-        # Bounds check
-        session['current_index'] = max(0, min(session['current_index'], len(false_detections) - 1))
-
-    current_detection = false_detections[session['current_index']]
-    current_detection['image'] = tensor_to_image_base64(current_detection['image'])
-
-    return render_template('fdi.html', detection=current_detection, total_images=len(false_detections))"""
-
-
 # ---------------------- APP ROUTES FLASK ----------------------#
 # Route to save false detected images to the database
 
@@ -269,24 +249,6 @@ def start():
     start_training_dict(adj)
     return response
 
-""""@app.route('/fdi')
-def visualize_false_detected_images():
-    image_folder = 'false_detected_images'
-    image_list = [image for image in os.listdir(os.path.join(app.static_folder, image_folder)) if
-                  image.endswith('.png')]
-
-    try:
-        for filename in os.listdir(os.path.join(app.static_folder, image_folder)):
-            if filename.endswith('.png'):
-                image_list.append(filename)
-    except FileNotFoundError:
-        # Handle the case where the "false_detected_images" folder is not found.
-        # You can provide a default list of images or an error message in this case.
-        error_message = "The 'false_detected_images' folder was not found."
-        return render_template('error.html', error_message=error_message)
-
-    return render_template('fdi.html', image_list=image_list)
-"""
 
 @app.route('/stop', methods=['POST'])
 def stop():
@@ -332,18 +294,6 @@ def predict_drawing():
         return response
 
     return jsonify({'prediction': int(prediction), 'confidence': float(confidence)})
-
-
-@app.route('/delete_image', methods=['POST'])
-def delete_image():
-    image_folder = 'false_detected_images'
-    image_name = request.json.get('image')
-    image_path = os.path.join(app.static_folder, image_folder, image_name)
-    if os.path.exists(image_path):
-        os.remove(image_path)
-        return jsonify(message=f"Image '{image_name}' deleted successfully.")
-    else:
-        return jsonify(error="Image not found or already deleted.", status=404)
 
 
 @app.route('/get_image', methods=['GET'])
