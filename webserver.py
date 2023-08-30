@@ -93,7 +93,7 @@ def start_training_dict(params):
     worker_process.start()
     worker_process.join()
 
-    #start_false_detection(current_model,adj)
+    start_false_detection(current_model,adj)
     return
 
 
@@ -163,7 +163,6 @@ def change_label():
 
 @app.route('/fdi', methods=['GET', 'POST'])
 def visualize_false_detected_images():
-    start_false_detection(current_model, adj)
 
 
     keys_list = list(common.false_detected_dict.keys())
