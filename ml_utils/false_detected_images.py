@@ -1,4 +1,4 @@
-import os
+"""import os
 import numpy as np
 import torch
 import torch.nn.functional as F
@@ -113,4 +113,4 @@ def save_false_detected_images(loss_nr, model: Module, loader: DataLoader, cuda:
         assert 'image_tensor' in value, f"'image_tensor' key missing for entry: {key}"
 
     return common.false_detected_dict
-
+"""

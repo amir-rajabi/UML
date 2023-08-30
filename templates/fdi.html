@@ -5,19 +5,35 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>False Detected Images</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 </head>
 <body>
+    <!-- Please wait message -->
+    <div id="loadingMessage" style="display: none;">
+    <p>Please Wait...</p>
+    </div>
 
     <!-- Displaying the image -->
     <img src="{{ detection['image'] }}" alt="False Detected Image">
     <p>Image-Index {{ session['current_index'] + 1 }} of {{ total_images }}</p>
 
-    <!-- Displaying labels -->
+    <!-- Displaying labels-->
+
     <p>Label: {{ detection['label'] }}</p>
+    <!--{% if detection['actual_label'] %}
+       <p>Modified Label: {{ detection['actual_label'] }}</p>
+    {% endif %}-->
+    {% if detection.get('actual_label') and detection['actual_label'] != detection['label'] %}
+   <p>Modified Label: {{ detection['actual_label'] }}</p>
+{% endif %}
+
+
+
     <p>Prediction: {{ detection['prediction'] }}</p>
 
-    <!-- Navigation buttons -->
-    <form action="/fdi" method="post">
+    <!-- Navigation buttons   onsubmit ezafe shodesh-->
+    <form action="/fdi" method="post" onsubmit="showLoadingMessage();">
         {% if session['current_index'] > 0 %}
             <input type="submit" name="previous" value="Previous">
         {% endif %}
@@ -26,20 +42,35 @@
         {% endif %}
     </form>
 
-    <!-- Input for new label and submit button -->
-    <form action="/change_label" method="post">
-        <label for="new_label">New Label hier (0 to 9): </label>
-        <input type="text" id="new_label" name="new_label" pattern="[0-9]{1}" title="Enter a number between 0 to 9">
+
+
+    <!-- Input for new label and submit button- -->
+    <form action="/change_label" method="post" onsubmit="showLoadingMessage();">
+        <label for="new_label">New Label:</label>
+<select id="new_label" name="new_label">
+    <option value="0">0</option>
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+    <option value="6">6</option>
+    <option value="7">7</option>
+    <option value="8">8</option>
+    <option value="9">9</option>
+</select>
         <input type="submit" value="Change Label">
     </form>
+
+        <!-- clear all lablel modifications- -->
+    <form id="clear-modifications-form" action="/clear_modifications" method="post" onsubmit="showLoadingMessage();">
+    <input type="submit" value="Clear Modifications">
+    </form>
+
+
     <a href="http://127.0.0.1:5001/" class="button">Go to First Page</a>
 
-
-</body>
-</html>
-
-
-<style>
+    <style>
     .button {
         display: inline-block;
         padding: 10px 20px;
@@ -62,3 +93,48 @@
         transform: translateY(4px);
     }
 </style>
+
+
+    <script>
+$(document).ready(function(){
+    // Ajax submission for change_label form
+    $("form[action='/change_label']").submit(function(e){
+        e.preventDefault(); // Prevent the default form submission
+
+        $.post($(this).attr('action'), $(this).serialize(), function(response){
+            if(response.status === "success"){
+                alert(response.message);
+                location.reload();
+            } else {
+                alert("Error updating label: " + response.message);
+            }
+        }).fail(function() {
+            alert("There was a problem communicating with the server. Please try again.");
+        });
+    });
+
+    // Ajax submission for clear_modifications form
+            $("#clear-modifications-form").submit(function(e){
+                e.preventDefault(); // Prevent the default form submission
+                $.post($(this).attr('action'), $(this).serialize(), function(response){
+                    if(response.status === "success"){
+                        alert(response.message);  // Show the message from the server
+                        location.reload();  // Reload the page to reflect any changes
+                    } else {
+                        alert("Error: " + response.message);
+                    }
+                }).fail(function() {
+                    alert("There was a problem communicating with the server. Please try again.");
+                });
+            });
+});
+
+</script>
+
+
+
+
+</body>
+</html>
+
+

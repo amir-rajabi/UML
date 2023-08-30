@@ -5,6 +5,7 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 from torch.nn import Module
 from torch.utils.data import DataLoader
+
 from PIL import Image, ImageDraw, ImageFont
 from typing import List, Dict, Union
 import common
@@ -13,12 +14,13 @@ from torch import manual_seed, Tensor
 from ml_utils.model import ConvolutionalNeuralNetwork
 from torch.optim import Optimizer, SGD
 
+#from ml_utils.data_beta import get_data_loaders
 from ml_utils.data import get_data_loaders
 
 loss_func = [F.cross_entropy, F.multi_margin_loss, F.multilabel_soft_margin_loss,
              F.soft_margin_loss, F.l1_loss, F.smooth_l1_loss, F.poisson_nll_loss]
 
-
+stop_flag_fdi = False
 
 
 
@@ -36,17 +38,22 @@ def save_false_detected_images(loss_nr, model: Module, loader: DataLoader, cuda:
 
     model.eval()
     losses = []
-    bcounter = 0
     correct = 0
 
     # Create a directory to save the false detected images
     output_dir = "static/false_detected_images"
+    if common.false_detected_dict:
+        common.false_detected_dict.clear()
 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
     with torch.no_grad():
         for index, img, target in loader:
+
+            if stop_flag_fdi:
+                break
+
             data = img
             target = target
 
@@ -91,6 +98,8 @@ def save_false_detected_images(loss_nr, model: Module, loader: DataLoader, cuda:
                             'prediction': prediction
                         }
 
+
+
                         # Directly save the image info with index_val as the key
                         common.false_detected_dict[index_val] = image_info
 
@@ -121,21 +130,28 @@ def save_false_detected_images(loss_nr, model: Module, loader: DataLoader, cuda:
 
     return common.false_detected_dict
 
-def init_model(name, model):
-    if os.path.exists(f"data/{name}_model.pt"):
-        model.load_state_dict(torch.load(f"data/{name}_model.pt"))
-        print(f"LOG:{name} model loaded")
+def init_model(model_name, model):
+    if os.path.exists(f'data/{model_name}_model_new.pt'):
+        model.load_state_dict(torch.load(f'data/{model_name}_model_new.pt'))
+    elif os.path.exists(f'data/{model_name}_model.pt'):
+        model.load_state_dict(torch.load(f'data/{model_name}_model.pt'))
+    else:
+        print("LOG: there is no model to evaluate")
+        return -1, -1
+
     return model
 
 
-def start_false_detected(name, data, socketio, params):
-    seed = ((len(data["run"]) << 3) * 31) % 256
-    manual_seed(seed)
-    np.random.seed(seed)
+def stop_false_detected():
+    global stop_flag_fdi
+    stop_flag_fdi = True
+
+
+
+def start_false_detected(name, data, params):
+
     model = ConvolutionalNeuralNetwork(float(params["dropout_rate"]))
     model = init_model(name, model)
-    opt = SGD(model.parameters(), lr=float(params["learning_rate"]),
-              momentum=float(params["momentum"]))
     cuda = False
     if os.path.exists("data/CUDA.conf"):
         cuda = True
@@ -143,5 +159,6 @@ def start_false_detected(name, data, socketio, params):
     batch_size = int(params["batch_size"])
 
     train_loader, test_loader = get_data_loaders(batch_size=batch_size)
-    save_false_detected_images(loss_nr, model, test_loader, cuda,test_loader=test_loader)
+    return save_false_detected_images(loss_nr, model, test_loader, cuda,test_loader=test_loader)
+
 

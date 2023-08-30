@@ -15,7 +15,6 @@ import time, os, math
 
 from ml_utils.data import get_data_loaders
 from ml_utils.evaluate import accuracy, init_eval_flag
-from ml_utils.false_detected_images import save_false_detected_images
 from ml_utils.model import ConvolutionalNeuralNetwork
 from ml_utils.json_write import write_json, get_run_num
 from ml_utils.print_overwrite import print

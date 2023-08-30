@@ -6,11 +6,13 @@
 
 # ---------------------- IMPORT ----------------------#
 
-from flask import Flask, render_template, request, jsonify, url_for, session
+from flask import Flask, render_template, request, jsonify, url_for, session, redirect
 from flask_socketio import SocketIO
 from PIL import Image
 import base64, io, os, threading, json, webbrowser, shutil
- # for start_training method
+
+import common
+# for start_training method
 from ml_utils.training import start_training as train
 from ml_utils.json_write import clear_file as clear
 from ml_utils.json_write import revert_history, verify_data, empty_missing_file
@@ -18,10 +20,12 @@ from ml_utils.training import stop_training
 from ml_utils.testing import test_drawing
 from ml_utils.print_overwrite import print, init_print
 from ml_utils.evaluate import stop_eval
+from ml_utils.data_beta import update_test_labels, clear_modifications
+
 from ml_utils.false_detected import start_false_detected as start_false
 import sys
 sys.path.append('/Users/kian/zusatztaufgabe-usable-ml')
-from common import false_detected_dict
+from common import false_detected_dict, user_modified_labels
 from torchvision import transforms
 
 # ---------------------- VARIABLES ----------------------#
@@ -32,6 +36,10 @@ app.secret_key = '3456'  # for using session
 
 # will be used for saving and loading models
 current_model = ""
+
+
+thread_done = False
+
 
 # chart data
 data = {
@@ -62,8 +70,6 @@ def block_revert():
     if os.path.exists(f"data/{current_model}_model_new.pt"):
         socketio.emit('revert_allowed', True)
 
-
-
 # loads chart
 def update_data():
     if empty_missing_file(f"data/{current_model}_epoch_data.json"):
@@ -85,16 +91,111 @@ def start_training_dict(params):
     worker_process = threading.Thread(target=train, args=[current_model, data,
                                                           socketio, params.copy()])
     worker_process.start()
+    worker_process.join()
 
-    false_detected_process = threading.Thread(target=start_false, args=[current_model, data,
-                                                          socketio, params.copy()])
-    false_detected_process.start()
-
-
+    #start_false_detection(current_model,adj)
     return
 
 
-# acts according to revert param
+def start_false_detection(model,params):
+    false_detected_thread = threading.Thread(target=start_false, args=[model, data, params.copy()])
+    false_detected_thread.start()
+
+
+def tensor_to_image_base64(tensor_image):
+    # Convert tensor to PIL Image
+    img = transforms.ToPILImage()(tensor_image)
+
+    # Convert PIL Image to bytes
+    buffer = io.BytesIO()
+    img.save(buffer, format="PNG")
+    img_bytes = buffer.getvalue()
+
+    # Convert bytes to base64 encoded string
+    base64_encoded = base64.b64encode(img_bytes).decode('utf-8')
+    return f"data:image/png;base64,{base64_encoded}"
+
+@app.route('/clear_modifications', methods=['POST'])
+def clear_modifications_route():
+    try:
+        clear_modifications()  # Call the function from data_beta.py
+        return jsonify(status="success", message="Modifications cleared!")
+
+    except Exception as e:
+        return jsonify(status="error", message=str(e))
+
+
+@app.route('/change_label', methods=['POST'])
+def change_label():
+    # Diagnostic print statement to see incoming form data
+    print(request.form)
+    try:
+        new_label = request.form['new_label']
+    except KeyError:
+        return jsonify(status="error", message="Label not provided.")
+
+    if not new_label or not new_label.isdigit() or int(new_label) not in range(10):
+        return jsonify(status="error", message="Invalid label provided. Must be a number between 0 and 9.")
+
+    # Get the actual key using current_index from the session
+    keys_list = list(common.false_detected_dict.keys())
+    current_key = keys_list[session['current_index']]
+    original_label = common.false_detected_dict[current_key]['label'] #jadid
+
+    # Compare new_label with original label for correct visualization of modified labels
+    if int(new_label) == original_label:
+        # If they are the same, remove 'actual_label' or set to None
+        common.false_detected_dict[current_key].pop('actual_label', None)
+    else:
+        # Update the false_detection's actual_label with the new_label
+        common.false_detected_dict[current_key]['actual_label'] = int(new_label)
+
+        # Update the false_detection's actual_label with the new_label
+    common.false_detected_dict[current_key]['actual_label'] = int(new_label)
+    print(f"Updated label for image {current_key} to {new_label}")
+
+        # Append the modified key and label to user_modified_labels
+    common.user_modified_labels[current_key] = int(new_label)
+    update_test_labels(common.user_modified_labels, 256)
+        #return redirect(url_for('visualize_false_detected_images'))
+    return jsonify(status="success", message="Label updated successfully")
+
+
+@app.route('/fdi', methods=['GET', 'POST'])
+def visualize_false_detected_images():
+    start_false_detection(current_model, adj)
+
+
+    keys_list = list(common.false_detected_dict.keys())
+    #keys_list = list(false_detection.keys())
+
+    if not keys_list:
+        # Handle empty list case
+        return "Please train the model or load a trained model"
+
+    if 'current_index' not in session:
+        session['current_index'] = 0
+    else:
+        if session['current_index'] >= len(keys_list):
+            session['current_index'] = 0
+
+    if request.method == 'POST':
+        if 'next' in request.form and session['current_index'] < len(keys_list) - 1:
+            session['current_index'] += 1
+        elif 'previous' in request.form and session['current_index'] > 0:
+            session['current_index'] -= 1
+
+    current_key = keys_list[session['current_index']]
+    current_detection = common.false_detected_dict[current_key]
+    #current_detection = false_detection[current_key]
+    print(str(current_detection))
+
+    if 'image_tensor' not in current_detection:
+        return "Error: image_tensor key not found for the current detection."
+    current_detection['image'] = tensor_to_image_base64(current_detection['image_tensor'])
+    return render_template('fdi.html', detection=current_detection, total_images=len(keys_list))
+
+
 def check_revert(revert):
     if revert:
         if os.path.exists(f"data/{current_model}_model_new.pt"):
@@ -122,65 +223,6 @@ def sendAlert(style, content):
     }
     socketio.emit('sendAlert', {'data': data})
 
-
-def tensor_to_image_base64(tensor_image):
-    # Convert tensor to PIL Image
-    img = transforms.ToPILImage()(tensor_image)
-
-    # Convert PIL Image to bytes
-    buffer = io.BytesIO()
-    img.save(buffer, format="PNG")
-    img_bytes = buffer.getvalue()
-
-    # Convert bytes to base64 encoded string
-    base64_encoded = base64.b64encode(img_bytes).decode('utf-8')
-    return f"data:image/png;base64,{base64_encoded}"
-
-
-
-
-#not developed yet
-@app.route('/change_label', methods=['POST'])
-def change_label():
-    new_label = request.form.get('new_label')
-    if new_label and new_label.isdigit() and 0 <= int(new_label) <= 9:
-        # Update the false_detection's actual_label with the new_label
-        false_detected_dict[session['current_index']]['actual_label'] = int(new_label)
-    return redirect(url_for('visualize_false_detected_images'))
-
-#not developed yet
-def change_label_in_dataset(dataset, false_detections, new_label):
-
-    for detection in false_detections:
-        image_idx = detection['index']
-        dataset[image_idx][1] = new_label  # Assuming the second element in the dataset tuple is the label
-
-
-@app.route('/fdi', methods=['GET', 'POST'])
-def visualize_false_detected_images():
-    #from common import false_detected_dict
-    keys_list = list(false_detected_dict.keys())
-    if not keys_list:
-        # Handle empty list case
-        return "No false detections found!"
-
-    if 'current_index' not in session:
-        session['current_index'] = 0
-
-    if request.method == 'POST':
-        if 'next' in request.form and session['current_index'] < len(keys_list) - 1:
-            session['current_index'] += 1
-        elif 'previous' in request.form and session['current_index'] > 0:
-            session['current_index'] -= 1
-
-    current_key = keys_list[session['current_index']]
-    current_detection = false_detected_dict[current_key]
-
-    if 'image_tensor' not in current_detection:
-        return "Error: image_tensor key not found for the current detection."
-    print(current_detection)
-    current_detection['image'] = tensor_to_image_base64(current_detection['image_tensor'])
-    return render_template('fdi.html', detection=current_detection, total_images=len(keys_list))
 
 
 # ---------------------- APP ROUTES FLASK ----------------------#
@@ -263,6 +305,8 @@ def stop():
 @app.route('/clear_history', methods=['POST'])
 def clear_history_data():
     clear(f"data/{current_model}_epoch_data.json")
+    clear_modifications()
+    false_detected_dict.clear()
     update_data()
     socketio.emit('update_chart', {'data': data})
     print("LOG: CLEAR HISTORY")
@@ -335,7 +379,7 @@ def restore_saved_models_html():
     else:
         return jsonify("response")
 
-
+# Not developed yet
 @app.route('/train_with_changed_labels', methods=['POST'])
 def train_with_changed_labels():
     training_data = request.json
