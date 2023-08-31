@@ -96,13 +96,22 @@ def start_training_dict(params):
     #start_false_detection(current_model,adj)
     return
 
+
 @app.route('/fdi_start', methods=['GET'])
 def fdi_start_route():
-    return fdi_start(adj)
+    if os.path.exists(f'data/{current_model}_model_new.pt') or os.path.exists(f'data/{current_model}_model.pt'):
+        return fdi_start(adj)
+    else:
+        return jsonify({"status": "no_model"})
 
-def fdi_start(adj):
+
+""""@app.route('/fdi_start', methods=['GET'])
+def fdi_start_route():
+    return fdi_start(adj)"""
+
+def fdi_start(params):
     global false_detected_thread
-    false_detected_thread = threading.Thread(target=start_false, args=[current_model, data, adj.copy()])
+    false_detected_thread = threading.Thread(target=start_false, args=[current_model, data, params.copy()])
     false_detected_thread.start()
     #false_detected_thread.join()
     return jsonify({"status": "processing"})

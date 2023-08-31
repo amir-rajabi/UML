@@ -71,7 +71,11 @@ function startFalseDetection() {
     fetch('/fdi_start') // We've renamed this endpoint for clarity
     .then(response => response.json())
     .then(data => {
-        if (data.status === "processing") {
+        if (data.status === "no_model") {
+            document.getElementById("loadingMessage").style.display = "none"; // Hide the "Please wait" message
+            alert('Please train the model or load a trained model'); // Notify the user
+        }
+        else if (data.status === "processing") {
             // Start polling the server every second to check if processing is done
             let interval = setInterval(() => {
                 fetch('/fdi_status')
@@ -86,6 +90,7 @@ function startFalseDetection() {
         }
     });
 }
+
 
 </script>
 
