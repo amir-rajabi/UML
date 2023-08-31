@@ -1,119 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>False Detected Images</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 </head>
-<body>
-    <!-- Please wait message -->
-    <div id="loadingMessage" style="display: none;">
-    <p>Please Wait...</p>
+
+<body style="background-color: black; color: white; font-family: 'UML', sans-serif;">
+    <div style="text-align: center;">
+        <h1 style="font-size: 34px; margin-bottom: 20px;">{{ total_images }} False Detected Images</h1>
+
+        <div style="display: flex; align-items: center; justify-content: center; height: 100vh;">
+            <!-- Displaying the image -->
+            <div style="flex: 0.5; text-align: left;">
+                <a href="http://127.0.0.1:5001/" class="button">Go to First Page</a>
+            </div>
+            <div style="flex: 1;">
+                <img src="{{ detection['image'] }}" alt="False Detected Image" style="display: block; margin: 0 auto; border-radius: 10px; border: 2px solid white;">
+                <!-- Navigation buttons -->
+                <form action="/fdi" method="post" onsubmit="showLoadingMessage();" style="margin-top: 10px;">
+                    {% if session['current_index'] > 0 %}
+                        <input type="submit" name="previous" value="Previous" class="button">
+                    {% endif %}
+                    {% if session['current_index'] < total_images - 1 %}
+                        <input type="submit" name="next" value="Next" class="button">
+                    {% endif %}
+                </form>
+            </div>
+            <div style="flex: 0.5; text-align: left;">
+                <p style="margin-bottom: 20px; font-size: 20px;">Image {{ session['current_index'] + 1 }}</p>
+                <p style="margin-bottom: 20px; font-size: 20px;">Label: {{ detection['label'] }}</p>
+                {% if detection.get('actual_label') and detection['actual_label'] != detection['label'] %}
+                   <p style="margin-bottom: 20px; font-size: 20px;">Modified Label: {{ detection['actual_label'] }}</p>
+                {% endif %}
+                <p style="margin-bottom: 20px; font-size: 20px;">Prediction: {{ detection['prediction'] }}</p>
+
+                <!-- Input for new label -->
+                <form action="/change_label" method="post" onsubmit="showLoadingMessage();" style="align-items: center;">
+                    <label for="new_label" style="font-size: 20px;">New Label:</label>
+                    <select id="new_label" name="new_label" style="font-size: 20px;">
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+
+                    </select>
+                    <div style="margin-top: 10px;">
+                        <input type="submit" value="Clear Modifications" class="action-button">
+                        <input type="submit" value="Change Label" class="action-button">
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
-    <!-- Displaying the image -->
-    <img src="{{ detection['image'] }}" alt="False Detected Image">
-    <p>Image-Index {{ session['current_index'] + 1 }} of {{ total_images }}</p>
-
-    <!-- Displaying labels-->
-
-    <p>Label: {{ detection['label'] }}</p>
-    <!--{% if detection['actual_label'] %}
-       <p>Modified Label: {{ detection['actual_label'] }}</p>
-    {% endif %}-->
-    {% if detection.get('actual_label') and detection['actual_label'] != detection['label'] %}
-   <p>Modified Label: {{ detection['actual_label'] }}</p>
-{% endif %}
-
-
-
-    <p>Prediction: {{ detection['prediction'] }}</p>
-
-    <!-- Navigation buttons   onsubmit ezafe shodesh-->
-    <form action="/fdi" method="post" onsubmit="showLoadingMessage();">
-        {% if session['current_index'] > 0 %}
-            <input type="submit" name="previous" value="Previous">
-        {% endif %}
-        {% if session['current_index'] < total_images - 1 %}
-            <input type="submit" name="next" value="Next">
-        {% endif %}
-    </form>
-
-
-
-    <!-- Input for new label and submit button- -->
-    <form action="/change_label" method="post" onsubmit="showLoadingMessage();">
-        <label for="new_label">New Label:</label>
-<select id="new_label" name="new_label">
-    <option value="0">0</option>
-    <option value="1">1</option>
-    <option value="2">2</option>
-    <option value="3">3</option>
-    <option value="4">4</option>
-    <option value="5">5</option>
-    <option value="6">6</option>
-    <option value="7">7</option>
-    <option value="8">8</option>
-    <option value="9">9</option>
-</select>
-        <input type="submit" value="Change Label">
-    </form>
-
-        <!-- clear all lablel modifications- -->
-    <form id="clear-modifications-form" action="/clear_modifications" method="post" onsubmit="showLoadingMessage();">
-    <input type="submit" value="Clear Modifications">
-    </form>
-
-
-    <a href="http://127.0.0.1:5001/" class="button">Go to First Page</a>
-
     <style>
-    .button {
-        display: inline-block;
-        padding: 10px 20px;
-        font-size: 16px;
-        cursor: pointer;
-        text-align: center;
-        text-decoration: none;
-        outline: none;
-        color: #fff;
-        background-color: #0F1116;
-        border: none;
-        border-radius: 15px;
-        box-shadow: 0 9px #999;
-    }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 20px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            outline: none;
+            color: black;
+            background-color: white;
+            border: none;
+            border-radius: 15px;
+            margin: 5px;
+            width: 150px; /* ensure that both buttons are of equal width */
+        }
 
-    .button:hover {background-color: #3e8e41}
-    .button:active {
-        background-color: #3e8e41;
-        box-shadow: 0 5px #666;
-        transform: translateY(4px);
-    }
-</style>
+        .action-button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 20px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            outline: none;
+            color: black;
+            background-color: white;
+            border: none;
+            border-radius: 15px;
+            margin: 5px;
+            width: 180px; /* set width for action buttons */
+        }
 
+        .button:hover, .action-button:hover {
+            background-color: lightgray
+        }
+
+        .button:active, .action-button:active {
+            background-color: lightgray;
+        }
+
+       select {
+         color: black;
+         margin: 0 5px;
+        }
+       label {
+         color: white;
+         margin: 0 5px;
+       }
+        select option {
+        color: black;
+        }
+    </style>
 
     <script>
 $(document).ready(function(){
-    // Ajax submission for change_label form
-    $("form[action='/change_label']").submit(function(e){
-        e.preventDefault(); // Prevent the default form submission
+            // Ajax submission for change_label form
+            $("form[action='/change_label']").submit(function(e){
+                e.preventDefault(); // Prevent the default form submission
+                $.post($(this).attr('action'), $(this).serialize(), function(response){
+                    if(response.status === "success"){
+                        alert(response.message);
+                        location.reload();
+                    } else {
+                        alert("Error updating label: " + response.message);
+                    }
+                }).fail(function() {
+                    alert("There was a problem communicating with the server. Please try again.");
+                });
+            });
 
-        $.post($(this).attr('action'), $(this).serialize(), function(response){
-            if(response.status === "success"){
-                alert(response.message);
-                location.reload();
-            } else {
-                alert("Error updating label: " + response.message);
-            }
-        }).fail(function() {
-            alert("There was a problem communicating with the server. Please try again.");
-        });
-    });
-
-    // Ajax submission for clear_modifications form
+            // Ajax submission for clear_modifications form
             $("#clear-modifications-form").submit(function(e){
                 e.preventDefault(); // Prevent the default form submission
                 $.post($(this).attr('action'), $(this).serialize(), function(response){
@@ -127,14 +148,8 @@ $(document).ready(function(){
                     alert("There was a problem communicating with the server. Please try again.");
                 });
             });
-});
-
+        });
 </script>
-
-
-
-
 </body>
+
 </html>
-
-
