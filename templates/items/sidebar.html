@@ -31,7 +31,10 @@ year:           2023
             <div class="kachel-description">Models</div>
         </button>
     </div>
-    <button type="button" class="btn btn-primary" onclick="window.location.href='/fdi'">Visualize False Detected Images</button>
+<button type="button" class="btn btn-primary" onclick="startFalseDetection()">Visualize False Detected Images</button>
+    <div id="loadingMessage" style="display: none;">
+    <p>Please Wait...</p>
+</div>
 
     <span id="sidebar-tobottom">
         <div class="kachel" id="glossary-kachel">
@@ -60,3 +63,29 @@ year:           2023
         </div>
     </span>
 </div>
+
+<script>
+function startFalseDetection() {
+    document.getElementById("loadingMessage").style.display = "block"; // Display the "Please wait" message
+
+    fetch('/fdi_start') // We've renamed this endpoint for clarity
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "processing") {
+            // Start polling the server every second to check if processing is done
+            let interval = setInterval(() => {
+                fetch('/fdi_status')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "done") {
+                        clearInterval(interval); // Stop polling
+                        window.location.href = '/fdi'; // Redirect to a different endpoint to fetch final results
+                    }
+                });
+            }, 1000);
+        }
+    });
+}
+
+</script>
+

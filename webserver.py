@@ -93,13 +93,19 @@ def start_training_dict(params):
     worker_process.start()
     worker_process.join()
 
-    start_false_detection(current_model,adj)
+    #start_false_detection(current_model,adj)
     return
 
+@app.route('/fdi_start', methods=['GET'])
+def fdi_start_route():
+    return fdi_start(adj)
 
-def start_false_detection(model,params):
-    false_detected_thread = threading.Thread(target=start_false, args=[model, data, params.copy()])
+def fdi_start(adj):
+    global false_detected_thread
+    false_detected_thread = threading.Thread(target=start_false, args=[current_model, data, adj.copy()])
     false_detected_thread.start()
+    #false_detected_thread.join()
+    return jsonify({"status": "processing"})
 
 
 def tensor_to_image_base64(tensor_image):
@@ -161,9 +167,17 @@ def change_label():
     return jsonify(status="success", message="Label updated successfully")
 
 
+@app.route('/fdi_status', methods=['GET'])
+def fdi_status():
+    # Check the status of your thread. If it's complete, return "done". Otherwise, return "processing".
+    # This is a simple example, you might need to adjust it to your actual threading setup.
+    while false_detected_thread.is_alive():
+        return jsonify(status="processing")
+
+    return jsonify(status="done")
+
 @app.route('/fdi', methods=['GET', 'POST'])
 def visualize_false_detected_images():
-
 
     keys_list = list(common.false_detected_dict.keys())
     #keys_list = list(false_detection.keys())
