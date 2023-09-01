@@ -35,15 +35,15 @@
             <div style="flex: 0.5; text-align: left;">
                 <p style="margin-bottom: 20px; font-size: 20px;">Image {{ session['current_index'] + 1 }}</p>
                 <p style="margin-bottom: 20px; font-size: 20px;">Label: {{ detection['label'] }}</p>
-                {% if detection.get('actual_label') and detection['actual_label'] != detection['label'] %}
+{% if detection.get('actual_label') is not none and detection['actual_label']|string != detection['label']|string %}
                    <p style="margin-bottom: 20px; font-size: 20px;">Modified Label: {{ detection['actual_label'] }}</p>
                 {% endif %}
                 <p style="margin-bottom: 20px; font-size: 20px;">Prediction: {{ detection['prediction'] }}</p>
 
                 <!-- Input for new label -->
-                <form action="/change_label" method="post" onsubmit="showLoadingMessage();" style="align-items: center;">
-                    <label for="new_label" style="font-size: 20px;">New Label:</label>
-                    <select id="new_label" name="new_label" style="font-size: 20px;">
+<form action="/change_label" method="post" onsubmit="showLoadingMessage();" style="align-items: center;">
+    <label for="new_label" style="font-size: 20px;">New Label:</label>
+    <select id="new_label" name="new_label" style="font-size: 20px;">
                         <option value="0">0</option>
                         <option value="1">1</option>
                         <option value="2">2</option>
@@ -54,13 +54,19 @@
                         <option value="7">7</option>
                         <option value="8">8</option>
                         <option value="9">9</option>
-
-                    </select>
-                    <div style="margin-top: 10px;">
-        <button type="submit" class="btn btn-outline-light">Clear Modifications</button>
+    </select>
+    <div style="margin-top: 10px;">
         <button type="submit" class="btn btn-outline-light">Change Label</button>
     </div>
 </form>
+<!-- Separate form for clearing modifications -->
+<form id="clear-modifications-form" action="/clear_modifications" method="post" onsubmit="showLoadingMessage();" style="align-items: center;">
+    <div style="margin-top: 10px;">
+        <button type="submit" class="btn btn-outline-light">Clear Modifications</button>
+    </div>
+</form>
+
+
             </div>
         </div>
     </div>

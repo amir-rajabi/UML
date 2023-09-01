@@ -68,7 +68,7 @@ year:           2023
 function startFalseDetection() {
     document.getElementById("loadingMessage").style.display = "block"; // Display the "Please wait" message
 
-    fetch('/fdi_start') // We've renamed this endpoint for clarity
+    fetch('/fdi_start') // Start False detcted procces
     .then(response => response.json())
     .then(data => {
         if (data.status === "no_model") {
