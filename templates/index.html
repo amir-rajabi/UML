@@ -39,6 +39,14 @@ year:           2023
     <script type="module" src="{{ url_for('static', filename='a_js/keyboard.js') }}"></script>
 </head>
 <body>
+    <!-- signal please Wait... disapear if user use the browser back button -->
+<script>
+        window.onpageshow = function(event) {
+            document.getElementById("loadingMessage").style.display = "none";
+        };
+</script>
+
+
     <div id="root">
         {% include 'items/settings/glossary.html' %}
         {% include 'items/settings/help.html' %}

@@ -540,6 +540,6 @@ def handle_disconnect():
 if __name__ == '__main__':
     print('App started')
     webbrowser.open_new_tab('http://127.0.0.1:5001')
-    socketio.run(app, host='127.0.0.1', port=5001, debug=False)
+    socketio.run(app, host='127.0.0.1', port=5001, debug=True)
     app.run(debug=True)
 
