@@ -14,18 +14,28 @@ from common import user_modified_labels
 
 
 def print_test_data():
-    _, test_loader = get_data_loaders(1)  # Setting batch_size to 1 to get one sample at a time
+    _,test_loader = get_data_loaders(1)  # Setting batch_size to 1 to get one sample at a time
 
     for index, _, label in test_loader:
         print(f"Index: {index.item()}, Label: {label.item()}")
 
+def print_train_data():
+    train_loader,_ = get_data_loaders(1)  # Setting batch_size to 1 to get one sample at a time
+
+    for index, _, label in train_loader:
+        print(f"Index: {index.item()}, Label: {label.item()}")
+
 
 if __name__ == '__main__':
-    #with open("/Users/kian/zusatztaufgabe-usable-ml/modifications.json", "r") as file:
-        #data = json.load(file)
+    """with open("/Users/kian/zusatztaufgabe-usable-ml/modifications.json", "r") as file:
+         #data = json.load(file)
     #print(data)
+    """
+
     #update_test_labels(data,1)
-    print_test_data()
+
+    #print_train_data()
+    #print_test_data()
 
 
 

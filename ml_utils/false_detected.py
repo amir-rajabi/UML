@@ -34,7 +34,7 @@ def resize_tensor_image(tensor_image, new_size=(280, 280)):
     return transforms.ToTensor()(pil_image_resized)
 
 
-def save_false_detected_images(loss_nr, model: Module, loader: DataLoader, cuda: bool,test_loader: DataLoader = None) -> (dict):
+def save_false_detected_images(loss_nr, model: Module, loader: DataLoader, cuda: bool,train_loader: DataLoader = None) -> (dict):
 
     model.eval()
     losses = []
@@ -69,7 +69,7 @@ def save_false_detected_images(loss_nr, model: Module, loader: DataLoader, cuda:
             correct += pred.eq(target.data.view_as(pred)).cpu().sum().item()
 
             # Save false detected images
-            if test_loader is not None and loader == test_loader:
+            if train_loader is not None and loader == train_loader:
                 for j, individual_index in enumerate(index):  # Enumerate through index
                     if pred[j] != target[j]:
                         image_tensor_original = data[j].cpu()
@@ -159,6 +159,6 @@ def start_false_detected(name, data, params):
     batch_size = int(params["batch_size"])
 
     train_loader, test_loader = get_data_loaders(batch_size=batch_size)
-    return save_false_detected_images(loss_nr, model, test_loader, cuda,test_loader=test_loader)
+    return save_false_detected_images(loss_nr, model, train_loader, cuda,train_loader=train_loader)
 
 

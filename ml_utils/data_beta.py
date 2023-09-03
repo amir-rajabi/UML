@@ -45,7 +45,7 @@ def get_data_loaders(batch_size):
     test_dataset = MNIST_beta('./data', train=False, download=True, transform=transform)
 
     # Data loaders
-    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=False)
     test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
     return train_loader, test_loader
@@ -69,9 +69,9 @@ def load_modifications(filename=MODIFICATIONS_FILE):
 #Adjust the update_test_labels function to both modify in-memory and save the modifications.
 #get the index_label_mapping in form {5: 3, 100: 8, 150: 2, ...} and save the changes to this data set.
 def update_test_labels(index_label_mapping, batch_size):
-    _, test_loader = get_data_loaders(batch_size=batch_size)
+    train_loader, _ = get_data_loaders(batch_size=batch_size)
 
-    for batch_indices, _, targets in test_loader:
+    for batch_indices, _, targets in train_loader:
         for idx, new_label in index_label_mapping.items():
             # Check if idx is in the current batch of indices
             if idx in batch_indices.tolist():

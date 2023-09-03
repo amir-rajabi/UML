@@ -2,92 +2,137 @@
 <html lang="en">
 
 <head>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>False Detected Images</title>
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
-<body style="background-color: black; color: white; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';">
+<body style="background-color: #202124; color: white; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';">
+
     <a href="http://127.0.0.1:5001/" class="btn btn-outline-light" style="position: absolute; top: 10px; left: 10px;">Go to First Page</a>
 
-    <div style="text-align: center;">
+        <div class="centered-box">
+            <div style="text-align: center;">
         <h1 style="font-size: 34px;margin-top: 40px; margin-bottom: 20px;">{{ total_images }} False Detected Images</h1>
 
-        <div class="centered-box">
-                <div style="text-align: center;">
-        <div style="display: flex; align-items: center; justify-content: center; height: 70vh;">
-            <!-- Displaying the image -->
 
-            <div style="flex: 1;">
-                <img src="{{ detection['image'] }}" alt="False Detected Image" style="display: block; margin: 0 auto; border-radius: 10px; border: 2px solid white;">
-                <!-- Navigation buttons -->
-                <form action="/fdi" method="post" onsubmit="showLoadingMessage();" style="margin-top: 10px;">
-    {% if session['current_index'] > 0 %}
-        <button type="submit" name="previous" class="btn btn-outline-light">Previous</button>
-    {% endif %}
-    {% if session['current_index'] < total_images - 1 %}
-        <button type="submit" name="next" class="btn btn-outline-light">Next</button>
-    {% endif %}
-</form>
-            </div>
-            <div style="flex: 0.2; text-align: left;">
-                <p style="margin-bottom: 20px; font-size: 20px;">Image {{ session['current_index'] + 1 }}</p>
-                <p style="margin-bottom: 20px; font-size: 20px;">Label: {{ detection['label'] }}</p>
-                {% if detection.get('actual_label') is not none and detection['actual_label']|string != detection['label']|string %}
-                   <p style="margin-bottom: 20px; font-size: 20px;">Modified Label: {{ detection['actual_label'] }}</p>
-                {% endif %}
-                <p style="margin-bottom: 20px; font-size: 20px;">Prediction: {{ detection['prediction'] }}</p>
+<div style="text-align: center; display: flex; justify-content: space-around; height: 70vh; margin-top: 40px;">
 
-                <!-- Input for new label -->
-<form action="/change_label" method="post" onsubmit="showLoadingMessage();" style="align-items: center; display: flex; flex-direction: column;">
-    <div style="display: flex; align-items: center;">
-        <label for="new_label" style="font-size: 20px; margin-right: 10px;">New Label:</label>
-        <select id="new_label" name="new_label" style="font-size: 20px; margin-right: 10px;">
-            <option value="0">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-        </select>
-    </div>
-    <div style="margin-top: 10px;">
-        <button type="submit" class="btn btn-outline-light">Change Label</button>
-    </div>
-</form>
-<!-- Separate form for clearing modifications -->
-<form id="clear-modifications-form" action="/clear_modifications" method="post" onsubmit="showLoadingMessage();" style="align-items: center;">
-    <div style="margin-top: 10px;">
-        <button type="submit" class="btn btn-outline-warning">Clear Modifications</button>
-    </div>
-</form>
+    <!-- Container for Image and Navigation Buttons -->
+  <div class="centered-box-small">
 
-                 </div>
-            </div>
-        </div>
+    <img src="{{ detection['image'] }}" alt="False Detected Image" style="display: block; margin: 0 auto; max-width: 90%; max-height: 70%; border-radius: 10px; border: 2px solid white;">
+
+    <!-- Image Info -->
+    <div class="image-info">
+        <p style="margin-bottom: 20px; font-size: 20px; margin-top: 20px; margin-left: 10px">Image {{ session['current_index'] + 1 }}</p>
+        <p style="margin-bottom: 20px; font-size: 20px;margin-left: 10px">Label: {{ detection['label'] }}</p>
+        <p style="margin-bottom: 20px; font-size: 20px;margin-left: 10px">Prediction: {{ detection['prediction'] }}</p>
     </div>
+
+    <!-- Navigation buttons -->
+    <div class="navigation-buttons" style="display: flex; justify-content: space-between;">
+        <form action="/fdi" method="post" onsubmit="showLoadingMessage();">
+            {% if session['current_index'] > 0 %}
+                <button type="submit" name="previous" class="btn btn-outline-light">Previous</button>
+            {% endif %}
+        </form>
+
+        <form action="/fdi" method="post" onsubmit="showLoadingMessage();">
+            {% if session['current_index'] < total_images - 1 %}
+                <button type="submit" name="next" class="btn btn-outline-light">Next</button>
+            {% endif %}
+        </form>
+    </div>
+
+
 </div>
 
+
+    <!-- Container for Image Info and Label Modification -->
+    <div class="centered-box-small">
+    <div>
+
+        {% if detection.get('actual_label') is not none and detection['actual_label']|string != detection['label']|string %}
+            <p style="margin-top: 20px; font-size: 20px;color:green">Modified Label:{{ detection['actual_label'] }}</p>
+        {% else %}
+    <p style="margin-top: 20px; font-size: 20px; color: white">Modified Label: <span style="color:white">-</span></p>
+        {% endif %}
+            <!-- Input for new label -->
+            <form action="/change_label" method="post" onsubmit="showLoadingMessage();" style="align-items: center; display: flex; flex-direction: column;">
+                <div style="display: flex; align-items: center;">
+                    <label for="new_label" style="font-size: 20px; margin-right: 10px;">New Label:</label>
+                    <select id="new_label" name="new_label" style="font-size: 20px; margin-left: 10px;">
+                                        <option value="0">0</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+
+                    </select>
+                </div>
+                <div style="margin-top: 20px;">
+                    <button type="submit" class="btn btn-outline-light">Change Label</button>
+                </div>
+            </form>
+
+            <!-- Separate form for clearing modifications -->
+            <form id="clear-modifications-form" action="/clear_modifications" method="post" onsubmit="showLoadingMessage();" style="align-items: center;">
+                <div style="margin-top: 206px;">
+                    <button type="submit" class="btn btn-outline-danger">Undo all Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    </div>
+    </div>
+
+
+</div>
+        </div>
+    </div>
+    </div>
+
     <style>
+.button-container {
+    display: flex;
+    justify-content: space-between; /* Adjust the spacing between the buttons as you need */
+    align-items: center;
+}
 
  .centered-box-small {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #333A4A;
-    padding: 40px;
-    border-radius: 100px;
-    margin: auto;
-    width: 64%; /* You can adjust this as needed */
-    height: 40%; /* You can adjust this as needed */
+    flex-direction: column; /* This stacks children vertically */
+    align-items: flex-start; /* Aligns items to the top */
+    background-color: #202124;
+    padding: 20px;
+    border-radius: 10px;
+    width: 45%; /* Adjust if needed */
+    height: 80%; /* Adjust if needed */
+    min-height: 200px; /* You can adjust this value */
+    min-width: 200px; /* You can adjust this value */
+    overflow: auto; /* This should help with the zooming issue */
 }
+
+.centered-box-small div {
+    width: 100%;
+    text-align: left;
+}
+.image-info {
+    text-align: left;
+    margin-bottom: 15px;
+}
+
     .centered-box {
     display: flex;
     justify-content: center;
@@ -95,9 +140,9 @@
     background-color: #333A4A;
     padding: 40px;
     border-radius: 100px;
-    margin: auto;
-    width: 64%; /* You can adjust this as needed */
-    height: 40%; /* You can adjust this as needed */
+    margin: 2vh auto;
+    width: 44%; /* You can adjust this as needed */
+    height: 10%; /* You can adjust this as needed */
 }
 
         .button {
