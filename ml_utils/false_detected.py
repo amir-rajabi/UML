@@ -20,9 +20,6 @@ from ml_utils.data import get_data_loaders
 loss_func = [F.cross_entropy, F.multi_margin_loss, F.multilabel_soft_margin_loss,
              F.soft_margin_loss, F.l1_loss, F.smooth_l1_loss, F.poisson_nll_loss]
 
-stop_flag_fdi = False
-
-
 
 def resize_tensor_image(tensor_image, new_size=(280, 280)):
     # Convert tensor to PIL image
@@ -39,6 +36,8 @@ def save_false_detected_images(loss_nr, model: Module, loader: DataLoader, cuda:
     model.eval()
     losses = []
     correct = 0
+    processed_images_count = 0  # total images counter
+
 
     # Create a directory to save the false detected images
     output_dir = "static/false_detected_images"
@@ -50,12 +49,11 @@ def save_false_detected_images(loss_nr, model: Module, loader: DataLoader, cuda:
 
     with torch.no_grad():
         for index, img, target in loader:
-
-            if stop_flag_fdi:
-                break
-
             data = img
             target = target
+
+            processed_images_count += len(data)
+
 
             if cuda:
                 data, target = data.cuda(), target.cuda()
@@ -75,15 +73,6 @@ def save_false_detected_images(loss_nr, model: Module, loader: DataLoader, cuda:
                         image_tensor_original = data[j].cpu()
                         image_tensor = resize_tensor_image(image_tensor_original)
 
-                        image = image_tensor.cpu().numpy().squeeze()
-
-                        if not np.isfinite(image).all():
-                            print(f"Non-finite values detected in image for index {individual_index}.")
-                            continue  # Skip this iteration
-
-                        image = (image * 255).astype(np.uint8)
-                        image = Image.fromarray(image)
-
                         # tensors to int`.item()`
                         label = target[j].item()
                         prediction = pred[j].item()
@@ -98,36 +87,12 @@ def save_false_detected_images(loss_nr, model: Module, loader: DataLoader, cuda:
                             'prediction': prediction
                         }
 
-
-
                         # Directly save the image info with index_val as the key
                         common.false_detected_dict[index_val] = image_info
+                        print(index_val)
 
-                        # Resize the image
-                        image_size = (224, 224)
-                        image = image.resize(image_size)
 
-                        # Add label and prediction as comments
-                        draw = ImageDraw.Draw(image)
-                        font = ImageFont.load_default()
-                        fill_color = 255  # Use 255 as the fill color (white text)
-                        comment = f"Index: {index_val}, Label: {label}, Prediction: {prediction}"
-
-                        draw.text((10, 10), comment, fill=fill_color, font=font)
-
-                        image_name = f"false_detected_images/{label}_{index_val}th_{label}predicted{prediction}.png"
-                        image_path = f"static/{image_name}"
-                        image_info['path'] = image_path
-                        image.save(image_path)
-    #debug assertion
-    for key, value in common.false_detected_dict.items():
-        if 'image_tensor' not in value:
-            print(f"Key: {key}, Value: {value}")
-
-    #  original assertion
-    for key, value in common.false_detected_dict.items():
-        assert 'image_tensor' in value, f"'image_tensor' key missing for entry: {key}"
-
+    print(f"Total processed images: {processed_images_count}")  # Total number of images processed
     return common.false_detected_dict
 
 def init_model(model_name, model):
@@ -141,14 +106,7 @@ def init_model(model_name, model):
 
     return model
 
-
-def stop_false_detected():
-    global stop_flag_fdi
-    stop_flag_fdi = True
-
-
-
-def start_false_detected(name, data, params):
+def start_false_detected(name,params):
 
     model = ConvolutionalNeuralNetwork(float(params["dropout_rate"]))
     model = init_model(name, model)

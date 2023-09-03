@@ -93,7 +93,6 @@ def start_training_dict(params):
     worker_process.start()
     worker_process.join()
 
-    #start_false_detection(current_model,adj)
     return
 
 
@@ -105,15 +104,11 @@ def fdi_start_route():
         return jsonify({"status": "no_model"})
 
 
-""""@app.route('/fdi_start', methods=['GET'])
-def fdi_start_route():
-    return fdi_start(adj)"""
-
 def fdi_start(params):
     global false_detected_thread
-    false_detected_thread = threading.Thread(target=start_false, args=[current_model, data, params.copy()])
+    false_detected_thread = threading.Thread(target=start_false, args=[current_model, params.copy()])
     false_detected_thread.start()
-    #false_detected_thread.join()
+    false_detected_thread.join()
     return jsonify({"status": "processing"})
 
 
@@ -189,7 +184,6 @@ def fdi_status():
 def visualize_false_detected_images():
 
     keys_list = list(common.false_detected_dict.keys())
-    #keys_list = list(false_detection.keys())
 
     if not keys_list:
         # Handle empty list case
@@ -209,7 +203,6 @@ def visualize_false_detected_images():
 
     current_key = keys_list[session['current_index']]
     current_detection = common.false_detected_dict[current_key]
-    #current_detection = false_detection[current_key]
     print(str(current_detection))
 
     if 'image_tensor' not in current_detection:
@@ -540,6 +533,6 @@ def handle_disconnect():
 if __name__ == '__main__':
     print('App started')
     webbrowser.open_new_tab('http://127.0.0.1:5001')
-    socketio.run(app, host='127.0.0.1', port=5001, debug=True)
+    socketio.run(app, host='127.0.0.1', port=5001, debug=False)
     app.run(debug=True)
 
