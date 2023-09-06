@@ -11,7 +11,7 @@ from flask_socketio import SocketIO
 from PIL import Image
 import base64, io, os, threading, json, webbrowser, shutil
 
-import common
+import common_dict
 # for start_training method
 from ml_utils.training import start_training as train
 from ml_utils.json_write import clear_file as clear
@@ -20,12 +20,12 @@ from ml_utils.training import stop_training
 from ml_utils.testing import test_drawing
 from ml_utils.print_overwrite import print, init_print
 from ml_utils.evaluate import stop_eval
-from ml_utils.data_beta import update_test_labels, clear_modifications
+from ml_utils.data_beta import update_training_labels, clear_modifications
 
 from ml_utils.false_detected import start_false_detected as start_false
 import sys
 sys.path.append('/Users/kian/zusatztaufgabe-usable-ml')
-from common import false_detected_dict, user_modified_labels
+from common_dict import false_detected_dict, user_modified_labels
 from torchvision import transforms
 
 # ---------------------- VARIABLES ----------------------#
@@ -37,8 +37,7 @@ app.secret_key = '3456'  # for using session
 # will be used for saving and loading models
 current_model = ""
 
-
-thread_done = False
+modified_data_set: bool
 
 
 # chart data
@@ -88,13 +87,25 @@ def update_data():
 
 # starts training in ml_utils.training.py with parameters
 def start_training_dict(params):
-    worker_process = threading.Thread(target=train, args=[current_model, data,
-                                                          socketio, params.copy()])
+    modified_data_set = False
+    worker_process = threading.Thread(target=train,
+                                      args=[current_model,
+                                            data,
+                                            socketio, params.copy(),
+                                            modified_data_set])
     worker_process.start()
     worker_process.join()
 
     return
 
+
+def start_training_dict_beta(params):
+    modified_data_set = True
+    worker_process = threading.Thread(target=train, args=[current_model, data,socketio, params.copy(),modified_data_set])
+    worker_process.start()
+    worker_process.join()
+
+    return
 
 @app.route('/fdi_start', methods=['GET'])
 def fdi_start_route():
@@ -144,31 +155,29 @@ def change_label():
     except KeyError:
         return jsonify(status="error", message="Label not provided.")
 
-    if not new_label or not new_label.isdigit() or int(new_label) not in range(10):
-        return jsonify(status="error", message="Invalid label provided. Must be a number between 0 and 9.")
 
     # Get the actual key using current_index from the session
-    keys_list = list(common.false_detected_dict.keys())
+    keys_list = list(common_dict.false_detected_dict.keys())
     current_key = keys_list[session['current_index']]
-    original_label = common.false_detected_dict[current_key]['label'] #jadid
+    original_label = common_dict.false_detected_dict[current_key]['label']
 
     # Compare new_label with original label for correct visualization of modified labels
     if int(new_label) == original_label:
         # If they are the same, remove 'actual_label' or set to None
-        common.false_detected_dict[current_key].pop('actual_label', None)
+        common_dict.false_detected_dict[current_key].pop('actual_label', None)
     else:
         # Update the false_detection's actual_label with the new_label
-        common.false_detected_dict[current_key]['actual_label'] = int(new_label)
+        common_dict.false_detected_dict[current_key]['actual_label'] = int(new_label)
 
         # Update the false_detection's actual_label with the new_label
-    common.false_detected_dict[current_key]['actual_label'] = int(new_label)
+    common_dict.false_detected_dict[current_key]['actual_label'] = int(new_label)
     print(f"Updated label for image {current_key} to {new_label}")
 
         # Append the modified key and label to user_modified_labels
-    common.user_modified_labels[current_key] = int(new_label)
-    update_test_labels(common.user_modified_labels, 256)
-        #return redirect(url_for('visualize_false_detected_images'))
-    return jsonify(status="success", message="Label updated successfully")
+    common_dict.user_modified_labels[current_key] = int(new_label)
+    update_training_labels(common_dict.user_modified_labels, 256)
+
+    return jsonify(status="success",message="Label updated successfully")
 
 
 @app.route('/fdi_status', methods=['GET'])
@@ -183,11 +192,11 @@ def fdi_status():
 @app.route('/fdi', methods=['GET', 'POST'])
 def visualize_false_detected_images():
 
-    keys_list = list(common.false_detected_dict.keys())
+    keys_list = list(common_dict.false_detected_dict.keys())
 
     if not keys_list:
         # Handle empty list case
-        return "Please train the model or load a trained model"
+        return "No false prediction found"
 
     if 'current_index' not in session:
         session['current_index'] = 0
@@ -202,13 +211,12 @@ def visualize_false_detected_images():
             session['current_index'] -= 1
 
     current_key = keys_list[session['current_index']]
-    current_detection = common.false_detected_dict[current_key]
-    print(str(current_detection))
+    current_detection = common_dict.false_detected_dict[current_key]
 
     if 'image_tensor' not in current_detection:
         return "Error: image_tensor key not found for the current detection."
     current_detection['image'] = tensor_to_image_base64(current_detection['image_tensor'])
-    return render_template('fdi.html', detection=current_detection, total_images=len(keys_list))
+    return render_template('fdi.html', detection=current_detection, total_images=len(keys_list), current_index=session['current_index'], keys_list=keys_list)
 
 
 def check_revert(revert):
@@ -242,6 +250,8 @@ def sendAlert(style, content):
 
 # ---------------------- APP ROUTES FLASK ----------------------#
 # Route to save false detected images to the database
+
+
 
 @app.route('/')
 def index():
@@ -294,6 +304,16 @@ def get_adjustments_data():
 
     # ---------------start -stop ------------------#
 
+@app.route('/start_beta', methods=['POST'])
+def start_beta():
+    revert = request.get_json()
+    print("LOG: RECEIVED TO RUN: " + str(adj))
+    print("LOG: STARTING TRAINING")
+    check_revert(revert)
+    update_data()
+    socketio.emit('update_chart', {'data': data})
+    start_training_dict_beta(adj)
+    return jsonify({'status': 'success'})
 
 @app.route('/start', methods=['POST'])
 def start():

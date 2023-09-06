@@ -7,10 +7,10 @@ from torch.optim import Optimizer, SGD
 import time, os, math
 import json
 
-from data_beta import get_data_loaders,update_test_labels
+from data_beta import get_data_loaders,update_training_labels
 import sys
 sys.path.append('/Users/kian/zusatztaufgabe-usable-ml')
-from common import user_modified_labels
+from common_dict import user_modified_labels
 
 
 def print_test_data():

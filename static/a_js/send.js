@@ -17,7 +17,9 @@ export function sendAdjustments() {
     xhr.open('POST', '/sendadjust', true);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send(JSON.stringify(adjustments));
-} 
+}
+
+
 
 // when start button is clicked, send data to server
 var start = document.getElementById('start');

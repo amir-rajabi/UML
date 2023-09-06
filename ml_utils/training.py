@@ -12,7 +12,7 @@ import torch
 from torch.optim import Optimizer, SGD
 
 import time, os, math
-
+from ml_utils.data_beta import get_data_loaders as loader_beta
 from ml_utils.data import get_data_loaders
 from ml_utils.evaluate import accuracy, init_eval_flag
 from ml_utils.model import ConvolutionalNeuralNetwork
@@ -45,14 +45,23 @@ def train_step(model: Module, optimizer: Optimizer, data: Tensor,
 def training(name, chart_data, socketio, dictionary, model: Module,
              optimizer: Optimizer,
              cuda: bool, n_epochs: int,
-             batch_size: int, loss_nr):
+             batch_size: int, loss_nr,
+             modified_data_set: bool):
+
     # for progressbar
     batches = math.ceil(60000 / batch_size)
     init_pb(socketio, batch_size, n_epochs)
 
     global_epoch = len(chart_data["d1"])
     run_index = get_run_num(f"data/{name}_epoch_data.json")
-    train_loader, test_loader = get_data_loaders(batch_size=batch_size)
+
+    if modified_data_set:
+        train_loader, test_loader = loader_beta(batch_size=batch_size)
+        pass
+    else:
+        train_loader, test_loader = get_data_loaders(batch_size=batch_size)
+        pass
+
     if cuda:
         model.cuda()
     for epoch in range(n_epochs):
@@ -136,8 +145,6 @@ def training(name, chart_data, socketio, dictionary, model: Module,
             continue
         break
 
-    #save_false_detected_images(loss_nr, model, test_loader, cuda,test_loader=test_loader)
-
     if cuda:
         empty_cache()
     if stop_flag:
@@ -159,7 +166,7 @@ def init_model(name, model):
 # socket to JS frontend
 # data is the current graph in JS
 # that will be updated by training
-def start_training(name, data, socketio, params):
+def start_training(name, data, socketio, params,modified_data_set):
     seed = ((len(data["run"]) << 3) * 31) % 256
     manual_seed(seed)
     np.random.seed(seed)
@@ -187,7 +194,8 @@ def start_training(name, data, socketio, params):
         cuda=cuda,
         n_epochs=int(params["epochs"]),
         batch_size=int(params["batch_size"]),
-        loss_nr=int(params["loss_function"])
+        loss_nr=int(params["loss_function"]),
+        modified_data_set= modified_data_set
     )
 
 

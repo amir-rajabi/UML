@@ -7,7 +7,7 @@
 from PIL import Image
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
-import json, os, common,torch,torchvision
+import json, os, common_dict,torch,torchvision
 
 ROOT_PATH = os.path.dirname(os.path.abspath('config.py'))
 MODIFICATIONS_FILE = os.path.join(ROOT_PATH, 'modifications.json')
@@ -68,7 +68,7 @@ def load_modifications(filename=MODIFICATIONS_FILE):
 
 #Adjust the update_test_labels function to both modify in-memory and save the modifications.
 #get the index_label_mapping in form {5: 3, 100: 8, 150: 2, ...} and save the changes to this data set.
-def update_test_labels(index_label_mapping, batch_size):
+def update_training_labels(index_label_mapping, batch_size):
     train_loader, _ = get_data_loaders(batch_size=batch_size)
 
     for batch_indices, _, targets in train_loader:
@@ -89,9 +89,9 @@ def update_test_labels(index_label_mapping, batch_size):
 def clear_modifications(filename=MODIFICATIONS_FILE):
     with open(filename, 'w') as file:
         json.dump({}, file)
-    for entry in common.false_detected_dict.values():
+    for entry in common_dict.false_detected_dict.values():
         entry.pop('actual_label', None)  # removes 'actual_label' if it exists, otherwise does nothing
         # Clear user_modified_labels
-    common.user_modified_labels.clear()
+    common_dict.user_modified_labels.clear()
 
 

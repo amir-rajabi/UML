@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader
 
 from PIL import Image, ImageDraw, ImageFont
 from typing import List, Dict, Union
-import common
+import common_dict
 import torchvision.transforms as transforms
 from torch import manual_seed, Tensor
 from ml_utils.model import ConvolutionalNeuralNetwork
@@ -41,8 +41,8 @@ def save_false_detected_images(loss_nr, model: Module, loader: DataLoader, cuda:
 
     # Create a directory to save the false detected images
     output_dir = "static/false_detected_images"
-    if common.false_detected_dict:
-        common.false_detected_dict.clear()
+    if common_dict.false_detected_dict:
+        common_dict.false_detected_dict.clear()
 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -88,12 +88,12 @@ def save_false_detected_images(loss_nr, model: Module, loader: DataLoader, cuda:
                         }
 
                         # Directly save the image info with index_val as the key
-                        common.false_detected_dict[index_val] = image_info
+                        common_dict.false_detected_dict[index_val] = image_info
                         print(index_val)
 
 
     print(f"Total processed images: {processed_images_count}")  # Total number of images processed
-    return common.false_detected_dict
+    return common_dict.false_detected_dict
 
 def init_model(model_name, model):
     if os.path.exists(f'data/{model_name}_model_new.pt'):
