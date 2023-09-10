@@ -37,6 +37,8 @@ var createHistory = true;
 
 var revert = document.getElementById('revert');
 var start = document.getElementById('start');
+var start_beta = document.getElementById('start_beta_train');
+
 var revertChecked = revert.checked;
 var lastIndexRun = revertIndexCalc(chartData.run);
 var revertedData = null;
@@ -533,6 +535,21 @@ revert.addEventListener("change", function(event) {
 });
 
 start.addEventListener("click", function(event) {
+  revertedData = null;
+  dia1.data.datasets[1].data = [];
+  dia2.data.datasets[1].data = [];
+  dia3.data.datasets[2].data = [];
+  dia3.data.datasets[3].data = [];
+
+  if (revertChecked) {
+    revertedData = Object.assign({}, chartData);
+    revertedData['epochs_per_runs'] = epochs_per_runs.map((x) => x);
+  }
+
+  revertChecked = false;
+})
+
+start_beta.addEventListener("click", function(event) {
   revertedData = null;
   dia1.data.datasets[1].data = [];
   dia2.data.datasets[1].data = [];

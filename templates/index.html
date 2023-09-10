@@ -28,6 +28,7 @@ year:           2023
     <script type="module" src="{{ url_for('static', filename='a_js/navigate.js') }}"></script>
     <script type="module" src="{{ url_for('static', filename='a_js/adjust.js') }}"></script>
     <script type="module" src="{{ url_for('static', filename='a_js/send.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='a_js/send_beta.js') }}"></script>
     <script type="module" src="{{ url_for('static', filename='a_js/onload.js') }}"></script>
     <script type="module" src="{{ url_for('static', filename='a_js/draw.js') }}"></script>
     <script type="module" src="{{ url_for('static', filename='a_js/reset.js') }}"></script>
@@ -37,6 +38,8 @@ year:           2023
     <script type="module" src="{{ url_for('static', filename='a_js/history.js') }}"></script>
     <script type="module" src="{{ url_for('static', filename='a_js/help.js') }}"></script>
     <script type="module" src="{{ url_for('static', filename='a_js/keyboard.js') }}"></script>
+
+
 </head>
 <body>
     <!-- signal please Wait... disapear if user use the browser back button -->
@@ -44,6 +47,8 @@ year:           2023
         window.onpageshow = function(event) {
             document.getElementById("loadingMessage").style.display = "none";
         };
+
+
 </script>
 
 
@@ -85,10 +90,11 @@ year:           2023
                                         Discard last run
                                     </label>
                                 </div>
-
+                        <button type="button" class="btn btn-info btn-lg" id="start_beta_train">Train with new Labels</button>
+                        <button type="button" class="btn btn-warning btn-lg" id="stop_beta_train">Stop Training</button>
                             </div>
                         </div>
-                        <button type="button" class="btn btn-primary btn-lg" id="start">Start</button>
+                        <button type="button" class="btn btn-primary btn-lg"  id="start" >Start</button>
                         <button type="button" class="btn btn-warning btn-lg" id="stop">Stop</button>
                     </div>
                 </div>

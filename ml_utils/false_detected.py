@@ -15,7 +15,7 @@ from ml_utils.model import ConvolutionalNeuralNetwork
 from torch.optim import Optimizer, SGD
 
 #from ml_utils.data_beta import get_data_loaders
-from ml_utils.data import get_data_loaders
+from ml_utils.data_beta import get_data_loaders
 
 loss_func = [F.cross_entropy, F.multi_margin_loss, F.multilabel_soft_margin_loss,
              F.soft_margin_loss, F.l1_loss, F.smooth_l1_loss, F.poisson_nll_loss]

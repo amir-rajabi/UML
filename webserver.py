@@ -24,6 +24,7 @@ from ml_utils.data_beta import update_training_labels, clear_modifications
 
 from ml_utils.false_detected import start_false_detected as start_false
 import sys
+
 sys.path.append('/Users/kian/zusatztaufgabe-usable-ml')
 from common_dict import false_detected_dict, user_modified_labels
 from torchvision import transforms
@@ -31,14 +32,15 @@ from torchvision import transforms
 # ---------------------- VARIABLES ----------------------#
 
 app = Flask(__name__)
-socketio = SocketIO(app,async_mode='threading')
+socketio = SocketIO(app, async_mode='threading')
 app.secret_key = '3456'  # for using session
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # Prevent caching
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
 
 # will be used for saving and loading models
 current_model = ""
 
 modified_data_set: bool
-
 
 # chart data
 data = {
@@ -69,6 +71,7 @@ def block_revert():
     if os.path.exists(f"data/{current_model}_model_new.pt"):
         socketio.emit('revert_allowed', True)
 
+
 # loads chart
 def update_data():
     if empty_missing_file(f"data/{current_model}_epoch_data.json"):
@@ -94,22 +97,26 @@ def start_training_dict(params):
                                             socketio, params.copy(),
                                             modified_data_set])
     worker_process.start()
-    worker_process.join()
+    #worker_process.join()
 
     return
 
 
 def start_training_dict_beta(params):
     modified_data_set = True
-    worker_process = threading.Thread(target=train, args=[current_model, data,socketio, params.copy(),modified_data_set])
-    worker_process.start()
-    worker_process.join()
+    worker_process_beta = threading.Thread(target=train,
+                                      args=[current_model, data, socketio, params.copy(), modified_data_set])
+    worker_process_beta.start()
+    worker_process_beta.join()
 
     return
 
+
 @app.route('/fdi_start', methods=['GET'])
 def fdi_start_route():
-    if os.path.exists(f'data/{current_model}_model_new.pt') or os.path.exists(f'data/{current_model}_model.pt'):
+    if os.path.exists(f'data/{current_model}_model_new.pt'):
+        return fdi_start(adj)
+    if os.path.exists(f'data/{current_model}_model.pt'):
         return fdi_start(adj)
     else:
         return jsonify({"status": "no_model"})
@@ -136,25 +143,23 @@ def tensor_to_image_base64(tensor_image):
     base64_encoded = base64.b64encode(img_bytes).decode('utf-8')
     return f"data:image/png;base64,{base64_encoded}"
 
+
 @app.route('/clear_modifications', methods=['POST'])
 def clear_modifications_route():
     try:
         clear_modifications()  # Call the function from data_beta.py
-        return jsonify(status="success", message="Modifications cleared!")
+        return jsonify(status="success", message="Modifications cleared!", alertType="danger")
 
     except Exception as e:
-        return jsonify(status="error", message=str(e))
+        return jsonify(status="error", message=str(e), alertType="danger")
 
 
 @app.route('/change_label', methods=['POST'])
 def change_label():
-    # Diagnostic print statement to see incoming form data
-    print(request.form)
     try:
         new_label = request.form['new_label']
     except KeyError:
-        return jsonify(status="error", message="Label not provided.")
-
+        return jsonify(status="error", message="Label not provided.", alertType="danger")
 
     # Get the actual key using current_index from the session
     keys_list = list(common_dict.false_detected_dict.keys())
@@ -163,21 +168,13 @@ def change_label():
 
     # Compare new_label with original label for correct visualization of modified labels
     if int(new_label) == original_label:
-        # If they are the same, remove 'actual_label' or set to None
         common_dict.false_detected_dict[current_key].pop('actual_label', None)
+        return jsonify(status="unchanged", message="Label remains unchanged", alertType="info")
     else:
-        # Update the false_detection's actual_label with the new_label
         common_dict.false_detected_dict[current_key]['actual_label'] = int(new_label)
-
-        # Update the false_detection's actual_label with the new_label
-    common_dict.false_detected_dict[current_key]['actual_label'] = int(new_label)
-    print(f"Updated label for image {current_key} to {new_label}")
-
-        # Append the modified key and label to user_modified_labels
-    common_dict.user_modified_labels[current_key] = int(new_label)
-    update_training_labels(common_dict.user_modified_labels, 256)
-
-    return jsonify(status="success",message="Label updated successfully")
+        common_dict.user_modified_labels[current_key] = int(new_label)
+        update_training_labels(common_dict.user_modified_labels, 256)
+        return jsonify(status="success", message="Label updated successfully", alertType="success")
 
 
 @app.route('/fdi_status', methods=['GET'])
@@ -189,9 +186,9 @@ def fdi_status():
 
     return jsonify(status="done")
 
+
 @app.route('/fdi', methods=['GET', 'POST'])
 def visualize_false_detected_images():
-
     keys_list = list(common_dict.false_detected_dict.keys())
 
     if not keys_list:
@@ -216,7 +213,8 @@ def visualize_false_detected_images():
     if 'image_tensor' not in current_detection:
         return "Error: image_tensor key not found for the current detection."
     current_detection['image'] = tensor_to_image_base64(current_detection['image_tensor'])
-    return render_template('fdi.html', detection=current_detection, total_images=len(keys_list), current_index=session['current_index'], keys_list=keys_list)
+    return render_template('fdi.html', detection=current_detection, total_images=len(keys_list),
+                           current_index=session['current_index'], keys_list=keys_list)
 
 
 def check_revert(revert):
@@ -247,10 +245,8 @@ def sendAlert(style, content):
     socketio.emit('sendAlert', {'data': data})
 
 
-
 # ---------------------- APP ROUTES FLASK ----------------------#
 # Route to save false detected images to the database
-
 
 
 @app.route('/')
@@ -304,8 +300,10 @@ def get_adjustments_data():
 
     # ---------------start -stop ------------------#
 
+
 @app.route('/start_beta', methods=['POST'])
 def start_beta():
+
     revert = request.get_json()
     print("LOG: RECEIVED TO RUN: " + str(adj))
     print("LOG: STARTING TRAINING")
@@ -313,7 +311,8 @@ def start_beta():
     update_data()
     socketio.emit('update_chart', {'data': data})
     start_training_dict_beta(adj)
-    return jsonify({'status': 'success'})
+    return jsonify(status='success')
+
 
 @app.route('/start', methods=['POST'])
 def start():
@@ -326,6 +325,13 @@ def start():
     start_training_dict(adj)
     return response
 
+
+@app.route('/stop_beta', methods=['POST'])
+def stop_beta():
+    print("LOG: STOP PRESSED")
+    stop_eval()
+    stop_training()
+    return response
 
 @app.route('/stop', methods=['POST'])
 def stop():
@@ -413,6 +419,7 @@ def restore_saved_models_html():
         return jsonify(json_data)
     else:
         return jsonify("response")
+
 
 # Not developed yet
 @app.route('/train_with_changed_labels', methods=['POST'])
@@ -555,4 +562,5 @@ if __name__ == '__main__':
     webbrowser.open_new_tab('http://127.0.0.1:5001')
     socketio.run(app, host='127.0.0.1', port=5001, debug=False)
     app.run(debug=True)
+
 

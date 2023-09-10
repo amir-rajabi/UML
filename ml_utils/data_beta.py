@@ -16,7 +16,6 @@ MODIFICATIONS_FILE = os.path.join(ROOT_PATH, 'modifications.json')
 class MNIST_beta(datasets.MNIST):
     def __init__(self, *args, **kwargs):
         super(MNIST_beta, self).__init__(*args, **kwargs)
-        #self.modifications = load_modifications()
 
     def __getitem__(self, index):
         # Load the modifications every time an item is requested

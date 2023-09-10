@@ -2,9 +2,13 @@
 authors:        Eren Kocadag, Benedikt Schmitz, Feliks Vdovichenko, Lucie Prokopy, Leiss Abdal Al, Johannes Ehrich
 institution:    Freie Universität Berlin
 institute:      Institut für Informatik
-module:         SWP - Usable Machine Learning 
+module:         SWP - Usable Machine Learning
 year:           2023
 -->
+<script type="module" src="{{ url_for('static', filename='a_js/adjust.js') }}"></script>
+
+
+
 
 <div class="column" id="sidebar-ctr">
     <div class="kachel" id="adjustments-kachel">
@@ -31,10 +35,22 @@ year:           2023
             <div class="kachel-description">Models</div>
         </button>
     </div>
-<button type="button" class="btn btn-primary" onclick="startFalseDetection()">Visualize False Detected Images</button>
-    <div id="loadingMessage" style="display: none;">
-    <p>Please Wait...</p>
+<div class="kachel" id="false-detection-kachel">
+    <button type="button" class="kachel_button btn light" id="false-detection-button" onclick="startFalseDetection()">
+        <img src="{{ url_for('static', filename='images/image.svg') }}" alt="Icon description" style="width:35px; height:35px;">
+        <div class="kachel-description">False Positives</div>
+    </button>
 </div>
+
+    <div id="loadingMessage" style="display: none;">
+    <div class="text-center">
+        <div class="spinner-border" role="status" style="margin-top: 20px;">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p style="text-align: center; margin-top: 10px;">Please Wait...</p>
+    </div>
+</div>
+
 
     <span id="sidebar-tobottom">
         <div class="kachel" id="glossary-kachel">
@@ -53,12 +69,6 @@ year:           2023
             <button id="reset-button" data-bs-toggle="modal" data-bs-target="#resetModal">
                 <img src="{{ url_for('static', filename='images/reset.svg') }}" alt="">
                 <div class="kachel-description">Reset</div>
-            </button>
-        </div>
-        <div class="kachel" id="fdi-kachel">
-            <button id="FDI-button" data-bs-toggle="modal" data-bs-target="#fdiModal">
-                <img src="{{ url_for('static', filename='images/fdi.svg') }}" alt="">
-                <div class="kachel-description">False Detected Images</div>
             </button>
         </div>
     </span>
@@ -93,4 +103,5 @@ function startFalseDetection() {
 
 
 </script>
+
 
