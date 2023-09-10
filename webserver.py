@@ -186,10 +186,17 @@ def fdi_status():
 
     return jsonify(status="done")
 
+def load_modifications():
+    with open("modifications.json", "r") as file:
+        modifications = json.load(file)
+    return modifications
 
 @app.route('/fdi', methods=['GET', 'POST'])
 def visualize_false_detected_images():
+    modifications = load_modifications()
+
     keys_list = list(common_dict.false_detected_dict.keys())
+
 
     if not keys_list:
         # Handle empty list case
@@ -209,6 +216,11 @@ def visualize_false_detected_images():
 
     current_key = keys_list[session['current_index']]
     current_detection = common_dict.false_detected_dict[current_key]
+
+    # Checking if the current_key exists in the modifications dictionary
+    if current_key in modifications:
+        # Updating the label in current_detection with the label from modifications dictionary
+        current_detection['actual_label'] = modifications[current_key]
 
     if 'image_tensor' not in current_detection:
         return "Error: image_tensor key not found for the current detection."
@@ -560,7 +572,7 @@ def handle_disconnect():
 if __name__ == '__main__':
     print('App started')
     webbrowser.open_new_tab('http://127.0.0.1:5001')
-    socketio.run(app, host='127.0.0.1', port=5001, debug=False)
+    socketio.run(app, host='127.0.0.1', port=5001, debug=True)
     app.run(debug=True)
 
 
