@@ -107,3 +107,5 @@ function getIMG(){
     };
     xhr9.send();
 }
+
+

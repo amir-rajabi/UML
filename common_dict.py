@@ -1,3 +1,3 @@
 false_detected_dict = {}
-user_modified_labels ={}
+user_modified_labels = {}
 

@@ -8,10 +8,11 @@
 
 from flask import Flask, render_template, request, jsonify, url_for, session, redirect
 from flask_socketio import SocketIO
-from PIL import Image
 import base64, io, os, threading, json, webbrowser, shutil
-
+import numpy as np
 import common_dict
+from PIL import Image, ImageOps
+
 # for start_training method
 from ml_utils.training import start_training as train
 from ml_utils.json_write import clear_file as clear
@@ -228,7 +229,26 @@ def visualize_false_detected_images():
     return render_template('fdi.html', detection=current_detection, total_images=len(keys_list),
                            current_index=session['current_index'], keys_list=keys_list)
 
+@app.route('/dti')
+def render_dti():
+    return render_template('dti.html')
 
+@app.route('/save_image', methods=['POST'])
+def save_image():
+    try:
+        data = request.json
+        image_data = data['image_data']
+        image_data = base64.b64decode(image_data)
+
+        image = Image.open(io.BytesIO(image_data)).convert('L')
+        image_np = np.array(image)
+
+
+
+        return jsonify(status="success"), 200
+    except Exception as e:
+        print(f"Exception occurred: {str(e)}")
+        return jsonify(status="error", error=str(e)), 400
 def check_revert(revert):
     if revert:
         if os.path.exists(f"data/{current_model}_model_new.pt"):
@@ -405,6 +425,39 @@ def get_image():
 
     # ---------------------- ROUTE SAVE LOAD ----------------#
 
+
+@app.route('/send_image', methods=['POST'])
+def send_image():
+    try:
+        data = request.json
+        image_data = data['image_data']
+        image_data = image_data.split(',')[1]
+        image_data = base64.b64decode(image_data)
+
+        # Open the image and convert it to grayscale
+        image = Image.open(io.BytesIO(image_data)).convert('L')
+
+        # Convert image to numpy array and crop the empty space
+        image_np = np.array(image)
+        non_empty_columns = np.where(image_np.min(axis=0)<255)[0]
+        non_empty_rows = np.where(image_np.min(axis=1)<255)[0]
+        cropBox = (min(non_empty_columns), min(non_empty_rows), max(non_empty_columns), max(non_empty_rows))
+        image_np_crop = image_np[cropBox[1]:cropBox[3]+1, cropBox[0]:cropBox[2]+1]
+
+        # Convert back to image and resize to 28x28
+        image_crop = Image.fromarray(image_np_crop)
+        image_resized = ImageOps.fit(image_crop, (28, 28), method=0, bleed=0.0)
+
+        # Save the processed image
+        image_resized.save('static/images/output_draw.png')
+
+        with open('static/images/output_draw.png', 'rb') as image_file:
+            encoded_image = base64.b64encode(image_file.read()).decode('utf-8')
+
+        response = {'image': encoded_image}
+        return jsonify(response), 200
+    except Exception as e:
+        return jsonify(status="error", error=str(e)), 400
 
 @app.route('/saved_models_html', methods=['POST'])
 def send_saved_models_html():

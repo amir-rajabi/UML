@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bs.css') }}">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Canvas Drawing</title>
+
+    <script type="module" src="{{ url_for('static', filename='a_js/draw_data.js') }}"></script>
+    <script src="static/a_js/alerts.js"></script>
+
+
+</head>
+<body>
+
+<canvas id="drawingcanvas" width="280" height="280"></canvas>
+<button id="clearButton" class="btn btn-outline-light btn-lg">Clear</button>
+<button id="saveButton" class="btn btn-outline-light btn-lg" disabled>Save</button>
+<div id="alerts_ctr"></div>
+
+<span id="predicted_no">&nbsp;</span>
+<span id="confidence_value">&nbsp;</span>
+<img id="output_img"  src="" style="display: none;" alt="Output Image" />
+
+</body>
+</html>

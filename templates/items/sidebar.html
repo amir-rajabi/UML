@@ -42,6 +42,14 @@ year:           2023
     </button>
 </div>
 
+
+<div class="kachel" id="save_test_image">
+    <button type="button" class="kachel_button btn light" id="save_test_image_button" onclick="starttestimagedraw()">
+        <img src="{{ url_for('static', filename='images/image.svg') }}" alt="Icon description" style="width:35px; height:35px;">
+        <div class="kachel-description">Create Image</div>
+    </button>
+</div>
+
     <div id="loadingMessage" style="display: none;">
     <div class="text-center">
         <div class="spinner-border" role="status" style="margin-top: 20px;">
@@ -99,6 +107,10 @@ function startFalseDetection() {
             }, 1000);
         }
     });
+}
+
+function starttestimagedraw() {
+    window.location.href = '/dti';
 }
 
 
