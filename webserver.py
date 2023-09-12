@@ -434,6 +434,7 @@ def random_string(length):
     return ''.join(random.choice(letters) for _ in range(length))
 
 
+
 @app.route('/send_image', methods=['POST'])
 def send_image():
     try:
@@ -461,11 +462,14 @@ def send_image():
         if not os.path.exists(folder_path):
             os.makedirs(folder_path)
 
-        unique_filename = f'{random_string(10)}.png'
+        unique_filename = f'{random_string(16)}.png'
         image_path = os.path.join(folder_path, unique_filename)
-        image_resized.save(image_path)
 
-        # Save the processed image
+        # Ensure the image is in the format compatible with MNIST
+        image_resized = image_resized.convert('L')  # Convert to grayscale
+        image_resized.save(image_path, format='PNG')  # Save as PNG
+
+        # Save the processed image with the previous naming method in the 'static/images/output_draw.png' path
         image_resized.save('static/images/output_draw.png')
 
         with open('static/images/output_draw.png', 'rb') as image_file:

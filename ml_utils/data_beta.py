@@ -8,6 +8,7 @@ from PIL import Image
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 import json, os, common_dict,torch,torchvision
+import re
 
 ROOT_PATH = os.path.dirname(os.path.abspath('config.py'))
 MODIFICATIONS_FILE = os.path.join(ROOT_PATH, 'modifications.json')
@@ -17,11 +18,36 @@ class MNIST_beta(datasets.MNIST):
     def __init__(self, *args, **kwargs):
         super(MNIST_beta, self).__init__(*args, **kwargs)
 
+        self.new_images = []
+        self.new_labels = []
+
+        folder_path = os.path.join(os.getcwd(), 'New Test Images')
+        if not self.train:
+            for filename in os.listdir(folder_path):
+                if filename.endswith('.png'):
+                    match = re.search(r'.{16}(\d)\.png$', filename)
+                    if match:
+                        label = int(match.group(1))
+                        image_path = os.path.join(folder_path, filename)
+                        image = Image.open(image_path).convert('L')
+                        self.new_images.append(image)
+                        self.new_labels.append(label)
+                    else:
+                        print(f"Filename {filename} did not match the pattern")
+
+    def __len__(self):
+        return super(MNIST_beta, self).__len__() + len(self.new_images)
+
     def __getitem__(self, index):
-        # Load the modifications every time an item is requested
         self.modifications = load_modifications()
 
-        img, target = super(MNIST_beta, self).__getitem__(index)
+        if index < super(MNIST_beta, self).__len__():
+            img, target = super(MNIST_beta, self).__getitem__(index)
+        else:
+            img = self.new_images[index - super(MNIST_beta, self).__len__()]
+            target = self.new_labels[index - super(MNIST_beta, self).__len__()]
+            img = torchvision.transforms.ToTensor()(img)
+            img = torchvision.transforms.Normalize(mean=(0.1307,), std=(0.3081,))(img)
 
         # Apply the modification if the index is in the modifications list
         if str(index) in self.modifications:  # JSON keys are strings
