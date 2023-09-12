@@ -8,7 +8,7 @@
 
 from flask import Flask, render_template, request, jsonify, url_for, session, redirect
 from flask_socketio import SocketIO
-import base64, io, os, threading, json, webbrowser, shutil
+import base64, io, os, threading, json, webbrowser, shutil, string, random
 import numpy as np
 import common_dict
 from PIL import Image, ImageOps
@@ -233,22 +233,7 @@ def visualize_false_detected_images():
 def render_dti():
     return render_template('dti.html')
 
-@app.route('/save_image', methods=['POST'])
-def save_image():
-    try:
-        data = request.json
-        image_data = data['image_data']
-        image_data = base64.b64decode(image_data)
 
-        image = Image.open(io.BytesIO(image_data)).convert('L')
-        image_np = np.array(image)
-
-
-
-        return jsonify(status="success"), 200
-    except Exception as e:
-        print(f"Exception occurred: {str(e)}")
-        return jsonify(status="error", error=str(e)), 400
 def check_revert(revert):
     if revert:
         if os.path.exists(f"data/{current_model}_model_new.pt"):
@@ -425,6 +410,29 @@ def get_image():
 
     # ---------------------- ROUTE SAVE LOAD ----------------#
 
+@app.route('/save_image', methods=['POST'])
+def save_image():
+    try:
+        data = request.json
+        image_data = data['image_data']
+        image_data = base64.b64decode(image_data)
+
+        image = Image.open(io.BytesIO(image_data)).convert('L')
+        image_np = np.array(image)
+
+
+
+        return jsonify(status="success"), 200
+    except Exception as e:
+        print(f"Exception occurred: {str(e)}")
+        return jsonify(status="error", error=str(e)), 400
+
+
+# Function to generate a random string of characters
+def random_string(length):
+    letters = string.ascii_letters + string.digits
+    return ''.join(random.choice(letters) for _ in range(length))
+
 
 @app.route('/send_image', methods=['POST'])
 def send_image():
@@ -447,6 +455,15 @@ def send_image():
         # Convert back to image and resize to 28x28
         image_crop = Image.fromarray(image_np_crop)
         image_resized = ImageOps.fit(image_crop, (28, 28), method=0, bleed=0.0)
+
+        # Save the processed image in "New Test Images" folder with a unique random name
+        folder_path = os.path.join(os.getcwd(), 'New Test Images')
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path)
+
+        unique_filename = f'{random_string(10)}.png'
+        image_path = os.path.join(folder_path, unique_filename)
+        image_resized.save(image_path)
 
         # Save the processed image
         image_resized.save('static/images/output_draw.png')
@@ -529,7 +546,7 @@ def save_model():
         model = f"{current_model}_model.pt"
     else:
         sendAlert(3, "Model to store was not found")
-        print(f"ERROR:{model} doesn't exists")
+        print(f"ERROR:model doesn't exists")
         return response
 
     print("LOG: model to save: " + model)
