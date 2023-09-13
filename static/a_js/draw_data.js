@@ -10,33 +10,51 @@ var canvas = document.getElementById('drawingcanvas');
   save_button.disabled = true;  // Initially disable the save button
   var adjustedImageData = null;
 
+
   canvas.addEventListener('mousedown', startDrawing);
   canvas.addEventListener('mousemove', draw);
   canvas.addEventListener('mouseup', stopDrawing);
   canvas.addEventListener('mouseleave', stopDrawing);
 
-  save_button.addEventListener('click', function(){
+  var adjustedImageData;
+
+save_button.addEventListener('click', function(){
     var imageData = canvas.toDataURL();
+    var selectedLabel = document.getElementById('new_label').value;  // Get the selected label
 
     // Get the adjusted image
-    getIMG(imageData, function(){
-      if(adjustedImageData) {
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', '/save_image', true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.onload = function() {
-          if (xhr.status === 200) {
-            createAlert(1, 'Image saved successfully.');
-          } else {
-            createAlert(3, 'There was an error saving the image.');
-          }
-        };
-        xhr.send(JSON.stringify({ image_data: adjustedImageData }));
-      } else {
-        createAlert(3, 'No adjusted image data to save.');
-      }
+    getIMG(imageData, function(response){
+        if(response.status === "success") {
+            createAlert(1, response.message);  // Create success alert
+            document.getElementById('new_label').value = '0';  // Reset the toggle after saving
+        } else {
+            createAlert(3, response.message);  // Create error alert
+        }
     });
-  });
+});
+
+function getIMG(imageData, callback) {
+    var selectedLabel = document.getElementById('new_label').value;  // Get the selected label
+
+    var xhr9 = new XMLHttpRequest();
+    xhr9.open('POST', '/send_image', true);
+    xhr9.setRequestHeader('Content-Type', 'application/json');
+    xhr9.responseType = 'json';
+    xhr9.onload = function() {
+        var response = xhr9.response;
+
+        if (xhr9.status === 200 && response.status === "success") {
+            adjustedImageData = response.image;
+            var imageUrl = "data:image/png;base64," + adjustedImageData;
+            output_img.src = imageUrl;
+            callback(response);
+        } else {
+            callback(response);
+        }
+    };
+    xhr9.send(JSON.stringify({ image_data: imageData, label: selectedLabel }));
+}
+
 
   clear_button.addEventListener('click', function(){
     clear_canvas();
@@ -74,19 +92,28 @@ var canvas = document.getElementById('drawingcanvas');
     save_button.disabled = true
   }
 
-  function getIMG(imageData, callback){
-    var xhr9 = new XMLHttpRequest();
-    xhr9.open('POST', '/send_image', true);
-    xhr9.setRequestHeader('Content-Type', 'application/json');
-    xhr9.responseType = 'json';
-    xhr9.onload = function() {
-      if (xhr9.status === 200) {
-        var response = xhr9.response;
-        adjustedImageData = response.image;
-        var imageUrl = "data:image/png;base64," + adjustedImageData;
-        output_img.src = imageUrl;
-        callback();
-      }
-    };
-    xhr9.send(JSON.stringify({ image_data: imageData }));
+
+
+function createAlert(type, message) {
+  let alertContainer = document.getElementById('alerts_ctr');
+  let alertElement = document.createElement('div');
+
+  let alertClass = 'alert ';
+  if (type === 1) {
+    alertClass += 'alert-success';
+  } else if (type === 3) {
+    alertClass += 'alert-danger';
+  } else {
+    alertClass += 'alert-primary';
   }
+
+  alertElement.setAttribute('class', alertClass);
+  alertElement.setAttribute('role', 'alert');
+  alertElement.textContent = message;
+
+  alertContainer.appendChild(alertElement);
+
+  setTimeout(() => {
+    alertElement.remove();
+  }, 5000); // The alert will be removed after 5 seconds
+}

@@ -25,7 +25,7 @@ class MNIST_beta(datasets.MNIST):
         if not self.train:
             for filename in os.listdir(folder_path):
                 if filename.endswith('.png'):
-                    match = re.search(r'.{16}(\d)\.png$', filename)
+                    match = re.search(r'.{32}(\d)\.png$', filename)
                     if match:
                         label = int(match.group(1))
                         image_path = os.path.join(folder_path, filename)
@@ -68,6 +68,9 @@ def get_data_loaders(batch_size):
     # MNIST datasets
     train_dataset = MNIST_beta('./data', train=True, download=True, transform=transform)
     test_dataset = MNIST_beta('./data', train=False, download=True, transform=transform)
+
+    # Print the total number of images in the test dataset
+    print(f"Total number of images in the test dataset: {len(test_dataset)}")
 
     # Data loaders
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=False)

@@ -5,22 +5,77 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bs.css') }}">
 
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Canvas Drawing</title>
 
     <script type="module" src="{{ url_for('static', filename='a_js/draw_data.js') }}"></script>
-    <script src="static/a_js/alerts.js"></script>
 
+    <style>
+
+
+    #alerts_ctr {
+        width: 300px; /* Adjust as needed */
+        position: fixed;
+        top: 40px;
+        right: 20px;
+    }
+
+
+        .center-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding-top: 60px;
+
+        }
+        .buttons {
+            display: flex;
+            gap: 10px;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
 
 </head>
 <body>
+    <a href="http://127.0.0.1:5001/" class="btn btn-outline-light" style="position: absolute; top: 10px; left: 10px;">Go to First Page</a>
+    <div id="alerts_ctr"></div>
 
-<canvas id="drawingcanvas" width="280" height="280"></canvas>
-<button id="clearButton" class="btn btn-outline-light btn-lg">Clear</button>
-<button id="saveButton" class="btn btn-outline-light btn-lg" disabled>Save</button>
-<div id="alerts_ctr"></div>
+
+    <h1 style="font-size: 34px; margin-top: 60px;text-align: center; margin-bottom: 20px;"> Save new images to Test Dataset</h1>
+
+<div class="center-container">
+    <canvas id="drawingcanvas" width="280" height="280"></canvas>
+     <div class="d-flex align-items-center" style="margin-bottom: 40px">
+    <div style="flex-grow: 1; display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 1rem; background-color: #0F1116; color: #fff;">
+        <div style="flex-grow: 1; text-align: center;margin-right: 10px;">Choose New Label:</div>
+        <select id="new_label" name="new_label" class="btn btn-light dropdown-toggle" style="width: 60px; height: 100%; border-radius: 5;">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+        </select>
+    </div>
+</div>
+
+    <div class="buttons">
+        <button id="clearButton" class="btn btn-outline-light btn-lg">Clear</button>
+        <button id="saveButton" class="btn btn-outline-light btn-lg" disabled>Save</button>
+
+    </div>
+</div>
 
 <span id="predicted_no">&nbsp;</span>
 <span id="confidence_value">&nbsp;</span>

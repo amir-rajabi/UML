@@ -410,23 +410,6 @@ def get_image():
 
     # ---------------------- ROUTE SAVE LOAD ----------------#
 
-@app.route('/save_image', methods=['POST'])
-def save_image():
-    try:
-        data = request.json
-        image_data = data['image_data']
-        image_data = base64.b64decode(image_data)
-
-        image = Image.open(io.BytesIO(image_data)).convert('L')
-        image_np = np.array(image)
-
-
-
-        return jsonify(status="success"), 200
-    except Exception as e:
-        print(f"Exception occurred: {str(e)}")
-        return jsonify(status="error", error=str(e)), 400
-
 
 # Function to generate a random string of characters
 def random_string(length):
@@ -442,6 +425,10 @@ def send_image():
         image_data = data['image_data']
         image_data = image_data.split(',')[1]
         image_data = base64.b64decode(image_data)
+
+        label = data['label']  # Get the label from the request data
+
+
 
         # Open the image and convert it to grayscale
         image = Image.open(io.BytesIO(image_data)).convert('L')
@@ -462,24 +449,23 @@ def send_image():
         if not os.path.exists(folder_path):
             os.makedirs(folder_path)
 
-        unique_filename = f'{random_string(16)}.png'
+        unique_filename = f'{random_string(32)}{label}.png'
         image_path = os.path.join(folder_path, unique_filename)
 
-        # Ensure the image is in the format compatible with MNIST
         image_resized = image_resized.convert('L')  # Convert to grayscale
         image_resized.save(image_path, format='PNG')  # Save as PNG
 
-        # Save the processed image with the previous naming method in the 'static/images/output_draw.png' path
+        # Save as output_draw.png also
         image_resized.save('static/images/output_draw.png')
 
         with open('static/images/output_draw.png', 'rb') as image_file:
             encoded_image = base64.b64encode(image_file.read()).decode('utf-8')
 
         response = {'image': encoded_image}
-        return jsonify(response), 200
-    except Exception as e:
-        return jsonify(status="error", error=str(e)), 400
+        return jsonify(status="success", message="Image saved successfully."), 200
 
+    except Exception as e:
+        return jsonify(status="error", error=str(e), message="There was an error saving the image."), 400
 @app.route('/saved_models_html', methods=['POST'])
 def send_saved_models_html():
     saved_models_json = 'data/saved_models.json'
