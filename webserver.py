@@ -201,7 +201,7 @@ def visualize_false_detected_images():
 
     if not keys_list:
         # Handle empty list case
-        return "No false prediction found"
+        return render_template('fdi-no-image.html')
 
     if 'current_index' not in session:
         session['current_index'] = 0

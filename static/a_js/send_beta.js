@@ -21,7 +21,7 @@ export function sendAdjustments() {
 
 
 
-// when start button is clicked, send data to server
+// when Train with Modification button is clicked, send data to server
 var start_beta_train = document.getElementById('start_beta_train');
 var stop_beta_train = document.getElementById('stop_beta_train');
 var revert = document.getElementById('revert');
