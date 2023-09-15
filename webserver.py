@@ -234,6 +234,10 @@ def render_dti():
     return render_template('dti.html')
 
 
+@app.route('/fdinm')
+def fdinomodel():
+    return render_template('fdi-no-model.html')
+
 def check_revert(revert):
     if revert:
         if os.path.exists(f"data/{current_model}_model_new.pt"):

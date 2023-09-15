@@ -40,12 +40,9 @@ def save_false_detected_images(loss_nr, model: Module, loader: DataLoader, cuda:
 
 
     # Create a directory to save the false detected images
-    output_dir = "static/false_detected_images"
     if common_dict.false_detected_dict:
         common_dict.false_detected_dict.clear()
 
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
 
     with torch.no_grad():
         for index, img, target in loader:

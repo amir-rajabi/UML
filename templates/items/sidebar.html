@@ -8,8 +8,6 @@ year:           2023
 <script type="module" src="{{ url_for('static', filename='a_js/adjust.js') }}"></script>
 
 
-
-
 <div class="column" id="sidebar-ctr">
     <div class="kachel" id="adjustments-kachel">
         <button class="kachel_button current-kachel" id="adjust-button">
@@ -36,7 +34,7 @@ year:           2023
         </button>
     </div>
 <div class="kachel" id="false-detection-kachel">
-    <button type="button" class="kachel_button" id="false-detection-button" onclick="startFalseDetection()">
+    <button class="kachel_button" id="false-detection-button" onclick="startFalseDetection()">
         <img src="{{ url_for('static', filename='images/tag.svg') }}" alt="">
         <div class="kachel-description">Modify Labels</div>
     </button>
@@ -44,7 +42,7 @@ year:           2023
 
 
 <div class="kachel" id="save_test_image">
-    <button type="button" class="kachel_button" id="save_test_image_button" onclick="starttestimagedraw()">
+    <button class="kachel_button" id="save_test_image_button" onclick="starttestimagedraw()">
         <img src="{{ url_for('static', filename='images/image.svg') }}" alt="">
         <div class="kachel-description">Add Image</div>
     </button>
@@ -83,15 +81,20 @@ year:           2023
 </div>
 
 <script>
+
+
 function startFalseDetection() {
     document.getElementById("loadingMessage").style.display = "block"; // Display the "Please wait" message
+    document.body.style.cursor = 'wait';
 
     fetch('/fdi_start') // Start False detcted procces
     .then(response => response.json())
     .then(data => {
         if (data.status === "no_model") {
             document.getElementById("loadingMessage").style.display = "none"; // Hide the "Please wait" message
-            alert('Please train the model or load a trained model'); // Notify the user
+            window.location.href = '/fdinm';
+            document.body.style.cursor = 'default'; // Change the cursor back to default
+
         }
         else if (data.status === "processing") {
             // Start polling the server every second to check if processing is done
@@ -101,6 +104,8 @@ function startFalseDetection() {
                 .then(data => {
                     if (data.status === "done") {
                         clearInterval(interval); // Stop polling
+                        document.body.style.cursor = 'default'; // Change the cursor back to default
+
                         window.location.href = '/fdi'; // Redirect to a different endpoint to fetch final results
                     }
                 });

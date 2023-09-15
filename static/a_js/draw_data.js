@@ -25,7 +25,9 @@ save_button.addEventListener('click', function(){
     // Get the adjusted image
     getIMG(imageData, function(response){
         if(response.status === "success") {
-            createAlert(1, response.message);  // Create success alert
+            createAlert(1, response.message);  //  success alert
+            clear_canvas();
+
             document.getElementById('new_label').value = '0';  // Reset the toggle after saving
         } else {
             createAlert(3, response.message);  // Create error alert
