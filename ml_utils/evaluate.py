@@ -14,12 +14,10 @@ stop_flag_eval = False
 loss_func = [F.cross_entropy, F.multi_margin_loss, F.multilabel_soft_margin_loss,
              F.soft_margin_loss, F.l1_loss, F.smooth_l1_loss, F.poisson_nll_loss]
 
-# Global dictionary to store false detected images
-#false_detected_dict = {i: {} for i in range(10)}
+
 
 
 def accuracy(loss_nr, model: Module, loader: DataLoader, cuda: bool) -> (float, float):
-    #global false_detected_dict  # Access the global variable
 
     model.eval()
     losses = []

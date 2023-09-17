@@ -16,6 +16,8 @@ var canvas = document.getElementById('drawingcanvas');
   canvas.addEventListener('mouseup', stopDrawing);
   canvas.addEventListener('mouseleave', stopDrawing);
 
+  window.onload = getFileCount;
+
   var adjustedImageData;
 
 save_button.addEventListener('click', function(){
@@ -27,12 +29,15 @@ save_button.addEventListener('click', function(){
         if(response.status === "success") {
             createAlert(1, response.message);  //  success alert
             clear_canvas();
+            getFileCount();
+
 
             document.getElementById('new_label').value = '0';  // Reset the toggle after saving
         } else {
             createAlert(3, response.message);  // Create error alert
         }
     });
+
 });
 
 function getIMG(imageData, callback) {
@@ -56,6 +61,23 @@ function getIMG(imageData, callback) {
     };
     xhr9.send(JSON.stringify({ image_data: imageData, label: selectedLabel }));
 }
+
+
+function getFileCount() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/file_count', true);
+    xhr.responseType = 'json';
+    xhr.onload = function() {
+        var response = xhr.response;
+        if (xhr.status === 200 && response.status === "success") {
+            document.getElementById('fileCount').textContent = " Total saved images: " + response.file_count;
+        } else {
+            console.error("Error getting file count: ", response.message);
+        }
+    };
+    xhr.send();
+}
+
 
 
   clear_button.addEventListener('click', function(){

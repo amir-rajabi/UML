@@ -6,15 +6,11 @@ from torch.autograd import Variable
 from torch.nn import Module
 from torch.utils.data import DataLoader
 
-from PIL import Image, ImageDraw, ImageFont
-from typing import List, Dict, Union
+from PIL import Image
 import common_dict
 import torchvision.transforms as transforms
-from torch import manual_seed, Tensor
 from ml_utils.model import ConvolutionalNeuralNetwork
-from torch.optim import Optimizer, SGD
 
-#from ml_utils.data import get_data_loaders
 from ml_utils.data_beta import get_data_loaders
 
 loss_func = [F.cross_entropy, F.multi_margin_loss, F.multilabel_soft_margin_loss,
@@ -39,7 +35,7 @@ def save_false_detected_images(loss_nr, model: Module, loader: DataLoader, cuda:
     processed_images_count = 0  # total images counter
 
 
-    # Create a directory to save the false detected images
+
     if common_dict.false_detected_dict:
         common_dict.false_detected_dict.clear()
 
@@ -75,18 +71,18 @@ def save_false_detected_images(loss_nr, model: Module, loader: DataLoader, cuda:
                         prediction = pred[j].item()
 
                         # Use individual_index for the unique identifier
-                        index_val = individual_index.item()
+                        index_val = individual_index
 
                         image_info = {
-                            'index': index_val,  # Storing the index value in the dict
+                            'index': index_val,
                             'image_tensor': image_tensor,
                             'label': label,
                             'prediction': prediction
                         }
 
-                        # Directly save the image info with index_val as the key
+                        # index_val as the key
                         common_dict.false_detected_dict[index_val] = image_info
-                        print(index_val)
+                        print("Image",index_val, "was falsly detected")
 
 
     print(f"Total processed images: {processed_images_count}")  # Total number of images processed

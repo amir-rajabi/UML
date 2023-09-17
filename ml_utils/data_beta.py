@@ -3,15 +3,15 @@
 # institute:     Institut für Informatik
 # module:        SWP - Usable Machine Learning
 # year:          2023
-
+import torch
 from PIL import Image
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
-import json, os, common_dict,torch,torchvision
+import json, os,torch,torchvision, sys
 import re
+import common_dict
 
-ROOT_PATH = os.path.dirname(os.path.abspath('config.py'))
-MODIFICATIONS_FILE = os.path.join(ROOT_PATH, 'modifications.json')
+MODIFICATIONS_FILE = os.path.join(os.getcwd(),'modifications.json')
 
 
 class MNIST_beta(datasets.MNIST):
@@ -22,6 +22,7 @@ class MNIST_beta(datasets.MNIST):
         self.new_labels = []
 
         folder_path = os.path.join(os.getcwd(), 'New Test Images')
+
         if not self.train:
             for filename in os.listdir(folder_path):
                 if filename.endswith('.png'):
@@ -41,20 +42,28 @@ class MNIST_beta(datasets.MNIST):
     def __getitem__(self, index):
         self.modifications = load_modifications()
 
-        if index < super(MNIST_beta, self).__len__():
+        if self.train:
             img, target = super(MNIST_beta, self).__getitem__(index)
+            if str(index) in self.modifications:
+                modified_label = int(self.modifications[str(index)])
+                target = torch.tensor(modified_label, dtype=torch.long)
         else:
-            img = self.new_images[index - super(MNIST_beta, self).__len__()]
-            target = self.new_labels[index - super(MNIST_beta, self).__len__()]
-            img = torchvision.transforms.ToTensor()(img)
-            img = torchvision.transforms.Normalize(mean=(0.1307,), std=(0.3081,))(img)
-
-        # Apply the modification if the index is in the modifications list
-        if str(index) in self.modifications:  # JSON keys are strings
-            modified_label = int(self.modifications[str(index)])  # Convert back to int
-            target = torch.tensor(modified_label, dtype=torch.long)  # Convert to tensor
+            if index < super(MNIST_beta, self).__len__():
+                img, target = super(MNIST_beta, self).__getitem__(index)
+            else:
+                img = self.new_images[index - super(MNIST_beta, self).__len__()]
+                target = self.new_labels[index - super(MNIST_beta, self).__len__()]
+                img = torchvision.transforms.ToTensor()(img)
+                img = torchvision.transforms.Normalize(mean=(0.1307,), std=(0.3081,))(img)
 
         return index, img, target
+
+
+def custom_collate(batch):
+    indices = [item[0] for item in batch]
+    images = torch.stack([item[1] for item in batch])
+    targets = torch.tensor([item[2] for item in batch])  # Convert targets to tensor
+    return indices, images, targets
 
 
 def get_data_loaders(batch_size):
@@ -73,8 +82,8 @@ def get_data_loaders(batch_size):
     print(f"Total number of images in the test dataset: {len(test_dataset)}")
 
     # Data loaders
-    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=False)
-    test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, collate_fn=custom_collate)
+    test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False,collate_fn=custom_collate)
 
     return train_loader, test_loader
 
@@ -102,9 +111,9 @@ def update_training_labels(index_label_mapping, batch_size):
     for batch_indices, _, targets in train_loader:
         for idx, new_label in index_label_mapping.items():
             # Check if idx is in the current batch of indices
-            if idx in batch_indices.tolist():
-                position_in_batch = (
-                            batch_indices == idx).nonzero().item()  # get the position of idx within the current batch
+            if idx in batch_indices:
+                position_in_batch = batch_indices.index(idx)
+
                 targets[position_in_batch] = new_label
 
     # Save modifications to disk

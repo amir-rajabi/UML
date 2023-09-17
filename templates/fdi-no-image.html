@@ -1,43 +1,40 @@
 <!doctype html>
 <html lang="en">
 <head>
-
    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bs.css') }}">
+   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bs.css') }}">
   <meta charset="UTF-8">
   <meta name="viewport"
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <style>
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .centered-container {
+        text-align: center;
+    }
+
+    .btn {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+    }
+  </style>
 </head>
 <body>
-    <a href="http://127.0.0.1:5001/" class="btn btn-outline-light" style="position: absolute; top: 10px; left: 10px;">&laquo;Go to First Page</a>
+    <a href="http://127.0.0.1:5001/" class="btn btn-outline-light">&laquo;Go to First Page</a>
 
-  <h1>No False Predictions Found</h1>
-  <h4>There are currently no false predicted image available for visualization due to the 100% accuracy on training dataset</h4>
-
-
-    <style>
-
-
-
-    body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    margin: 0;
-}
-
-h1, h4 {
-    text-align: center;
-}
-
-
-
-
-    <style>
-
-
+    <div class="centered-container">
+        <h1>No False Predictions Found</h1>
+        <h4>There are currently no false predicted image available for visualization due to the 100% accuracy on training dataset</h4>
+    </div>
 </body>
 </html>

@@ -30,12 +30,12 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding-top: 60px;
+            padding-top: 30px;
 
         }
         .buttons {
             display: flex;
-            gap: 10px;
+            gap: 30px;
         }
         canvas {
             display: block;
@@ -54,8 +54,8 @@
     <canvas id="drawingcanvas" width="280" height="280"></canvas>
      <div class="d-flex align-items-center" style="margin-bottom: 40px">
     <div style="flex-grow: 1; display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 1rem; background-color: #0F1116; color: #fff;">
-        <div style="flex-grow: 1; text-align: center;margin-right: 10px;">Choose New Label:</div>
-        <select id="new_label" name="new_label" class="btn btn-light dropdown-toggle" style="width: 60px; height: 100%; border-radius: 5;">
+        <div style="flex-grow: 1; text-align: center;margin-right: 10px;font-size: 15px;"> New Label:</div>
+        <select id="new_label" name="new_label" class="btn btn-light dropdown-toggle" style="width: 60px; height: 100%; border-radius: 10;">
             <option value="0">0</option>
             <option value="1">1</option>
             <option value="2">2</option>
@@ -68,18 +68,18 @@
             <option value="9">9</option>
         </select>
     </div>
-</div>
 
-    <div class="buttons">
+</div>
+<div class="buttons">
         <button id="clearButton" class="btn btn-outline-light btn-lg">Clear</button>
         <button id="saveButton" class="btn btn-outline-light btn-lg" disabled>Save</button>
-
     </div>
+
+    <span id="fileCount" style="display: block; text-align: center; margin-top: 30px;font-size: 24px;"> </span>
+
 </div>
 
-<span id="predicted_no">&nbsp;</span>
-<span id="confidence_value">&nbsp;</span>
-<img id="output_img"  src="" style="display: none;" alt="Output Image" />
+<img id="output_img"  src="" style="display: none;" alt="Output Image" />  <!-- hidden Adjusted image extracted from canvas -->
 
 </body>
 </html>

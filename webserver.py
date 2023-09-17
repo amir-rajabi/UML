@@ -8,7 +8,7 @@
 
 from flask import Flask, render_template, request, jsonify, url_for, session, redirect
 from flask_socketio import SocketIO
-import base64, io, os, threading, json, webbrowser, shutil, string, random
+import base64, io, os, threading, json, webbrowser, shutil, string, random, glob
 import numpy as np
 import common_dict
 from PIL import Image, ImageOps
@@ -167,7 +167,7 @@ def change_label():
     current_key = keys_list[session['current_index']]
     original_label = common_dict.false_detected_dict[current_key]['label']
 
-    # Compare new_label with original label for correct visualization of modified labels
+    # Compare new_label with original label for "Modified Labels"
     if int(new_label) == original_label:
         common_dict.false_detected_dict[current_key].pop('actual_label', None)
         return jsonify(status="unchanged", message="Label remains unchanged", alertType="info")
@@ -180,8 +180,7 @@ def change_label():
 
 @app.route('/fdi_status', methods=['GET'])
 def fdi_status():
-    # Check the status of your thread. If it's complete, return "done". Otherwise, return "processing".
-    # This is a simple example, you might need to adjust it to your actual threading setup.
+    # Checkin false detected thread status.
     while false_detected_thread.is_alive():
         return jsonify(status="processing")
 
@@ -231,7 +230,16 @@ def visualize_false_detected_images():
 
 @app.route('/dti')
 def render_dti():
+    file_count = len([f for f in os.listdir('New Test Images') if os.path.isfile(os.path.join('New Test Images', f))])
     return render_template('dti.html')
+
+@app.route('/file_count', methods=['GET'])
+def file_count():
+    try:
+        file_count = len([f for f in os.listdir('New Test Images') if os.path.isfile(os.path.join('New Test Images', f)) and f.endswith('.png')])
+        return jsonify(status="success", file_count=file_count)
+    except Exception as e:
+        return jsonify(status="error", message=str(e))
 
 
 @app.route('/fdinm')
@@ -459,13 +467,13 @@ def send_image():
         image_resized = image_resized.convert('L')  # Convert to grayscale
         image_resized.save(image_path, format='PNG')  # Save as PNG
 
-        # Save as output_draw.png also
+        # Save as output_draw.png also, its used temporary for draw_test part of app
         image_resized.save('static/images/output_draw.png')
 
         with open('static/images/output_draw.png', 'rb') as image_file:
             encoded_image = base64.b64encode(image_file.read()).decode('utf-8')
 
-        response = {'image': encoded_image}
+        response = {'image': encoded_image} #could be used later for previewing the adjusted image
         return jsonify(status="success", message="Image saved successfully."), 200
 
     except Exception as e:
@@ -636,7 +644,7 @@ def handle_disconnect():
 if __name__ == '__main__':
     print('App started')
     webbrowser.open_new_tab('http://127.0.0.1:5001')
-    socketio.run(app, host='127.0.0.1', port=5001, debug=True)
+    socketio.run(app, host='127.0.0.1', port=5001, debug=False)
     app.run(debug=True)
 
 
